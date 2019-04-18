@@ -1,75 +1,56 @@
-.App-Body {
-display: flex;
-flex-direction: row;
-background-color: #282c34;
+& {
+  display: flex;
+  flex-direction: row;
+  background: #2f3138;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.Editor {
-    width: 66vw;
+& article {
+  width: 66vw;
+  overflow: auto;
+
+  pre {
+    color: #fff;
+    padding: 3rem;
+    outline: none;
+
+    a {
+      color: #61dafb;
+    }
+  }
 }
 
-.SideBar {
-    width: 33vw;
-    display: flex;
-    flex-direction: column;
-    background-color: #33343a;
-    border-top-left-radius: 30px;
-    padding: 30px;
-}
-
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 20vmin;
-  pointer-events: none;
-}
-
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+& aside {
+  width: 33vw;
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
-}
-
-.App-link,
-a {
-  color: #61dafb;
-}
-
-@keyframes App-logo-spin {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
+  background-color: #2c2d32;
+  padding: 30px;
 }
 
 .Overlay {
-    height: 100vh;
-    width: 100vw;
-    background-color: #282c34;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
+  height: 100vh;
+  width: 100vw;
+  background-color: #282c34;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
 }
 
 .Overlay-Text {
-    color: red;
+  color: red;
 }
 
 .Overlay-Button {
-    width: 20%;
-    height: 10%;
-    background-color: orange;
+  width: 20%;
+  height: 10%;
+  background-color: orange;
 }
 
 .Info {
-    font-family: 'Open Sans', sans-serif;
-    margin-bottom: 30px;
-    color: #ffffff
+  font-family: 'Open Sans', sans-serif;
+  margin-bottom: 30px;
+  color: #ffffff;
 }
