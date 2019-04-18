@@ -56,20 +56,34 @@ a {
     justify-content: center;
     align-items: center;
     flex-direction: column;
+    position: fixed;
+    z-index: 1;    
+    overflow: hidden;
 }
 
 .Overlay-Text {
-    color: red;
+    color: #ce4f2d;
+    font-family: Arial;
 }
 
 .Overlay-Button {
-    width: 20%;
-    height: 10%;
-    background-color: orange;
+    border: 1px solid #ca5688;
+    margin-top: 2rem;
+    font-size: 1.2rem;
+    padding: 1rem;
+    border-radius: 1rem;
+    color: #282c34;
+    background-color: #ca5688;
+    font-weight: bold;
+}
+
+.Overlay-Button:hover{
+    color: #ca5688;
+    background: transparent;
 }
 
 .Info {
-    font-family: 'Open Sans', sans-serif;
+    font-family: 'Arial';
     margin-bottom: 30px;
     color: #ffffff
 }

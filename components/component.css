@@ -16,7 +16,7 @@
       }
 }
 
-@keyframes middleKF {
+@keyframes middleKf {
     0% {
         opacity: 0.7;
       }
@@ -34,8 +34,8 @@
       }  
 }
 
-.Svg {
-    width: 300px;
+svg {
+    width: 30vw;
 }
 
 .Svg:hover .InnerRing{ 
