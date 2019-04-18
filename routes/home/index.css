@@ -9,10 +9,10 @@
 & article {
   width: 66vw;
   overflow: auto;
+  padding: 3rem;
 
   pre {
     color: #fff;
-    padding: 3rem;
     outline: none;
 
     a {
@@ -26,7 +26,13 @@
   display: flex;
   flex-direction: column;
   background-color: #2c2d32;
-  padding: 30px;
+  padding: 3rem;
+  color: #fff;
+
+  h1 {
+    font-size: 3rem;
+    margin: 0;
+  }
 }
 
 .Overlay {
@@ -37,20 +43,39 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
+  position: fixed;
+  z-index: 1;
+  overflow: hidden;
+
+  svg {
+    width: 20vw;
+  }
+
+  p {
+    max-width: 40ex;
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+  }
 }
 
 .Overlay-Text {
-  color: red;
+  color: #ce4f2d;
+  font-family: Arial;
 }
 
 .Overlay-Button {
-  width: 20%;
-  height: 10%;
-  background-color: orange;
+  border: 1px solid #ca5688;
+  margin-top: 2rem;
+  font-size: 1.2rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  color: #282c34;
+  background-color: #ca5688;
+  font-weight: bold;
 }
 
-.Info {
-  font-family: 'Open Sans', sans-serif;
-  margin-bottom: 30px;
-  color: #ffffff;
+.Overlay-Button:hover {
+  color: #ca5688;
+  background: transparent;
 }

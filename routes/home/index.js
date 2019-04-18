@@ -10,10 +10,16 @@ export default () => {
     ? window.location.href.split(`entry=`)[1].replace(/\/$/, '')
     : 'lodash-es@4.17.11/lodash.js'
 
-  const packageName = query.split(/\@|\//)[0]
+  const packageName = query
   const queryForEntry = query.replace(/(?<=\/)[^\/]*$/, '').replace(/\/$/, '')
 
-  const [displayedThing, toggleDisplayed] = React.useState(true)
+  const [displayedOverlay, toggleDisplayed] = React.useState(false)
+
+  React.useEffect(() => {
+    if (displayedOverlay) {
+      window.localStorage.setItem('displayedOverlay', true)
+    }
+  }, [displayedOverlay])
 
   React.useEffect(() => {
     fetch(`https://unpkg.com/${query}`)
@@ -21,13 +27,14 @@ export default () => {
       .then(res => {
         setMeta({
           size: res.length,
-          packageName,
           imports: (res.match(/import/g) || []).length,
           exports: (res.match(/export/g) || []).length,
         })
-        setCode(res.split(/(\.\/\w*\.js)/))
+        setCode(res.split(/((\.\/|https)\w*\.js)/))
       })
   }, [])
+
+  console.log(code)
 
   return html`
     <main class=${styles}>
@@ -42,6 +49,10 @@ export default () => {
                     >${x}</a
                   >
                 `
+              : x.startsWith(`https://`)
+              ? html`
+                  <a key=${x} href="${`/?entry=${x}/`}">${x}</a>
+                `
               : html`
                   <span key=${x}>${x}</span>
                 `
@@ -50,11 +61,34 @@ export default () => {
         >
       </article>
       <aside>
-        <h1>${meta.packageName}</h1>
+        <h1>${packageName.split(/\@|\//)[0]}</h1>
+        <h3>/${packageName.split(/\//)[1]}</h3>
         <span>${meta.size} bytes</span>
         <span>${meta.imports} Imports</span>
         <span>${meta.exports} Exports</span>
       </aside>
+      ${!displayedOverlay &&
+        !window.localStorage.displayedOverlay &&
+        html`
+          <div className="Overlay">
+            <${ProjectBadge}
+              color="#ca5688"
+              abbreviation="De"
+              description="Dora Explorer"
+              number="43"
+            />
+            <p>
+              Explore, learn about and perform static analysis on npm packages
+              in the browser.
+            </p>
+            <button
+              className="Overlay-Button"
+              onClick=${() => toggleDisplayed(true)}
+            >
+              Start Exploring
+            </button>
+          </div>
+        `}
     </main>
   `
 }
