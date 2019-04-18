@@ -1,3 +1,18 @@
+.App-Body {
+display: flex;
+flex-direction: row;
+}
+
+.Editor {
+    width: 66vw;
+}
+
+.SideBar {
+    width: 33vw;
+    display: flex;
+    flex-direction: column;
+}
+
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
   height: 20vmin;
@@ -27,4 +42,29 @@ a {
   to {
     transform: rotate(360deg);
   }
+}
+
+.Overlay {
+    height: 100vh;
+    width: 100vw;
+    background-color: #282c34;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+
+.Overlay-Text {
+    color: red;
+}
+
+.Overlay-Button {
+    width: 20%;
+    height: 10%;
+    background-color: orange;
+}
+
+.Info {
+    font-family: 'Open Sans', sans-serif;
+
 }
