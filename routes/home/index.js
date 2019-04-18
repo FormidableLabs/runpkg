@@ -7,7 +7,7 @@ export default () => {
   const [code, setCode] = React.useState([]);
   const [meta, setMeta] = React.useState({});
 
-  const query = window.location.href.includes("entry=")
+  const query = window.location.search.includes("entry=")
     ? window.location.href.split(`entry=`)[1].replace(/\/$/, "")
     : "lodash-es@4.17.11/lodash.js";
 
@@ -23,8 +23,8 @@ export default () => {
         setMeta({
           size: res.length,
           packageName,
-          imports: res.match(/import/g).length,
-          exports: res.match(/export/g).length
+          imports: (res.match(/import/g) || []).length,
+          exports: (res.match(/export/g) || []).length
         });
         setCode(res.split(/(\.\/\w*\.js)/));
       });
@@ -78,13 +78,21 @@ export default () => {
           </header>
         </div>
         <div className="SideBar">
-          <span className="Info">Package: ${meta.packageName ? meta.packageName : null}</span>
+          <span className="Info"
+            >Package: ${meta.packageName ? meta.packageName : null}</span
+          >
 
-          <span className="Info">Size: ${meta.size ? meta.size : null} bytes</span>
+          <span className="Info"
+            >Size: ${meta.size ? meta.size : null} bytes</span
+          >
 
-          <span className="Info">Number imports: ${meta.imports ? meta.imports : null}</span>
+          <span className="Info"
+            >Number imports: ${meta.imports ? meta.imports : null}</span
+          >
 
-          <span className="Info">Number exports: ${meta.exports ? meta.exports : null}</span>    
+          <span className="Info"
+            >Number exports: ${meta.exports ? meta.exports : null}</span
+          >
         </div>
       </div>
     </div>

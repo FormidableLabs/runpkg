@@ -1,6 +1,7 @@
 .App-Body {
 display: flex;
 flex-direction: row;
+background-color: #282c34;
 }
 
 .Editor {
@@ -11,6 +12,9 @@ flex-direction: row;
     width: 33vw;
     display: flex;
     flex-direction: column;
+    background-color: #33343a;
+    border-top-left-radius: 30px;
+    padding: 30px;
 }
 
 .App-logo {
@@ -66,5 +70,6 @@ a {
 
 .Info {
     font-family: 'Open Sans', sans-serif;
-
+    margin-bottom: 30px;
+    color: #ffffff
 }
