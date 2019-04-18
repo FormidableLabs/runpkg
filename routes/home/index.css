@@ -1,25 +1,81 @@
-.App-logo {
-  animation: App-logo-spin infinite 20s linear;
-  height: 40vmin;
-  pointer-events: none;
+& {
+  display: flex;
+  flex-direction: row;
+  background: #2f3138;
+  height: 100vh;
+  overflow: hidden;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+& article {
+  width: 66vw;
+  overflow: auto;
+  padding: 3rem;
+
+  pre {
+    color: #fff;
+    outline: none;
+
+    a {
+      color: #61dafb;
+    }
+  }
+}
+
+& aside {
+  width: 33vw;
   display: flex;
   flex-direction: column;
-  align-items: center;
+  background-color: #2c2d32;
+  padding: 3rem;
+  color: #fff;
+
+  h1 {
+    font-size: 3rem;
+    margin: 0;
+  }
+}
+
+.Overlay {
+  height: 100vh;
+  width: 100vw;
+  background-color: #282c34;
+  display: flex;
   justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  align-items: center;
+  flex-direction: column;
+  position: fixed;
+  z-index: 1;
+  overflow: hidden;
+
+  svg {
+    width: 20vw;
+  }
+
+  p {
+    max-width: 40ex;
+    font-size: 1.5rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-align: center;
+  }
 }
 
-.App-link {
-  color: #61dafb;
+.Overlay-Text {
+  color: #ce4f2d;
+  font-family: Arial;
 }
 
-@keyframes App-logo-spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
+.Overlay-Button {
+  border: 1px solid #ca5688;
+  margin-top: 2rem;
+  font-size: 1.2rem;
+  padding: 1rem;
+  border-radius: 1rem;
+  color: #282c34;
+  background-color: #ca5688;
+  font-weight: bold;
+}
+
+.Overlay-Button:hover {
+  color: #ca5688;
+  background: transparent;
 }
