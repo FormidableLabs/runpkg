@@ -28,6 +28,7 @@
   background-color: #2c2d32;
   padding: 3rem;
   color: #fff;
+  overflow: auto;
 
   h1 {
     font-size: 3rem;

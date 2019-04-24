@@ -1,26 +1,19 @@
-import reducerFn from "./reducerFn.js";
-// import {GlobalStyle, MiddleRing, InnerRing, Svg} from './ProjectBadge.styles'
-const styles = css`/components/component.css`;
+import reducerFn from './reducerFn.js'
+import { html, css } from 'https://unpkg.com/rplus'
 
-console.log(123);
+const styles = css`/components/component.css`
 
-const ProjectBadge = ({
-  color,
-  abbreviation,
-  description,
-  number,
-  className
-}) => {
-  const descriptionArr = description.split(" ").reduce(reducerFn, []);
+const ProjectBadge = ({ color, abbreviation, description, number }) => {
+  const descriptionArr = description.split(' ').reduce(reducerFn, [])
   const descriptionText = descriptionArr.map(
     (word, idx, array) =>
       html`
         <text
           x="39%"
-          y=${`${array.length === 1 ? "66" : 65 + idx * 6}%`}
+          y=${`${array.length === 1 ? '66' : 65 + idx * 6}%`}
           fontFamily="Arial"
           fontWeight="Bold"
-          fontSize=${`${array.length === 1 ? "24" : "18"}`}
+          fontSize=${`${array.length === 1 ? '24' : '18'}`}
           letterSpacing=${1.8}
           fill="#1D1E1F"
           text-anchor="middle"
@@ -28,7 +21,7 @@ const ProjectBadge = ({
           ${word.toUpperCase()}
         </text>
       `
-  );
+  )
 
   return html`
     <div className=${styles}>
@@ -124,7 +117,7 @@ const ProjectBadge = ({
         </g>
       </svg>
     </div>
-  `;
-};
+  `
+}
 
-export default ProjectBadge;
+export default ProjectBadge
