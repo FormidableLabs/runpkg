@@ -30,7 +30,9 @@ export default () => {
         setCode(text)
 
         const size = text.length
-        const imports = text.match(/((\.\/|https).*\.js)/g) || []
+        const imports = (text.match(/(?<= from )['"].*['"]/g) || []).map(x =>
+          x.slice(1, -1)
+        )
         const exports = text.match(/export\s(.*)/g) || []
         const url = res.url.replace(/\/[^\/]*\.js/, '')
 
@@ -38,7 +40,7 @@ export default () => {
 
         Promise.all(
           imports.map(x =>
-            fetch(url + x.slice(1))
+            fetch(x.startsWith('./') ? url + x.replace('./', '/') : x)
               .then(res => res.text())
               .then(res => ({ [x]: res }))
           )
@@ -78,9 +80,8 @@ export default () => {
         <h1 onClick=${() => history.pushState(null, null, '?' + entry)}>
           ${entry}
         </h1>
-        <h3>/${entry.split(/\//)[1] || 'index.js'}</h3>
-        <span>${meta.size} bytes</span>
-        <h2>(${Object.keys(meta.imports).length}) Imports</h2>
+        <h2>/${entry.split(/\//)[1] || 'index.js'} (${meta.size} bytes)</h2>
+        <h3>(${Object.keys(meta.imports).length}) Imports</h3>
         <ul>
           ${Object.entries(meta.imports).map(
             ([x, v]) =>
@@ -90,15 +91,18 @@ export default () => {
                     history.pushState(
                       null,
                       null,
-                      '?' + entry.replace(/\/.*\.js/, '') + x.slice(1)
+                      '?' +
+                        (x.startsWith('./')
+                          ? entry.replace(/\/.*\.js/, '') + x.replace('./', '/')
+                          : x.replace('https://unpkg.com/', ''))
                     )}
                 >
-                  ${x.slice(2).replace('.js', '')} (${v.length} bytes)
+                  ${x.replace('.js', '')} (${v.length} bytes)
                 </li>
               `
           )}
         </ul>
-        <h2>(${meta.exports.length}) Exports</h2>
+        <h3>(${meta.exports.length}) Exports</h3>
         <ul>
           ${meta.exports.map(
             x =>
