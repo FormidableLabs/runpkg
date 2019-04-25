@@ -34,6 +34,41 @@
     font-size: 3rem;
     margin: 0;
   }
+
+  ul,
+  li {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  > div {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 2rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  ul {
+    border-radius: 0.5rem;
+    overflow: scroll;
+  }
+
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.05);
+    &:hover {
+      background: rgba(0, 0, 0, 0.1);
+    }
+  }
+
+  li + li {
+    border-top: 1px solid rgba(0, 0, 0, 0.1);
+  }
 }
 
 .Overlay {

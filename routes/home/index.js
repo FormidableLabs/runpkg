@@ -30,17 +30,24 @@ export default () => {
         setCode(text)
 
         const size = text.length
-        const imports = (text.match(/(?<= from )['"].*['"]/g) || []).map(x =>
-          x.slice(1, -1)
-        )
-        const exports = text.match(/export\s(.*)/g) || []
-        const url = res.url.replace(/\/[^\/]*\.js/, '')
+        const url = res.url
+        const base = url.replace(/\/[^\/]*\.js/, '')
+        const imports = [
+          ...(text.match(/(?<=(import|export).*from ['"]).*(?=['"])/g) || []),
+          ...(text.match(/(?<=require\(['"])[^)]*(?=['"]\))/g) || []),
+        ]
 
         setEntry(url.replace('https://unpkg.com/', ''))
 
         Promise.all(
           imports.map(x =>
-            fetch(x.startsWith('./') ? url + x.replace('./', '/') : x)
+            fetch(
+              x.startsWith('./')
+                ? base + x.replace('./', '/')
+                : x.startsWith('https://')
+                ? x
+                : 'https://unpkg.com/' + x
+            )
               .then(res => res.text())
               .then(res => ({ [x]: res }))
           )
@@ -48,7 +55,6 @@ export default () => {
           setMeta({
             size,
             imports: deps.reduce((a, b) => ({ ...a, ...b }), {}),
-            exports,
           })
         })
       })
@@ -78,10 +84,15 @@ export default () => {
       </article>
       <aside>
         <h1 onClick=${() => history.pushState(null, null, '?' + entry)}>
-          ${entry}
+          ${entry.split('/')[0]}
         </h1>
-        <h2>/${entry.split(/\//)[1] || 'index.js'} (${meta.size} bytes)</h2>
-        <h3>(${Object.keys(meta.imports).length}) Imports</h3>
+        <h2>
+          ${entry.match(/\/.*$/) || 'index.js'} ${' '}(${meta.size} B)
+        </h2>
+        <div>
+          <h3>Dependencies</h3>
+          <span>${Object.keys(meta.imports).length}</span>
+        </div>
         <ul>
           ${Object.entries(meta.imports).map(
             ([x, v]) =>
@@ -97,17 +108,9 @@ export default () => {
                           : x.replace('https://unpkg.com/', ''))
                     )}
                 >
-                  ${x.replace('.js', '')} (${v.length} bytes)
+                  <b>${x.replace('.js', '')}</b>
+                  <span>${v.length} B</span>
                 </li>
-              `
-          )}
-        </ul>
-        <h3>(${meta.exports.length}) Exports</h3>
-        <ul>
-          ${meta.exports.map(
-            x =>
-              html`
-                <li>${x}</li>
               `
           )}
         </ul>
