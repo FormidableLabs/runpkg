@@ -4,13 +4,17 @@ import Editor from '../../components/editor.js'
 const styles = css`/routes/home/index.css`
 
 export default () => {
-	const [entry, setEntry] = react.useState('')
-	const [code, setCode] = react.useState([])
+	const [code, setCode] = react.useState('')
 	const [meta, setMeta] = react.useState({
 		imports: [],
 		exports: [],
 	})
+	const [packageJSON, setPackageJSON] = react.useState({})
 	const [displayedOverlay, toggleDisplayed] = react.useState(false)
+	const entry =
+		window.location.search === ''
+			? 'lodash-es'
+			: window.location.search.slice(1).replace(/\/$/, '')
 
 	react.useEffect(() => {
 		if (displayedOverlay) {
@@ -19,12 +23,27 @@ export default () => {
 	}, [displayedOverlay])
 
 	react.useEffect(() => {
-		const go = () => {
-			const entry =
-				window.location.search === ''
-					? 'lodash-es'
-					: window.location.search.slice(1).replace(/\/$/, '')
+		// Fetch package JSON and add to state
+		// TODO: add the dependencies info to help deal with requires?
+		const fetchPackageJSON = () => {
+			const root = entry.split('/')[0]
+			fetch(`https://unpkg.com/${root}/package.json`)
+				.then(res => res.json())
+				.then(res => {
+					setPackageJSON({
+						name: res.name,
+						version: res.version,
+						description: res.description,
+						license: res.license,
+					})
+				})
+		}
 
+		fetchPackageJSON()
+	}, [])
+
+	react.useEffect(() => {
+		const go = () => {
 			fetch(`https://unpkg.com/${entry}`).then(async res => {
 				const text = await res.text()
 				setCode(text)
@@ -36,8 +55,6 @@ export default () => {
 					...(text.match(/(?<=(import|export).*from ['"]).*(?=['"])/g) || []),
 					...(text.match(/(?<=require\(['"])[^)]*(?=['"]\))/g) || []),
 				]
-
-				setEntry(url.replace('https://unpkg.com/', ''))
 
 				Promise.all(
 					imports.map(x =>
@@ -73,20 +90,46 @@ export default () => {
 		history.replaceState({}, null, location.search)
 	}, [])
 
+	const CodeBlock = react.useMemo(
+		() => html`
+			${code.length > 100000
+				? html`
+						<p>
+							-- Code limited to the first 100,000 bytes as syntax highlighting
+							is enabled. Please move the syntax highlighting threshold slider
+							to the left to see all the code --
+						</p>
+				  `
+				: null}
+			<${Editor}
+				key="editor"
+				value=${code.slice(0, 100000)}
+				style=${{ lineHeight: '138%' }}
+				onValueChange=${code => setCode(code)}
+			/>
+			<pre>${code.slice(100000)}</pre>
+		`,
+		[code]
+	)
+
 	return html`
 		<main class=${styles}>
 			<article>
-				<${Editor}
-					value=${code}
-					style=${{ lineHeight: '138%' }}
-					onValueChange=${code => setCode(code)}
-				/>
+				${CodeBlock}
 			</article>
 			<aside>
-				<p onClick=${() => console.log('wooo')}>special fetch</p>
 				<h1 onClick=${() => history.pushState(null, null, '?' + entry)}>
-					${entry.split('/')[0]}
+					${packageJSON.name}
 				</h1>
+				${packageJSON.version &&
+					html`
+						<h2>v${packageJSON.version}</h2>
+					`}
+				<h2>${packageJSON.license}</h2>
+				${packageJSON.description &&
+					html`
+						<p>"${packageJSON.description}"</p>
+					`}
 				<h2>
 					${entry.match(/\/.*$/) || 'index.js'} ${' '}(${meta.size} B)
 				</h2>
