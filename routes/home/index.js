@@ -32,7 +32,7 @@ export default () => {
       const imports = [
         ...(text.match(/(?<=(import|export).*from ['"]).*(?=['"])/g) || []),
         ...(text.match(/(?<=require\(['"])[^)]*(?=['"]\))/g) || []).filter(x =>
-          Object.keys(pkg.dependencies).includes(x)
+          Object.keys(pkg.dependencies || {}).includes(x)
         ),
       ];
 
