@@ -3,78 +3,70 @@ import ProjectBadge from '../../components/ProjectBadge.js'
 import Editor from '../../components/editor.js'
 const styles = css`/routes/home/index.css`
 
+const navigate = url => history.pushState(null, null, url)
+
 export default () => {
-	const [code, setCode] = react.useState('')
+	const [packageJSON, setPackageJSON] = react.useState({})
 	const [meta, setMeta] = react.useState({
 		imports: [],
 		exports: [],
+		code: '',
+		path: '',
 	})
-	const [packageJSON, setPackageJSON] = react.useState({})
-	const [displayedOverlay, toggleDisplayed] = react.useState(false)
-	const entry =
-		window.location.search === ''
-			? 'lodash-es'
-			: window.location.search.slice(1).replace(/\/$/, '')
 
 	react.useEffect(() => {
-		if (displayedOverlay) {
-			window.localStorage.setItem('displayedOverlay', true)
-		}
-	}, [displayedOverlay])
-
-	react.useEffect(() => {
-		// Fetch package JSON and add to state
-		// TODO: add the dependencies info to help deal with requires?
-		const fetchPackageJSON = () => {
+		const go = async () => {
+			const entry = window.location.search.slice(1).replace(/\/$/, '')
 			const root = entry.split('/')[0]
-			fetch(`https://unpkg.com/${root}/package.json`)
-				.then(res => res.json())
-				.then(res => {
-					setPackageJSON({
-						name: res.name,
-						version: res.version,
-						description: res.description,
-						license: res.license,
-					})
-				})
-		}
 
-		fetchPackageJSON()
-	}, [])
+			const pkg = await fetch(`https://unpkg.com/${root}/package.json`).then(
+				res => res.json()
+			)
 
-	react.useEffect(() => {
-		const go = () => {
-			fetch(`https://unpkg.com/${entry}`).then(async res => {
-				const text = await res.text()
-				setCode(text)
+			const file = await fetch(`https://unpkg.com/${entry}`)
+			const text = await file.text()
+			const size = text.length
+			const url = file.url
+			const base = url.replace(/\/[^\/]*\.js/, '')
+			const imports = [
+				...(text.match(/(?<=(import|export).*from ['"]).*(?=['"])/g) || []),
+				...(text.match(/(?<=require\(['"])[^)]*(?=['"]\))/g) || []).filter(x =>
+					Object.keys(pkg.dependencies).includes(x)
+				),
+			]
 
-				const size = text.length
-				const url = res.url
-				const base = url.replace(/\/[^\/]*\.js/, '')
-				const imports = [
-					...(text.match(/(?<=(import|export).*from ['"]).*(?=['"])/g) || []),
-					...(text.match(/(?<=require\(['"])[^)]*(?=['"]\))/g) || []),
-				]
-
-				Promise.all(
-					imports.map(x =>
-						fetch(
-							x.startsWith('./')
-								? base + x.replace('./', '/')
-								: x.startsWith('https://')
-								? x
-								: 'https://unpkg.com/' + x
-						)
-							.then(res => res.text())
-							.then(res => ({ [x]: res }))
+			const dependencies = await Promise.all(
+				imports.map(x =>
+					// TODO: abstract out to a function! normalisePath()?
+					fetch(
+						x.startsWith('./')
+							? base + x.replace('./', '/')
+							: x.startsWith('https://')
+							? x
+							: 'https://unpkg.com/' + x
 					)
-				).then(deps => {
-					setMeta({
-						size,
-						imports: deps.reduce((a, b) => ({ ...a, ...b }), {}),
-					})
-				})
+						.then(res => res.text())
+						.then(res => ({ [x]: res }))
+				)
+			).then(deps => deps.reduce((a, b) => ({ ...a, ...b }), {}))
+
+			setPackageJSON({
+				name: pkg.name,
+				version: pkg.version,
+				description: pkg.description,
+				license: pkg.license,
+				dependencies: pkg.dependencies,
 			})
+
+			setMeta({
+				path: entry.match(/\/.*$/) || 'index.js',
+				code: text,
+				imports: dependencies,
+				size,
+				entry,
+			})
+
+			window.document.title = 'Dora | ' + pkg.name
 		}
 
 		// Rerender the app when pushState or replaceState are called
@@ -87,12 +79,12 @@ export default () => {
 		})
 		// Rerender when the back and forward buttons are pressed
 		addEventListener('popstate', go)
-		history.replaceState({}, null, location.search)
+		location.search && history.replaceState({}, null, location.search)
 	}, [])
 
 	const CodeBlock = react.useMemo(
 		() => html`
-			${code.length > 100000
+			${meta.code.length > 100000
 				? html`
 						<p>
 							-- Code limited to the first 100,000 bytes as syntax highlighting
@@ -103,84 +95,87 @@ export default () => {
 				: null}
 			<${Editor}
 				key="editor"
-				value=${code.slice(0, 100000)}
+				value=${meta.code.slice(0, 100000)}
 				style=${{ lineHeight: '138%' }}
-				onValueChange=${code => setCode(code)}
+				onValueChange=${code => setMeta({ ...meta, code })}
 			/>
-			<pre>${code.slice(100000)}</pre>
+			<pre>${meta.code.slice(100000)}</pre>
 		`,
-		[code]
+		[meta.code]
 	)
 
 	return html`
 		<main class=${styles}>
-			<article>
-				${CodeBlock}
-			</article>
-			<aside>
-				<h1 onClick=${() => history.pushState(null, null, '?' + entry)}>
-					${packageJSON.name}
-				</h1>
-				${packageJSON.version &&
-					html`
-						<h2>v${packageJSON.version}</h2>
-					`}
-				<h2>${packageJSON.license}</h2>
-				${packageJSON.description &&
-					html`
-						<p>"${packageJSON.description}"</p>
-					`}
-				<h2>
-					${entry.match(/\/.*$/) || 'index.js'} ${' '}(${meta.size} B)
-				</h2>
-				<div>
-					<h3>Dependencies</h3>
-					<span>${Object.keys(meta.imports).length}</span>
-				</div>
-				<ul>
-					${Object.entries(meta.imports).map(
-						([x, v]) =>
-							html`
-								<li
-									onClick=${e =>
-										history.pushState(
-											null,
-											null,
-											'?' +
-												(x.startsWith('./')
-													? entry.replace(/\/.*\.js/, '') + x.replace('./', '/')
-													: x.replace('https://unpkg.com/', ''))
-										)}
-								>
-									<b>${x.replace('.js', '')}</b>
-									<span>${v.length} B</span>
-								</li>
-							`
-					)}
-				</ul>
-			</aside>
-			${!displayedOverlay &&
-				!window.localStorage.displayedOverlay &&
-				html`
-					<div className="Overlay">
-						<${ProjectBadge}
-							color="#ca5688"
-							abbreviation="De"
-							description="Dora Explorer"
-							number="43"
-						/>
-						<p>
-							Explore, learn about and perform static analysis on npm packages
-							in the browser.
-						</p>
-						<button
-							className="Overlay-Button"
-							onClick=${() => toggleDisplayed(true)}
-						>
-							Start Exploring
-						</button>
-					</div>
-				`}
+			${!window.location.search
+				? html`
+						<div className="Overlay">
+							<${ProjectBadge}
+								color="#ca5688"
+								abbreviation="De"
+								description="Dora Explorer"
+								number="43"
+							/>
+							<p>
+								Explore, learn about and perform static analysis on npm packages
+								in the browser.
+							</p>
+							<button
+								className="Overlay-Button"
+								onClick=${() => navigate('?lodash-es')}
+							>
+								Start Exploring
+							</button>
+						</div>
+				  `
+				: html`
+						<article>
+							${CodeBlock}
+						</article>
+						<aside>
+							<h1
+								onClick=${() =>
+									navigate('?' + packageJSON.name + '@' + packageJSON.version)}
+							>
+								${packageJSON.name}
+							</h1>
+							${packageJSON.version &&
+								html`
+									<h2>v${packageJSON.version}</h2>
+								`}
+							<h2>${packageJSON.license}</h2>
+							${packageJSON.description &&
+								html`
+									<p>"${packageJSON.description}"</p>
+								`}
+							<h2>
+								${meta.path} ${' '}(${meta.size} B)
+							</h2>
+							<div>
+								<h3>Dependencies</h3>
+								<span>${Object.keys(meta.imports).length}</span>
+							</div>
+							<ul>
+								${Object.entries(meta.imports).map(
+									([x, v]) =>
+										html`
+											<li
+												onClick=${e =>
+													navigate(
+														'?' +
+															(x.startsWith('./')
+																? meta.entry.replace(/\/[^\/]*\.js/, '') +
+																  x.replace('./', '/')
+																: x.replace('https://unpkg.com/', ''))
+													)}
+											>
+												<b>${x.replace('.js', '')}</b>
+												<span>${v.length} B</span>
+											</li>
+										`
+								)}
+							</ul>
+						</aside>
+				  `}
 		</main>
 	`
 }
