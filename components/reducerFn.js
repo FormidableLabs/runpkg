@@ -1,4 +1,4 @@
-const reducerFn = (acc, cur, idx, src) => {
+const reducerFn = (acc, cur, idx) => {
   // If first word, just add to acc
   if (idx === 0) {
     return acc.concat(cur);
