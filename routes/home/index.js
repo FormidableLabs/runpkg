@@ -72,6 +72,7 @@ export default () => {
         description: pkg.description,
         license: pkg.license,
         dependencies: pkg.dependencies,
+        readme: `https://www.npmjs.com/package/${pkg.name}`,
       });
 
       setMeta({
@@ -155,10 +156,14 @@ export default () => {
               >
                 ${packageJSON.name}
               </h1>
-              <h3>
-                ${meta.path} ${' '}(${formatBytes(meta.size)})
-              </h3>
-              <h5>v${packageJSON.version} | ${packageJSON.license}</h5>
+              <span className="Info-Block">
+                ${packageJSON.version &&
+                  html`
+                    <span>v${packageJSON.version} | ${'\u00A0'}</span>
+                  `}
+                <span>${packageJSON.license} | ${'\u00A0'}</span>
+                <a href=${packageJSON.readme}>Readme</a>
+              </span>
               ${packageJSON.description &&
                 html`
                   <p>${packageJSON.description}</p>

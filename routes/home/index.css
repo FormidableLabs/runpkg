@@ -52,6 +52,17 @@
   color: #fff;
   overflow: auto;
 
+  .Info-Block {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    > a {
+      display: inline-block;
+      text-decoration: none;
+      color: #fff;
+    }
+  }
+
   h1 {
     font-size: 3rem;
     margin: 0;
