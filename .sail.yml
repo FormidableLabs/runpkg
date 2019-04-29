@@ -10,16 +10,10 @@ tasks:
     command:
       - yarn
     args:
-      - write
+      - prettier
   lint:
     image: node:carbon
     command:
       - yarn
     args:
       - lint
-  test:
-    image: node:carbon
-    command:
-      - yarn
-    args:
-      - test
