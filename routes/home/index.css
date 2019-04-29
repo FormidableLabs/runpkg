@@ -35,6 +35,10 @@
     margin: 0;
   }
 
+  h2 {
+    margin: 0.5rem 0;
+  }
+
   ul,
   li {
     list-style: none;

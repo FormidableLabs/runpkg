@@ -1,49 +1,49 @@
 @keyframes innerKf {
-    0% {
-        opacity: 0.4;
-      }
-      60% {
-        opacity: 0.1;
-      }
-      75% {
-        opacity: 0.1;
-      }
-      85% {
-        opacity: 0.5;
-      }
-      100% {
-        opacity: 0.4;
-      }
+  0% {
+    opacity: 0.4;
+  }
+  60% {
+    opacity: 0.1;
+  }
+  75% {
+    opacity: 0.1;
+  }
+  85% {
+    opacity: 0.5;
+  }
+  100% {
+    opacity: 0.4;
+  }
 }
 
 @keyframes middleKf {
-    0% {
-        opacity: 0.7;
-      }
-      60% {
-        opacity: 0.4;
-      }
-      75% {
-        opacity: 0.4;
-      }
-      85% {
-        opacity: 0.8;
-      }
-      100% {
-        opacity: 0.7;
-      }  
+  0% {
+    opacity: 0.7;
+  }
+  60% {
+    opacity: 0.4;
+  }
+  75% {
+    opacity: 0.4;
+  }
+  85% {
+    opacity: 0.8;
+  }
+  100% {
+    opacity: 0.7;
+  }
 }
 
 svg {
-    width: 30vw;
+  width: 30vw;
 }
 
-.Svg:hover .InnerRing{ 
-    animation-name: innerKf;
-    animation-duration: 1s;
+.Svg:hover .InnerRing {
+  animation-name: innerKf;
+  animation-duration: 1s;
 }
 
 .Svg:hover .MiddleRing {
-    animation-name: middleKf;
-    animation-duration: 1s;
+  animation-name: middleKf;
+  animation-duration: 1s;
 }

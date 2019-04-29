@@ -1,10 +1,10 @@
-import reducerFn from './reducerFn.js'
-import { html, css } from 'https://unpkg.com/rplus'
+import reducerFn from './reducerFn.js';
+import { html, css } from 'https://unpkg.com/rplus';
 
-const styles = css`/components/component.css`
+const styles = css`/components/component.css`;
 
 const ProjectBadge = ({ color, abbreviation, description, number }) => {
-  const descriptionArr = description.split(' ').reduce(reducerFn, [])
+  const descriptionArr = description.split(' ').reduce(reducerFn, []);
   const descriptionText = descriptionArr.map(
     (word, idx, array) =>
       html`
@@ -21,7 +21,7 @@ const ProjectBadge = ({ color, abbreviation, description, number }) => {
           ${word.toUpperCase()}
         </text>
       `
-  )
+  );
 
   return html`
     <div className=${styles}>
@@ -117,7 +117,7 @@ const ProjectBadge = ({ color, abbreviation, description, number }) => {
         </g>
       </svg>
     </div>
-  `
-}
+  `;
+};
 
-export default ProjectBadge
+export default ProjectBadge;
