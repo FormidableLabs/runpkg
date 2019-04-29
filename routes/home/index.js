@@ -1,6 +1,7 @@
 import { react, html, css } from 'https://unpkg.com/rplus';
 import ProjectBadge from '../../components/ProjectBadge.js';
 import Editor from '../../components/editor.js';
+
 const styles = css`/routes/home/index.css`;
 
 const navigate = url => history.pushState(null, null, url);
@@ -84,20 +85,14 @@ export default () => {
 
   const CodeBlock = react.useMemo(
     () => html`
-      ${meta.code.length > 100000
-        ? html`
-            <p>
-              -- Code limited to the first 100,000 bytes as syntax highlighting
-              is enabled. Please move the syntax highlighting threshold slider
-              to the left to see all the code --
-            </p>
-          `
-        : null}
       <${Editor}
         key="editor"
         value=${meta.code.slice(0, 100000)}
-        style=${{ lineHeight: '138%' }}
-        onValueChange=${code => setMeta({ ...meta, code })}
+        style=${{
+          lineHeight: '138%',
+          fontFamily: '"dm", monospace'
+        }}
+        disabled
       />
       <pre>${meta.code.slice(100000)}</pre>
     `,
