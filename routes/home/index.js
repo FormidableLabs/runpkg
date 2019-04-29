@@ -1,8 +1,18 @@
 import { react, html, css } from 'https://unpkg.com/rplus';
 import ProjectBadge from '../../components/ProjectBadge.js';
 import Editor from '../../components/editor.js';
+import FormidableIcon from '../../components/logo.js';
 
 const styles = css`/routes/home/index.css`;
+
+const formatBytes = (bytes, decimals = 2) => {
+  if (bytes === 0) return '0 Bytes';
+  const k = 1024;
+  const dm = decimals < 0 ? 0 : decimals;
+  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  const i = Math.floor(Math.log(bytes) / Math.log(k));
+  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
+}
 
 const navigate = url => history.pushState(null, null, url);
 
@@ -65,7 +75,7 @@ export default () => {
       });
 
       setMeta({
-        path: entry.match(/\/.*$/) || 'index.js',
+        path: entry.match(/\/.*$/) || '/index.js',
         code: text,
         imports: dependencies,
         size,
@@ -117,8 +127,8 @@ export default () => {
                 number="43"
               />
               <p>
-                Explore, learn about and perform static analysis on npm packages
-                in the browser.
+                Explore, learn about and perform static analysis on npm
+                packages in the browser.
               </p>
               <button
                 className="Overlay-Button"
@@ -129,28 +139,30 @@ export default () => {
             </div>
           `
         : html`
+            <header>
+              <p>An experiment by the folks at Formidable</p>
+              ${FormidableIcon}
+            </header>
             <article>
               ${CodeBlock}
             </article>
             <aside>
               <h1
                 onClick=${() =>
-                  navigate('?' + packageJSON.name + '@' + packageJSON.version)}
+                  navigate(
+                    '?' + packageJSON.name + '@' + packageJSON.version
+                  )}
               >
                 ${packageJSON.name}
               </h1>
-              ${packageJSON.version &&
-                html`
-                  <h2>v${packageJSON.version}</h2>
-                `}
-              <h2>${packageJSON.license}</h2>
+              <h3>
+                ${meta.path} ${' '}(${formatBytes(meta.size)})
+              </h3>
+              <h5>v${packageJSON.version} | ${packageJSON.license}</h5>
               ${packageJSON.description &&
                 html`
-                  <p>"${packageJSON.description}"</p>
+                  <p>${packageJSON.description}</p>
                 `}
-              <h2>
-                ${meta.path} ${' '}(${meta.size} B)
-              </h2>
               <div>
                 <h3>Dependencies</h3>
                 <span>${Object.keys(meta.imports).length}</span>
@@ -170,7 +182,7 @@ export default () => {
                           )}
                       >
                         <b>${x.replace('.js', '')}</b>
-                        <span>${v.length} B</span>
+                        <span>${formatBytes(v.length)}</span>
                       </li>
                     `
                 )}
