@@ -31,21 +31,26 @@ export default () => {
       const base = url.replace(/\/[^\/]*\.js/, '');
       const imports = [
         ...(text.match(/(?<=(import|export).*from ['"]).*(?=['"])/g) || []),
-        ...(text.match(/(?<=require\(['"])[^)]*(?=['"]\))/g) || []).filter(x =>
-          Object.keys(pkg.dependencies || {}).includes(x)
+        ...(text.match(/(?<=require\(['"])[^)]*(?=['"]\))/g) || []).filter(
+          x =>
+            x.startsWith('./') ||
+            Object.keys(pkg.dependencies || {}).includes(x)
         ),
       ];
 
+      const normaliseRoutes = x => {
+        if (x.startsWith(`./`)) {
+          return base + x.replace(`./`, `/`);
+        } else if (x.startsWith(`https://`)) {
+          return x;
+        } else {
+          return `https://unpkg.com/` + x;
+        }
+      };
+
       const dependencies = await Promise.all(
         imports.map(x =>
-          // TODO: abstract out to a function! normalisePath()?
-          fetch(
-            x.startsWith('./')
-              ? base + x.replace('./', '/')
-              : x.startsWith('https://')
-              ? x
-              : 'https://unpkg.com/' + x
-          )
+          fetch(normaliseRoutes(x))
             .then(res => res.text())
             .then(res => ({ [x]: res }))
         )
@@ -80,6 +85,7 @@ export default () => {
     });
     // Rerender when the back and forward buttons are pressed
     addEventListener('popstate', go);
+    // eslint-disable-next-line no-unused-expressions
     location.search && history.replaceState({}, null, location.search);
   }, []);
 
@@ -90,7 +96,7 @@ export default () => {
         value=${meta.code.slice(0, 100000)}
         style=${{
           lineHeight: '138%',
-          fontFamily: '"dm", monospace'
+          fontFamily: '"dm", monospace',
         }}
         disabled
       />
@@ -154,7 +160,7 @@ export default () => {
                   ([x, v]) =>
                     html`
                       <li
-                        onClick=${e =>
+                        onClick=${() =>
                           navigate(
                             '?' +
                               (x.startsWith('./')

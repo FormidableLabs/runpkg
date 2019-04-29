@@ -42,7 +42,7 @@
     "func-style": "off",
     "arrow-parens": "off",
     "no-use-before-define": "off",
-    "no-undef": ["error", { "typeof": true }],
+    "no-undef": "off",
     "react/jsx-filename-extension": "off",
     "react/require-extension": "off",
     "react/no-multi-comp": "off",
@@ -58,6 +58,10 @@
       {
         "argsIgnorePattern": "^_+$"
       }
-    ]
+    ],
+    "import/no-unresolved": [2, { "ignore": ["https"] }],
+    "no-var": "off",
+    "prefer-template": "off",
+    "filenames/match-regex": "off"
   }
 }

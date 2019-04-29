@@ -1,0 +1,31 @@
+{
+  "name": "dora",
+  "version": "0.1.0",
+  "description": "> the online package explorer",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "prettier": "prettier --config .prettierrc --write \"./**/*.{js,json,css,html}\"",
+    "lint": "eslint --config .eslintrc \"./**/*.js\""
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FormidableLabs/dora.git"
+  },
+  "author": "",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/FormidableLabs/dora/issues"
+  },
+  "homepage": "https://github.com/FormidableLabs/dora#readme",
+  "devDependencies": {
+    "babel-eslint": "^10.0.1",
+    "eslint": "^5.16.0",
+    "eslint-config-formidable": "^3.0.0",
+    "eslint-config-prettier": "^2.9.0",
+    "eslint-plugin-filenames": "^1.2.0",
+    "eslint-plugin-import": "^2.9.0",
+    "eslint-plugin-react": "^7.7.0",
+    "prettier": "^1.17.0"
+  }
+}
