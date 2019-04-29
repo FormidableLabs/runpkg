@@ -6,7 +6,7 @@ export default () => html`
     <header className="App-header">
       <${Logo} className="App-logo" />
       <p>There is not a route for the path <code>${location.pathname}</code></p>
-      <a href='/' className='App-link'>Go Back Home</a>
+      <a href="/" className="App-link">Go Back Home</a>
     </header>
   </div>
 `
