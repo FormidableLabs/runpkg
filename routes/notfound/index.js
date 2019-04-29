@@ -1,5 +1,5 @@
-import Logo from '../../components/logo.js'
-const style = css`/routes/home/index.css`
+import Logo from '../../components/logo.js';
+const style = css`/routes/home/index.css`;
 
 export default () => html`
   <div className=${style}>
@@ -9,4 +9,4 @@ export default () => html`
       <a href="/" className="App-link">Go Back Home</a>
     </header>
   </div>
-`
+`;
