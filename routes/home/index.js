@@ -2,6 +2,7 @@ import { react, html, css } from 'https://unpkg.com/rplus';
 import ProjectBadge from '../../components/ProjectBadge.js';
 import Editor from '../../components/editor.js';
 import FormidableIcon from '../../components/logo.js';
+import recursiveDependantsFetch from './utils/recursiveDependantsFetch.js';
 
 const styles = css`/routes/home/index.css`;
 
@@ -12,12 +13,13 @@ const formatBytes = (bytes, decimals = 2) => {
   const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-}
+};
 
 const navigate = url => history.pushState(null, null, url);
 
 export default () => {
   const [packageJSON, setPackageJSON] = react.useState({});
+  const [cache, setCache] = react.useState({});
   const [meta, setMeta] = react.useState({
     imports: [],
     exports: [],
@@ -25,14 +27,18 @@ export default () => {
     path: '',
   });
 
+  const normaliseRoutes = (base, x) => {
+    if (x.startsWith(`./`)) return base + x.replace(`./`, `/`);
+    if (x.startsWith(`https://`)) return x;
+    return `https://unpkg.com/` + x;
+  };
+
+  /* eslint-disable max-statements*/
   react.useEffect(() => {
+    let currentPackage;
     const go = async () => {
       const entry = window.location.search.slice(1).replace(/\/$/, '');
       const root = entry.split('/')[0];
-
-      const pkg = await fetch(`https://unpkg.com/${root}/package.json`).then(
-        res => res.json()
-      );
 
       const file = await fetch(`https://unpkg.com/${entry}`);
       const text = await file.text();
@@ -48,23 +54,34 @@ export default () => {
         ),
       ];
 
-      const normaliseRoutes = x => {
-        if (x.startsWith(`./`)) {
-          return base + x.replace(`./`, `/`);
-        } else if (x.startsWith(`https://`)) {
-          return x;
-        } else {
-          return `https://unpkg.com/` + x;
-        }
-      };
+      /* Dependencies are what this file depends on in the package */
 
       const dependencies = await Promise.all(
         imports.map(x =>
-          fetch(normaliseRoutes(x))
+          fetch(normaliseRoutes(base, x))
             .then(res => res.text())
             .then(res => ({ [x]: res }))
         )
       ).then(deps => deps.reduce((a, b) => ({ ...a, ...b }), {}));
+
+      setMeta({
+        path: entry.match(/\/.*$/) || '/index.js',
+        code: text,
+        imports: dependencies,
+        size,
+        entry,
+        url,
+      });
+
+      /* Runs on load then if the package changes it runs code again.*/
+      if (root === currentPackage) return;
+
+      /* Sets current package to the package pulled from root. */
+      currentPackage = root;
+
+      const pkg = await fetch(`https://unpkg.com/${root}/package.json`).then(
+        res => res.json()
+      );
 
       setPackageJSON({
         name: pkg.name,
@@ -75,18 +92,18 @@ export default () => {
         readme: `https://www.npmjs.com/package/${pkg.name}`,
       });
 
-      setMeta({
-        path: entry.match(/\/.*$/) || '/index.js',
-        code: text,
-        imports: dependencies,
-        size,
-        entry,
-      });
+      /* Sets document title to package name. */
 
       window.document.title = 'Dora | ' + pkg.name;
-    };
 
-    // Rerender the app when pushState or replaceState are called
+      /* Dependants are what depend on this file in the package 
+      recursiveDependantsFetch fetches all the dependants and then puts
+      them into the cache*/
+      recursiveDependantsFetch(`https://unpkg.com/${root}`).then(setCache);
+    };
+    /* eslint-enable max-statements*/
+
+    /* Rerender the app when pushState or replaceState are called */
     ['pushState', 'replaceState'].map(event => {
       const original = window.history[event];
       window.history[event] = function() {
@@ -94,9 +111,9 @@ export default () => {
         go();
       };
     });
-    // Rerender when the back and forward buttons are pressed
+    /* Rerender when the back and forward buttons are pressed */
     addEventListener('popstate', go);
-    // eslint-disable-next-line no-unused-expressions
+    /* eslint-disable-next-line no-unused-expressions */
     location.search && history.replaceState({}, null, location.search);
   }, []);
 
@@ -128,8 +145,8 @@ export default () => {
                 number="43"
               />
               <p>
-                Explore, learn about and perform static analysis on npm
-                packages in the browser.
+                Explore, learn about and perform static analysis on npm packages
+                in the browser.
               </p>
               <button
                 className="Overlay-Button"
@@ -150,9 +167,7 @@ export default () => {
             <aside>
               <h1
                 onClick=${() =>
-                  navigate(
-                    '?' + packageJSON.name + '@' + packageJSON.version
-                  )}
+                  navigate('?' + packageJSON.name + '@' + packageJSON.version)}
               >
                 ${packageJSON.name}
               </h1>
@@ -171,6 +186,33 @@ export default () => {
               ${packageJSON.description &&
                 html`
                   <p>${packageJSON.description}</p>
+                `}
+              ${Object.keys(cache).length > 0 &&
+                html`
+                  <div>
+                    <h3>Dependants</h3>
+                    <span>${cache[meta.url].dependants.length}</span>
+                  </div>
+                  <ul>
+                    ${cache[meta.url].dependants.map(
+                      x =>
+                        html`
+                          <li
+                            onClick=${() =>
+                              navigate(
+                                '?' +
+                                  (x.startsWith('./')
+                                    ? meta.entry.replace(/\/[^\/]*\.js/, '') +
+                                      x.replace('./', '/')
+                                    : x.replace('https://unpkg.com/', ''))
+                              )}
+                          >
+                            <b>${x.replace('.js', '')}</b>
+                            <span>${formatBytes(cache[x].code.length)}</span>
+                          </li>
+                        `
+                    )}
+                  </ul>
                 `}
               <div>
                 <h3>Dependencies</h3>
