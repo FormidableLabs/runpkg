@@ -128,13 +128,13 @@ export default () => {
         }}
         disabled
       />
-      <pre>${meta.code.slice(100000)}</pre>
+      <pre key="pre">${meta.code.slice(100000)}</pre>
     `,
     [meta.code]
   );
 
   return html`
-    <main class=${styles}>
+    <main className=${styles}>
       ${!window.location.search
         ? html`
             <div className="Overlay">
@@ -157,10 +157,10 @@ export default () => {
             </div>
           `
         : html`
-            <article>
+            <article key="article">
               ${CodeBlock}
             </article>
-            <aside>
+            <aside key="aside">
               <h1
                 onClick=${() =>
                   navigate('?' + packageJSON.name + '@' + packageJSON.version)}
@@ -185,11 +185,11 @@ export default () => {
                 `}
               ${Object.keys(cache).length > 0 &&
                 html`
-                  <div>
+                  <div key="div">
                     <h3>Dependants</h3>
                     <span>${cache[meta.url].dependants.length}</span>
                   </div>
-                  <ul>
+                  <ul key="ul">
                     ${cache[meta.url].dependants.map(
                       x =>
                         html`
@@ -237,7 +237,7 @@ export default () => {
                 )}
               </ul>
             </aside>
-            <footer>
+            <footer key="footer">
               <p>An experiment by the folks at Formidable</p>
               ${FormidableIcon}
             </footer>
