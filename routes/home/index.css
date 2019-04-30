@@ -52,6 +52,34 @@
   color: #fff;
   overflow: auto;
 
+  .Info-Block {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    > a {
+      color: #fff;
+      display: inline-block;
+      text-decoration: none;
+      > svg {
+        display: inline-block;
+        width: 2em;
+        vertical-align: middle;
+      }
+    }
+    > a:hover {
+      > svg {
+        > path {
+          fill: #b03b3a;
+        }
+      }
+    }
+    > * + *:before {
+      content: '|';
+      margin: 0 0.3em;
+    }
+  }
+
   h1 {
     font-size: 3rem;
     margin: 0;
