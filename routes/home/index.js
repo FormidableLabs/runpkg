@@ -206,7 +206,7 @@ export default () => {
                                 );
                               }}
                             >
-                              <span>$${cache[x].name}</span>
+                              <span>${cache[x].name}</span>
                               <span>${formatBytes(cache[x].code.length)}</span>
                             </a>
                           </li>
