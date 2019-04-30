@@ -193,19 +193,22 @@ export default () => {
                     ${cache[meta.url].dependants.map(
                       x =>
                         html`
-                          <li
-                            key=${x}
-                            onClick=${() =>
-                              navigate(
-                                '?' +
-                                  (x.startsWith('./')
-                                    ? meta.entry.replace(/\/[^\/]*\.js/, '') +
-                                      x.replace('./', '/')
-                                    : x.replace('https://unpkg.com/', ''))
-                              )}
-                          >
-                            <b>${cache[x].name}</b>
-                            <span>${formatBytes(cache[x].code.length)}</span>
+                          <li key=${x}>
+                            <a
+                              onClick=${e => {
+                                e.preventDefault();
+                                navigate(
+                                  '?' +
+                                    (x.startsWith('./')
+                                      ? meta.entry.replace(/\/[^\/]*\.js/, '') +
+                                        x.replace('./', '/')
+                                      : x.replace('https://unpkg.com/', ''))
+                                );
+                              }}
+                            >
+                              <span>$${cache[x].name}</span>
+                              <span>${formatBytes(cache[x].code.length)}</span>
+                            </a>
                           </li>
                         `
                     )}
@@ -219,19 +222,22 @@ export default () => {
                 ${Object.entries(meta.imports).map(
                   ([x, v]) =>
                     html`
-                      <li
-                        key=${x}
-                        onClick=${() =>
-                          navigate(
-                            '?' +
-                              (x.startsWith('./')
-                                ? meta.entry.replace(/\/[^\/]*\.js/, '') +
-                                  x.replace('./', '/')
-                                : x.replace('https://unpkg.com/', ''))
-                          )}
-                      >
-                        <b>${x.replace('.js', '')}</b>
-                        <span>${formatBytes(v.length)}</span>
+                      <li key=${x}>
+                        <a
+                          onClick=${e => {
+                            e.preventDefault();
+                            navigate(
+                              '?' +
+                                (x.startsWith('./')
+                                  ? meta.entry.replace(/\/[^\/]*\.js/, '') +
+                                    x.replace('./', '/')
+                                  : x.replace('https://unpkg.com/', ''))
+                            );
+                          }}
+                        >
+                          <span>${x.replace('.js', '')}</span>
+                          <span>${formatBytes(v.length)}</span>
+                        </a>
                       </li>
                     `
                 )}

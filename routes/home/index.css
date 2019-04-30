@@ -140,9 +140,10 @@
     border-radius: 0.5rem;
     overflow: scroll;
     flex: none;
+    min-height: 10%;
   }
 
-  li {
+  li > a {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -150,6 +151,9 @@
     background: rgba(0, 0, 0, 0.05);
     &:hover {
       background: rgba(0, 0, 0, 0.1);
+    }
+    > span:first-child {
+      font-weight: bold;
     }
   }
 
