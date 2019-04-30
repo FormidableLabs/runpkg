@@ -1,37 +1,54 @@
 & {
   width: 100vw;
-  display: grid;
-  grid-template-rows: 1fr 4rem;  
-  grid-template-areas:
-  'article aside'
-  'article header';
-  background: #2f3138;
   height: 100vh;
-  overflow: hidden;
+  background: #2f3138;
+  display: flex;
+  flex-direction: column;
+  overflow: scroll;
+
+  @media screen and (min-width: 800px) {
+    display: grid;
+    height: 100vh;
+    grid-template-rows: 1fr 4rem;
+    grid-template-areas:
+      'article aside'
+      'article footer';
+    overflow: hidden;
+  }
 }
 
-& header {
-  grid-area: header;
-  background:rgba(0,0,0,0.2);
-  color: rgba(255,255,255,0.5);
+& footer {
+  grid-area: footer;
+  background: rgba(0, 0, 0, 0.2);
+  color: rgba(255, 255, 255, 0.5);
 
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 0 2rem;
+  width: 100%;
 
-   svg {
-     width: 1.6rem;
-     fill: currentColor;
-   }
+  svg {
+    width: 1.6rem;
+    fill: currentColor;
+  }
+
+  @media screen and (min-width: 800px) {
+    width: auto;
+  }
 }
 
 & article {
+  width: 100vw;
+  height: 50vh;
   grid-area: article;
-  width: 66vw;
   overflow: auto;
   padding: 3rem;
-
+  flex: 1 0 62%;
+  @media screen and (min-width: 800px) {
+    width: 66vw;
+    height: 100vh;
+  }
   pre {
     color: #fff;
     outline: none;
@@ -44,13 +61,24 @@
 
 & aside {
   grid-area: aside;
-  width: 33vw;
   display: flex;
   flex-direction: column;
-  background:rgba(0,0,0,0.1);
+  background: rgba(0, 0, 0, 0.1);
   padding: 3rem;
   color: #fff;
   overflow: auto;
+  flex: 1 0 auto;
+
+  @media screen and (min-width: 800px) {
+    width: 33vw;
+    height: unset;
+  }
+
+  @media screen and (min-width: 800px) and (max-width: 1000px) {
+    padding-left: 2rem;
+    padding-right: 2rem;
+
+  }
 
   .Info-Block {
     display: flex;
@@ -81,8 +109,12 @@
   }
 
   h1 {
-    font-size: 3rem;
+    font-size: 2rem;
     margin: 0;
+
+    @media screen and (min-width: 1000px) {
+      font-size: 3rem;
+    }
   }
 
   h2 {
@@ -107,9 +139,11 @@
   ul {
     border-radius: 0.5rem;
     overflow: scroll;
+    flex: none;
+    min-height: 10%;
   }
 
-  li {
+  li > a {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -117,6 +151,9 @@
     background: rgba(0, 0, 0, 0.05);
     &:hover {
       background: rgba(0, 0, 0, 0.1);
+    }
+    > span:first-child {
+      font-weight: bold;
     }
   }
 
