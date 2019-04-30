@@ -7,10 +7,10 @@ import recursiveDependantsFetch from './utils/recursiveDependantsFetch.js';
 const styles = css`/routes/home/index.css`;
 
 const formatBytes = (bytes, decimals = 2) => {
-  if (bytes === 0) return '0 Bytes';
+  if (bytes === 0) return '0 B';
   const k = 1024;
   const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ['Bytes', 'KB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  const sizes = ['B', 'KB', 'MB', 'GB'];
   const i = Math.floor(Math.log(bytes) / Math.log(k));
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 };
@@ -124,7 +124,7 @@ export default () => {
         value=${meta.code.slice(0, 100000)}
         style=${{
           lineHeight: '138%',
-          fontFamily: '"dm", monospace',
+          fontFamily: '"Inconsolata", monospace',
         }}
         disabled
       />
