@@ -1,12 +1,33 @@
 & {
-  display: flex;
-  flex-direction: row;
+  width: 100vw;
+  display: grid;
+  grid-template-rows: 1fr 4rem;  
+  grid-template-areas:
+  'article aside'
+  'article header';
   background: #2f3138;
   height: 100vh;
   overflow: hidden;
 }
 
+& header {
+  grid-area: header;
+  background:rgba(0,0,0,0.2);
+  color: rgba(255,255,255,0.5);
+
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 2rem;
+
+   svg {
+     width: 1.6rem;
+     fill: currentColor;
+   }
+}
+
 & article {
+  grid-area: article;
   width: 66vw;
   overflow: auto;
   padding: 3rem;
@@ -22,10 +43,11 @@
 }
 
 & aside {
+  grid-area: aside;
   width: 33vw;
   display: flex;
   flex-direction: column;
-  background-color: #2c2d32;
+  background:rgba(0,0,0,0.1);
   padding: 3rem;
   color: #fff;
   overflow: auto;
