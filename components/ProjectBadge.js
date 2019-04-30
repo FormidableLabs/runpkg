@@ -9,6 +9,7 @@ const ProjectBadge = ({ color, abbreviation, description, number }) => {
     (word, idx, array) =>
       html`
         <text
+          key=${word}
           x="39%"
           y=${`${array.length === 1 ? '66' : 65 + idx * 6}%`}
           fontFamily="Arial"
@@ -16,7 +17,7 @@ const ProjectBadge = ({ color, abbreviation, description, number }) => {
           fontSize=${`${array.length === 1 ? '24' : '18'}`}
           letterSpacing=${1.8}
           fill="#1D1E1F"
-          text-anchor="middle"
+          textAnchor="middle"
         >
           ${word.toUpperCase()}
         </text>
@@ -92,7 +93,7 @@ const ProjectBadge = ({ color, abbreviation, description, number }) => {
             fontSize=${140}
             x="39%"
             y="52%"
-            text-anchor="middle"
+            textAnchor="middle"
             letterSpacing="{-9}"
           >
             ${abbreviation}
