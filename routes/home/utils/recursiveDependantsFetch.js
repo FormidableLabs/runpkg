@@ -32,6 +32,8 @@ const recursiveDependantsFetch = async (path, parent) => {
   // parent directory of current file.
   const base = url.replace(/\/[^\/]*\.js/, '');
 
+  const name = './' + url.match(/\/([^\/]*)(\.js)|$/)[1];
+
   // Checks for imports/ requires for current file then
   // coverts relative imports to absolute.
   const dependencies = [
@@ -40,7 +42,13 @@ const recursiveDependantsFetch = async (path, parent) => {
   ].map(makePath(base));
 
   // Pushes collected info into cache
-  cache[url] = { url, code, dependencies, dependants: parent ? [parent] : [] };
+  cache[url] = {
+    url,
+    name,
+    code,
+    dependencies,
+    dependants: parent ? [parent] : [],
+  };
   /* eslint-disable consistent-return*/
 
   // Then we call the function again for all dependencies of
