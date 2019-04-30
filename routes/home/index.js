@@ -3,6 +3,7 @@ import ProjectBadge from '../../components/ProjectBadge.js';
 import Editor from '../../components/editor.js';
 import FormidableIcon from '../../components/logo.js';
 import recursiveDependantsFetch from './utils/recursiveDependantsFetch.js';
+import totalPackageSize from './utils/totalPackageSize.js';
 
 const styles = css`/routes/home/index.css`;
 
@@ -145,8 +146,8 @@ export default () => {
                 number="43"
               />
               <p>
-                Explore, learn about and perform static analysis on npm
-                packages in the browser.
+                Explore, learn about and perform static analysis on npm packages
+                in the browser.
               </p>
               <button
                 className="Overlay-Button"
@@ -163,9 +164,7 @@ export default () => {
             <aside key="aside">
               <h1
                 onClick=${() =>
-                  navigate(
-                    '?' + packageJSON.name + '@' + packageJSON.version
-                  )}
+                  navigate('?' + packageJSON.name + '@' + packageJSON.version)}
               >
                 ${packageJSON.name}
               </h1>
@@ -182,40 +181,49 @@ export default () => {
                   </svg>
                 </a>
               </span>
-              <p>${packageJSON.description || 'There is no description for this package.'}</p>
-              ${Object.keys(meta.imports).length > 0 && html`
-                <div>
-                  <h3>Dependencies</h3>
-                  <span>${Object.keys(meta.imports).length}</span>
-                </div>
-                <ul>
-                  ${Object.entries(meta.imports).map(
-                    ([x, v]) =>
-                      html`
-                        <li key=${x}>
+              <p>
+                ${packageJSON.description ||
+                  'There is no description for this package.'}
+              </p>
+              ${Object.keys(meta.imports).length > 0 &&
+                html`
+                  <div>
+                    <h3>Dependencies</h3>
+                    <span>${Object.keys(meta.imports).length}</span>
+                  </div>
+                  <ul>
+                    ${Object.entries(meta.imports).map(
+                      ([x, v]) =>
+                        html`
+                          <li key=${x}>
                             <a
-                            onClick=${e => {
-                              e.preventDefault();
-                              navigate(
-                                '?' +
-                                  (x.startsWith('./')
-                                    ? meta.entry.replace(/\/[^\/]*\.js/, '') +
-                                      x.replace('./', '/')
-                                    : x.replace('https://unpkg.com/', ''))
-                              );
-                            }}
-                          >
-                          <span>${x.replace('.js', '')}</span>
-                          <span>${formatBytes(v.length)}</span>
-                        </a>
-                      </li>
-                      `
-                  )}
-                </ul>
-              `}
-              ${cache[meta.url] && cache[meta.url].dependants.length > 0 &&
+                              onClick=${e => {
+                                e.preventDefault();
+                                navigate(
+                                  '?' +
+                                    (x.startsWith('./')
+                                      ? meta.entry.replace(/\/[^\/]*\.js/, '') +
+                                        x.replace('./', '/')
+                                      : x.replace('https://unpkg.com/', ''))
+                                );
+                              }}
+                            >
+                              <span>${x.replace('.js', '')}</span>
+                              <span>${formatBytes(v.length)}</span>
+                            </a>
+                          </li>
+                        `
+                    )}
+                  </ul>
+                `}
+              ${cache[meta.url] &&
+                cache[meta.url].dependants.length > 0 &&
                 html`
                   <div key="div">
+                    <h3>Package Size</h3>
+                    <span>${formatBytes(totalPackageSize(cache))}</span>
+                  </div>
+                  <div>
                     <h3>Dependants</h3>
                     <span>${cache[meta.url].dependants.length}</span>
                   </div>
@@ -230,18 +238,14 @@ export default () => {
                                 navigate(
                                   '?' +
                                     (x.startsWith('./')
-                                      ? meta.entry.replace(
-                                          /\/[^\/]*\.js/,
-                                          ''
-                                        ) + x.replace('./', '/')
+                                      ? meta.entry.replace(/\/[^\/]*\.js/, '') +
+                                        x.replace('./', '/')
                                       : x.replace('https://unpkg.com/', ''))
                                 );
                               }}
                             >
                               <span>${cache[x].name}</span>
-                              <span
-                                >${formatBytes(cache[x].code.length)}</span
-                              >
+                              <span>${formatBytes(cache[x].code.length)}</span>
                             </a>
                           </li>
                         `
