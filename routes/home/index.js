@@ -157,10 +157,6 @@ export default () => {
             </div>
           `
         : html`
-            <header>
-              <p>An experiment by the folks at Formidable</p>
-              ${FormidableIcon}
-            </header>
             <article>
               ${CodeBlock}
             </article>
@@ -198,6 +194,7 @@ export default () => {
                       x =>
                         html`
                           <li
+                            key=${x}
                             onClick=${() =>
                               navigate(
                                 '?' +
@@ -207,7 +204,7 @@ export default () => {
                                     : x.replace('https://unpkg.com/', ''))
                               )}
                           >
-                            <b>${x.replace('.js', '')}</b>
+                            <b>${cache[x].name}</b>
                             <span>${formatBytes(cache[x].code.length)}</span>
                           </li>
                         `
@@ -223,6 +220,7 @@ export default () => {
                   ([x, v]) =>
                     html`
                       <li
+                        key=${x}
                         onClick=${() =>
                           navigate(
                             '?' +
@@ -239,6 +237,10 @@ export default () => {
                 )}
               </ul>
             </aside>
+            <footer>
+              <p>An experiment by the folks at Formidable</p>
+              ${FormidableIcon}
+            </footer>
           `}
     </main>
   `;
