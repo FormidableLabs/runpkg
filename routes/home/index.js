@@ -145,8 +145,8 @@ export default () => {
                 number="43"
               />
               <p>
-                Explore, learn about and perform static analysis on npm packages
-                in the browser.
+                Explore, learn about and perform static analysis on npm
+                packages in the browser.
               </p>
               <button
                 className="Overlay-Button"
@@ -163,27 +163,57 @@ export default () => {
             <aside>
               <h1
                 onClick=${() =>
-                  navigate('?' + packageJSON.name + '@' + packageJSON.version)}
+                  navigate(
+                    '?' + packageJSON.name + '@' + packageJSON.version
+                  )}
               >
                 ${packageJSON.name}
               </h1>
               <span className="Info-Block">
                 <p>v${packageJSON.version}</p>
                 <p>${packageJSON.license}</p>
-                <a href=${packageJSON.readme}
-                  ><svg viewBox="0 0 780 250">
+                <a href=${packageJSON.readme}>
+                  <svg viewBox="0 0 780 250">
                     <title>NPM repo link</title>
                     <path
                       fill="#fff"
                       d="M240,250h100v-50h100V0H240V250z M340,50h50v100h-50V50z M480,0v200h100V50h50v150h50V50h50v150h50V0H480z M0,200h100V50h50v150h50V0H0V200z"
-                    ></path></svg
-                ></a>
+                    ></path>
+                  </svg>
+                </a>
               </span>
-              ${packageJSON.description &&
-                html`
-                  <p>${packageJSON.description}</p>
-                `}
-              ${Object.keys(cache).length > 0 &&
+              <p>${packageJSON.description || 'There is no description for this package.'}</p>
+              ${Object.keys(meta.imports).length > 0 && html`
+                <div>
+                  <h3>Dependencies</h3>
+                  <span>${Object.keys(meta.imports).length}</span>
+                </div>
+                <ul>
+                  ${Object.entries(meta.imports).map(
+                    ([x, v]) =>
+                      html`
+                        <li key=${x}>
+                            <a
+                            onClick=${e => {
+                              e.preventDefault();
+                              navigate(
+                                '?' +
+                                  (x.startsWith('./')
+                                    ? meta.entry.replace(/\/[^\/]*\.js/, '') +
+                                      x.replace('./', '/')
+                                    : x.replace('https://unpkg.com/', ''))
+                              );
+                            }}
+                          >
+                          <span>${x.replace('.js', '')}</span>
+                          <span>${formatBytes(v.length)}</span>
+                        </a>
+                      </li>
+                      `
+                  )}
+                </ul>
+              `}
+              ${cache[meta.url] && cache[meta.url].dependants.length > 0 &&
                 html`
                   <div>
                     <h3>Dependants</h3>
@@ -200,48 +230,24 @@ export default () => {
                                 navigate(
                                   '?' +
                                     (x.startsWith('./')
-                                      ? meta.entry.replace(/\/[^\/]*\.js/, '') +
-                                        x.replace('./', '/')
+                                      ? meta.entry.replace(
+                                          /\/[^\/]*\.js/,
+                                          ''
+                                        ) + x.replace('./', '/')
                                       : x.replace('https://unpkg.com/', ''))
                                 );
                               }}
                             >
                               <span>${cache[x].name}</span>
-                              <span>${formatBytes(cache[x].code.length)}</span>
+                              <span
+                                >${formatBytes(cache[x].code.length)}</span
+                              >
                             </a>
                           </li>
                         `
                     )}
                   </ul>
                 `}
-              <div>
-                <h3>Dependencies</h3>
-                <span>${Object.keys(meta.imports).length}</span>
-              </div>
-              <ul>
-                ${Object.entries(meta.imports).map(
-                  ([x, v]) =>
-                    html`
-                      <li key=${x}>
-                        <a
-                          onClick=${e => {
-                            e.preventDefault();
-                            navigate(
-                              '?' +
-                                (x.startsWith('./')
-                                  ? meta.entry.replace(/\/[^\/]*\.js/, '') +
-                                    x.replace('./', '/')
-                                  : x.replace('https://unpkg.com/', ''))
-                            );
-                          }}
-                        >
-                          <span>${x.replace('.js', '')}</span>
-                          <span>${formatBytes(v.length)}</span>
-                        </a>
-                      </li>
-                    `
-                )}
-              </ul>
             </aside>
             <footer>
               <p>An experiment by the folks at Formidable</p>
