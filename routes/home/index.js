@@ -95,7 +95,7 @@ export default () => {
 
       /* Sets document title to package name. */
 
-      window.document.title = 'Dora | ' + pkg.name;
+      window.document.title = 'runpkg | ' + pkg.name;
 
       /* Dependants are what depend on this file in the package 
       recursiveDependantsFetch fetches all the dependants and then puts
@@ -146,8 +146,8 @@ export default () => {
                 number="43"
               />
               <p>
-                Explore, learn about and perform static analysis on npm packages
-                in the browser.
+                Explore, learn about and perform static analysis on npm
+                packages in the browser.
               </p>
               <button
                 className="Overlay-Button"
@@ -164,7 +164,9 @@ export default () => {
             <aside key="aside">
               <h1
                 onClick=${() =>
-                  navigate('?' + packageJSON.name + '@' + packageJSON.version)}
+                  navigate(
+                    '?' + packageJSON.name + '@' + packageJSON.version
+                  )}
               >
                 ${packageJSON.name}
               </h1>
@@ -185,11 +187,18 @@ export default () => {
                 ${packageJSON.description ||
                   'There is no description for this package.'}
               </p>
+              ${Object.keys(cache).length > 0 &&
+                html`
+                  <div>
+                    <h3>Package Size</h3>
+                    <span>${formatBytes(totalPackageSize(cache))}</span>
+                  </div>
+                `}
               ${Object.keys(meta.imports).length > 0 &&
                 html`
                   <div>
                     <h3>Dependencies</h3>
-                    <span>${Object.keys(meta.imports).length}</span>
+                    <span>${Object.keys(meta.imports).length} Files</span>
                   </div>
                   <ul>
                     ${Object.entries(meta.imports).map(
@@ -202,8 +211,10 @@ export default () => {
                                 navigate(
                                   '?' +
                                     (x.startsWith('./')
-                                      ? meta.entry.replace(/\/[^\/]*\.js/, '') +
-                                        x.replace('./', '/')
+                                      ? meta.entry.replace(
+                                          /\/[^\/]*\.js/,
+                                          ''
+                                        ) + x.replace('./', '/')
                                       : x.replace('https://unpkg.com/', ''))
                                 );
                               }}
@@ -219,13 +230,9 @@ export default () => {
               ${cache[meta.url] &&
                 cache[meta.url].dependants.length > 0 &&
                 html`
-                  <div key="div">
-                    <h3>Package Size</h3>
-                    <span>${formatBytes(totalPackageSize(cache))}</span>
-                  </div>
                   <div>
                     <h3>Dependants</h3>
-                    <span>${cache[meta.url].dependants.length}</span>
+                    <span>${cache[meta.url].dependants.length} Files</span>
                   </div>
                   <ul key="ul">
                     ${cache[meta.url].dependants.map(
@@ -238,14 +245,18 @@ export default () => {
                                 navigate(
                                   '?' +
                                     (x.startsWith('./')
-                                      ? meta.entry.replace(/\/[^\/]*\.js/, '') +
-                                        x.replace('./', '/')
+                                      ? meta.entry.replace(
+                                          /\/[^\/]*\.js/,
+                                          ''
+                                        ) + x.replace('./', '/')
                                       : x.replace('https://unpkg.com/', ''))
                                 );
                               }}
                             >
                               <span>${cache[x].name}</span>
-                              <span>${formatBytes(cache[x].code.length)}</span>
+                              <span
+                                >${formatBytes(cache[x].code.length)}</span
+                              >
                             </a>
                           </li>
                         `
