@@ -69,6 +69,10 @@
   overflow: auto;
   flex: 1 0 auto;
 
+  p {
+    line-height: 162%;
+  }
+
   @media screen and (min-width: 800px) {
     width: 33vw;
     height: unset;

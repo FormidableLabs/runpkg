@@ -41,6 +41,19 @@ export default () => {
       const entry = window.location.search.slice(1).replace(/\/$/, '');
       const root = entry.split('/')[0];
 
+      const pkg = await fetch(
+        `https://unpkg.com/${root}/package.json`
+      ).then(res => res.json());
+
+      setPackageJSON({
+        name: pkg.name,
+        version: pkg.version,
+        description: pkg.description,
+        license: pkg.license,
+        dependencies: pkg.dependencies,
+        readme: `https://www.npmjs.com/package/${pkg.name}`,
+      });
+
       const file = await fetch(`https://unpkg.com/${entry}`);
       const text = await file.text();
       const size = text.length;
@@ -80,21 +93,7 @@ export default () => {
       /* Sets current package to the package pulled from root. */
       currentPackage = root;
 
-      const pkg = await fetch(`https://unpkg.com/${root}/package.json`).then(
-        res => res.json()
-      );
-
-      setPackageJSON({
-        name: pkg.name,
-        version: pkg.version,
-        description: pkg.description,
-        license: pkg.license,
-        dependencies: pkg.dependencies,
-        readme: `https://www.npmjs.com/package/${pkg.name}`,
-      });
-
       /* Sets document title to package name. */
-
       window.document.title = 'runpkg | ' + pkg.name;
 
       /* Dependants are what depend on this file in the package 
