@@ -140,8 +140,8 @@ export default () => {
             <div className="Overlay">
               <${ProjectBadge}
                 color="#ca5688"
-                abbreviation="De"
-                description="Dora Explorer"
+                abbreviation="Rp"
+                description="runpkg"
                 number="43"
               />
               <p>

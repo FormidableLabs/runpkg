@@ -3,6 +3,7 @@ import { html, css } from 'https://unpkg.com/rplus';
 
 const styles = css`/components/component.css`;
 
+
 const ProjectBadge = ({ color, abbreviation, description, number }) => {
   const descriptionArr = description.split(' ').reduce(reducerFn, []);
   const descriptionText = descriptionArr.map(
@@ -12,8 +13,7 @@ const ProjectBadge = ({ color, abbreviation, description, number }) => {
           key=${word}
           x="39%"
           y=${`${array.length === 1 ? '66' : 65 + idx * 6}%`}
-          fontFamily="Arial"
-          fontWeight="Bold"
+          fontFamily="Work Sans"
           fontSize=${`${array.length === 1 ? '24' : '18'}`}
           letterSpacing=${1.8}
           fill="#1D1E1F"
@@ -89,12 +89,12 @@ const ProjectBadge = ({ color, abbreviation, description, number }) => {
           />
           <text
             fill=${color}
-            fontFamily="Orbitron"
+            fontFamily="Bai Jamjuree"
             fontSize=${140}
             x="39%"
-            y="52%"
+            y="50%"
             textAnchor="middle"
-            letterSpacing="{-9}"
+            letterSpacing='-4'
           >
             ${abbreviation}
           </text>
@@ -103,8 +103,7 @@ const ProjectBadge = ({ color, abbreviation, description, number }) => {
             fill=${color}
           />
           <text
-            fontFamily="Arial"
-            fontWeight="Bold"
+            fontFamily="Work Sans"
             fill="#1D1E1F"
             fontSize="24px"
             letterSpacing=${0.138}

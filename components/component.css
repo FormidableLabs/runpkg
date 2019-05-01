@@ -47,3 +47,7 @@ svg {
   animation-name: middleKf;
   animation-duration: 1s;
 }
+
+text {
+    font-weight: bold;
+}
