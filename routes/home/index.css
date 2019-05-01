@@ -132,13 +132,13 @@
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin: 0.5rem 0 1.5rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   }
 
   ul {
     border-radius: 0.5rem;
     flex: none;
+    margin-top: 1rem;
   }
 
   li > a {
