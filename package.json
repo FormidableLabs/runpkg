@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "prettier": "prettier --config .prettierrc --write \"./**/*.{js,json,css,html}\"",
-    "lint": "eslint --config .eslintrc \"./**/*.js\""
+    "lint": "eslint --config .eslintrc \"./**/*.js\"",
+    "cy": "concurrently --kill-others \"node_modules/servor/servor.js --no-browser --no-reload\" \"wait-on http-get://localhost:8080 && npx cypress run --browser chrome --env env=local\" "
   },
   "repository": {
     "type": "git",
@@ -20,6 +21,7 @@
   "homepage": "https://github.com/FormidableLabs/dora#readme",
   "devDependencies": {
     "babel-eslint": "^10.0.1",
+    "concurrently": "^4.1.0",
     "cypress": "^3.2.0",
     "eslint": "^5.16.0",
     "eslint-config-formidable": "^3.0.0",
@@ -27,6 +29,8 @@
     "eslint-plugin-filenames": "^1.2.0",
     "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-react": "^7.7.0",
-    "prettier": "^1.17.0"
+    "prettier": "^1.17.0",
+    "servor": "^2.2.1",
+    "wait-on": "^3.2.0"
   }
 }

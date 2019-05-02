@@ -1,5 +1,5 @@
 tasks:
-  build:
+  install:
     image: node:carbon
     command:
       - yarn
@@ -17,3 +17,9 @@ tasks:
       - yarn
     args:
       - lint
+
+workflow:
+  - install
+  - sail:parallel:
+      - lint
+      - prettier

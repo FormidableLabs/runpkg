@@ -13,10 +13,4 @@ Eventually we hope to be able to offer dependency tree flattening with dead code
 
 We're doing testing via cypress.
 
-First 
-
-```npx servor```
-
-Then
-
-```npx cypress open --env env=local```
+```yarn run cy```
