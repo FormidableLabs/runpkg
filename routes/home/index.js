@@ -2,37 +2,115 @@ import { react, html, css } from 'https://unpkg.com/rplus';
 import ProjectBadge from '../../components/ProjectBadge.js';
 import Editor from '../../components/editor.js';
 import FormidableIcon from '../../components/logo.js';
-import recursiveDependantsFetch from './utils/recursiveDependantsFetch.js';
+import recursiveDependencyFetch from './utils/recursiveDependencyFetch.js';
 import totalPackageSize from './utils/totalPackageSize.js';
+import formatBytes from './utils/formatBytes.js';
+import normalizePath from './utils/normalizePath.js';
 
-const styles = css`/routes/home/index.css`;
+// const styles = css`/routes/home/index.css`;
+const pushState = url => history.pushState(null, null, url);
+const replaceState = url => history.replaceState(null, null, url);
 
-const formatBytes = (bytes, decimals = 2) => {
-  if (bytes === 0) return '0 B';
-  const k = 1024;
-  const dm = decimals < 0 ? 0 : decimals;
-  const sizes = ['B', 'KB', 'MB', 'GB'];
-  const i = Math.floor(Math.log(bytes) / Math.log(k));
-  return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
-};
-
-const navigate = url => history.pushState(null, null, url);
+const parseUrl = (search = window.location.search.slice(1)) => ({
+  url: search,
+  package: search.split('/')[0],
+  file: search.split('/').slice(1).join('/'),
+});
 
 export default () => {
+
+  const [request, setRequest] = react.useState(parseUrl());
   const [packageJSON, setPackageJSON] = react.useState({});
   const [cache, setCache] = react.useState({});
-  const [meta, setMeta] = react.useState({
+
+  /* Runs once and subscribes to url changes */
+  react.useEffect(() => {
+    console.log('Setting up URL listener');
+    /* Rerender the app when pushState or replaceState are called */
+    ['pushState', 'replaceState'].map(event => {
+      const original = window.history[event];
+      window.history[event] = function () {
+        original.apply(history, arguments);
+        setRequest(parseUrl())
+      };
+    });
+    /* Rerender when the back and forward buttons are pressed */
+    addEventListener('popstate', () => setRequest(parseUrl()));
+  }, [])
+
+  /* Runs every time the URL changes */
+  react.useEffect(() => {
+    /* Fetch the package json */
+    if(request.package !== `${packageJSON.name}@${packageJSON.version}`) {
+      console.log('Getting package json for', request);
+      fetch(`https://unpkg.com/${request.package}/package.json`)
+        .then(res => res.json())
+        .then(pkg => {
+          setPackageJSON(pkg);
+          replaceState(
+            `?${pkg.name}@${pkg.version}${
+              request.file ? `/${request.file}` : ''
+            }`
+          );
+        })
+        .catch(() => setPackageJSON({}));
+    }
+  }, [request.package])
+
+  /* Runs every time the requested file changes */
+  react.useEffect(() => {
+    /* Fetch the requested file */
+    const fileURL = `https://unpkg.com/${request.url}`;
+    console.log('Getting file', fileURL);
+    (async () => {
+      const file = await fetch(fileURL)
+      const path = file.url
+      const code = await file.text()
+      const size = code.length
+      setCache({ ...cache, [path]: { code, size } })
+    })()
+  }, [request.file])
+
+  // /* Runs every time the package name changes */
+  react.useEffect(() => {
+    if(packageJSON.name) {
+      /* Fetch all files in this module */
+      console.log(
+        `Recursively fetching files in ${packageJSON.name}@${packageJSON.version}`
+      );
+      recursiveDependencyFetch(`https://unpkg.com/${packageJSON.name}@${packageJSON.version}`)
+        .then(setCache);
+    }
+  }, [packageJSON.name])  
+
+  return html`
+    <button onClick=${e => pushState('?lodash-es@4.17.11')}>lodash-es</button>
+    <button onClick=${e => pushState('?lodash-es@4.17.11/add.js')}>
+      lodash-es/add.js
+    </button>
+    <button onClick=${e => pushState('?es-react')}>es-react</button>
+  `;
+
+// <${Editor}
+//   key="editor"
+//   value=${cache[`https://unpkg.com/${url}`] && cache[`https://unpkg.com/${url}`].code || ''}
+//   style=${{
+//     lineHeight: '138%',
+//     fontFamily: '"Inconsolata", monospace',
+//   }}
+//   disabled
+// />
+
+
+
+
+
+  /* const [meta, setMeta] = react.useState({
     imports: [],
     exports: [],
     code: '',
     path: '',
-  });
-
-  const normaliseRoutes = (base, x) => {
-    if (x.startsWith(`./`)) return base + x.replace(`./`, `/`);
-    if (x.startsWith(`https://`)) return x;
-    return `https://unpkg.com/` + x;
-  };
+  }); */
 
   /* eslint-disable max-statements*/
   react.useEffect(() => {
@@ -41,9 +119,8 @@ export default () => {
       const entry = window.location.search.slice(1).replace(/\/$/, '');
       const root = entry.split('/')[0];
 
-      const pkg = await fetch(
-        `https://unpkg.com/${root}/package.json`
-      ).then(res => res.json());
+      const pkg = await fetch(`https://unpkg.com/${root}/package.json`)
+        .then(res => res.json());
 
       setPackageJSON({
         name: pkg.name,
@@ -72,14 +149,13 @@ export default () => {
 
       const dependencies = await Promise.all(
         imports.map(x =>
-          fetch(normaliseRoutes(base, x))
+          fetch(normalizePath(base, x))
             .then(res => res.text())
             .then(res => ({ [x]: res }))
         )
       ).then(deps => deps.reduce((a, b) => ({ ...a, ...b }), {}));
 
       setMeta({
-        path: entry.match(/\/.*$/) || '/index.js',
         code: text,
         imports: dependencies,
         size,
@@ -103,18 +179,7 @@ export default () => {
     };
     /* eslint-enable max-statements*/
 
-    /* Rerender the app when pushState or replaceState are called */
-    ['pushState', 'replaceState'].map(event => {
-      const original = window.history[event];
-      window.history[event] = function() {
-        original.apply(history, arguments);
-        go();
-      };
-    });
-    /* Rerender when the back and forward buttons are pressed */
-    addEventListener('popstate', go);
-    /* eslint-disable-next-line no-unused-expressions */
-    location.search && history.replaceState({}, null, location.search);
+
   }, []);
 
   const CodeBlock = react.useMemo(
