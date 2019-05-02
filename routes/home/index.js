@@ -7,7 +7,7 @@ import totalPackageSize from './utils/totalPackageSize.js';
 import formatBytes from './utils/formatBytes.js';
 import normalizePath from './utils/normalizePath.js';
 
-// const styles = css`/routes/home/index.css`;
+const styles = css`/routes/home/index.css`;
 const pushState = url => history.pushState(null, null, url);
 const replaceState = url => history.replaceState(null, null, url);
 
@@ -21,6 +21,7 @@ export default () => {
 
   const [request, setRequest] = react.useState(parseUrl());
   const [packageJSON, setPackageJSON] = react.useState({});
+  const [code, setCode] = react.useState('');
   const [cache, setCache] = react.useState({});
 
   /* Runs once and subscribes to url changes */
@@ -42,14 +43,14 @@ export default () => {
   react.useEffect(() => {
     /* Fetch the package json */
     if(request.package !== `${packageJSON.name}@${packageJSON.version}`) {
-      console.log('Getting package json for', request);
+      console.log('Getting package json for', request.package);
       fetch(`https://unpkg.com/${request.package}/package.json`)
         .then(res => res.json())
         .then(pkg => {
           setPackageJSON(pkg);
           replaceState(
             `?${pkg.name}@${pkg.version}${
-              request.file ? `/${request.file}` : ''
+              request.file ? `/${request.file}` : pkg.main ? `/${pkg.main}` : '/index.js'
             }`
           );
         })
@@ -60,50 +61,50 @@ export default () => {
   /* Runs every time the requested file changes */
   react.useEffect(() => {
     /* Fetch the requested file */
-    const fileURL = `https://unpkg.com/${request.url}`;
-    console.log('Getting file', fileURL);
-    (async () => {
-      const file = await fetch(fileURL)
-      const path = file.url
-      const code = await file.text()
-      const size = code.length
-      setCache({ ...cache, [path]: { code, size } })
-    })()
+    if (request.file) {
+      const fileURL = `https://unpkg.com/${request.url}`;
+      console.log('Getting file', fileURL);
+      (async () => {
+        const file = await fetch(fileURL)
+        const code = await file.text()
+        replaceState(`?${file.url.replace('https://unpkg.com/', '')}`);
+        setCode(code)
+      })()
+    }
   }, [request.file])
 
   // /* Runs every time the package name changes */
   react.useEffect(() => {
-    if(packageJSON.name) {
+    if(packageJSON.name && packageJSON.version) {
       /* Fetch all files in this module */
-      console.log(
-        `Recursively fetching files in ${packageJSON.name}@${packageJSON.version}`
-      );
-      recursiveDependencyFetch(`https://unpkg.com/${packageJSON.name}@${packageJSON.version}`)
+      console.log(`Recursively fetching ${packageJSON.name}@${packageJSON.version}`);
+      recursiveDependencyFetch(packageJSON)
         .then(setCache);
     }
-  }, [packageJSON.name])  
+  }, [packageJSON.name, packageJSON.version])
 
-  return html`
-    <button onClick=${e => pushState('?lodash-es@4.17.11')}>lodash-es</button>
-    <button onClick=${e => pushState('?lodash-es@4.17.11/add.js')}>
-      lodash-es/add.js
-    </button>
-    <button onClick=${e => pushState('?es-react')}>es-react</button>
-  `;
-
-// <${Editor}
-//   key="editor"
-//   value=${cache[`https://unpkg.com/${url}`] && cache[`https://unpkg.com/${url}`].code || ''}
-//   style=${{
-//     lineHeight: '138%',
-//     fontFamily: '"Inconsolata", monospace',
-//   }}
-//   disabled
-// />
-
-
-
-
+  // return html`
+  //   <button onClick=${e => pushState('?lodash-es@4.17.11')}>
+  //     lodash-es@4.17.11
+  //   </button>
+  //   <button onClick=${e => pushState('?lodash-es@4.17.11/add.js')}>
+  //     lodash-es@4.17.11/add.js
+  //   </button>
+  //   <button onClick=${e => pushState('?lodash-es')}>lodash-es</button>
+  //   <button onClick=${e => pushState('?lodash-es/add.js')}>
+  //     lodash-es/add.js
+  //   </button>
+  //   <button onClick=${e => pushState('?es-react')}>es-react</button>
+  //   <${Editor}
+  //     key="editor"
+  //     value=${code}
+  //     style=${{
+  //       lineHeight: '138%',
+  //       fontFamily: '"Inconsolata", monospace',
+  //     }}
+  //     disabled
+  //   />
+  // `;
 
   /* const [meta, setMeta] = react.useState({
     imports: [],
@@ -112,95 +113,95 @@ export default () => {
     path: '',
   }); */
 
-  /* eslint-disable max-statements*/
-  react.useEffect(() => {
-    let currentPackage;
-    const go = async () => {
-      const entry = window.location.search.slice(1).replace(/\/$/, '');
-      const root = entry.split('/')[0];
+  // /* eslint-disable max-statements*/
+  // react.useEffect(() => {
+  //   let currentPackage;
+  //   const go = async () => {
+  //     const entry = window.location.search.slice(1).replace(/\/$/, '');
+  //     const root = entry.split('/')[0];
 
-      const pkg = await fetch(`https://unpkg.com/${root}/package.json`)
-        .then(res => res.json());
+  //     const pkg = await fetch(`https://unpkg.com/${root}/package.json`)
+  //       .then(res => res.json());
 
-      setPackageJSON({
-        name: pkg.name,
-        version: pkg.version,
-        description: pkg.description,
-        license: pkg.license,
-        dependencies: pkg.dependencies,
-        readme: `https://www.npmjs.com/package/${pkg.name}`,
-      });
+  //     setPackageJSON({
+  //       name: pkg.name,
+  //       version: pkg.version,
+  //       description: pkg.description,
+  //       license: pkg.license,
+  //       dependencies: pkg.dependencies,
+  //       readme: `https://www.npmjs.com/package/${pkg.name}`,
+  //     });
 
-      const file = await fetch(`https://unpkg.com/${entry}`);
-      const text = await file.text();
-      const size = text.length;
-      const url = file.url;
-      const base = url.replace(/\/[^\/]*\.js/, '');
-      const imports = [
-        ...(text.match(/(?<=(import|export).*from ['"]).*(?=['"])/g) || []),
-        ...(text.match(/(?<=require\(['"])[^)]*(?=['"]\))/g) || []).filter(
-          x =>
-            x.startsWith('./') ||
-            Object.keys(pkg.dependencies || {}).includes(x)
-        ),
-      ];
+  //     const file = await fetch(`https://unpkg.com/${entry}`);
+  //     const text = await file.text();
+  //     const size = text.length;
+  //     const url = file.url;
+  //     const base = url.replace(/\/[^\/]*\.js/, '');
+  //     const imports = [
+  //       ...(text.match(/(?<=(import|export).*from ['"]).*(?=['"])/g) || []),
+  //       ...(text.match(/(?<=require\(['"])[^)]*(?=['"]\))/g) || []).filter(
+  //         x =>
+  //           x.startsWith('./') ||
+  //           Object.keys(pkg.dependencies || {}).includes(x)
+  //       ),
+  //     ];
 
-      /* Dependencies are what this file depends on in the package */
+  //     /* Dependencies are what this file depends on in the package */
 
-      const dependencies = await Promise.all(
-        imports.map(x =>
-          fetch(normalizePath(base, x))
-            .then(res => res.text())
-            .then(res => ({ [x]: res }))
-        )
-      ).then(deps => deps.reduce((a, b) => ({ ...a, ...b }), {}));
+  //     const dependencies = await Promise.all(
+  //       imports.map(x =>
+  //         fetch(normalizePath(base, x))
+  //           .then(res => res.text())
+  //           .then(res => ({ [x]: res }))
+  //       )
+  //     ).then(deps => deps.reduce((a, b) => ({ ...a, ...b }), {}));
 
-      setMeta({
-        code: text,
-        imports: dependencies,
-        size,
-        entry,
-        url,
-      });
+  //     setMeta({
+  //       code: text,
+  //       imports: dependencies,
+  //       size,
+  //       entry,
+  //       url,
+  //     });
 
-      /* Runs on load then if the package changes it runs code again.*/
-      if (root === currentPackage) return;
+  //     /* Runs on load then if the package changes it runs code again.*/
+  //     if (root === currentPackage) return;
 
-      /* Sets current package to the package pulled from root. */
-      currentPackage = root;
+  //     /* Sets current package to the package pulled from root. */
+  //     currentPackage = root;
 
-      /* Sets document title to package name. */
-      window.document.title = 'runpkg | ' + pkg.name;
+  //     /* Sets document title to package name. */
+  //     window.document.title = 'runpkg | ' + pkg.name;
 
-      /* Dependants are what depend on this file in the package 
-      recursiveDependantsFetch fetches all the dependants and then puts
-      them into the cache*/
-      recursiveDependantsFetch(`https://unpkg.com/${root}`).then(setCache);
-    };
-    /* eslint-enable max-statements*/
+  //     /* Dependants are what depend on this file in the package 
+  //     recursiveDependantsFetch fetches all the dependants and then puts
+  //     them into the cache*/
+  //     recursiveDependantsFetch(`https://unpkg.com/${root}`).then(setCache);
+  //   };
+  //   /* eslint-enable max-statements*/
 
 
-  }, []);
+  // }, []);
 
   const CodeBlock = react.useMemo(
     () => html`
       <${Editor}
         key="editor"
-        value=${meta.code.slice(0, 100000)}
+        value=${code.slice(0, 100000)}
         style=${{
           lineHeight: '138%',
           fontFamily: '"Inconsolata", monospace',
         }}
         disabled
       />
-      <pre key="pre">${meta.code.slice(100000)}</pre>
+      <pre key="pre">${code.slice(100000)}</pre>
     `,
-    [meta.code]
+    [code]
   );
 
   return html`
     <main className=${styles}>
-      ${!window.location.search
+      ${request.url === ''
         ? html`
             <div className="Overlay">
               <${ProjectBadge}
@@ -215,7 +216,7 @@ export default () => {
               </p>
               <button
                 className="Overlay-Button"
-                onClick=${() => navigate('?lodash-es')}
+                onClick=${() => pushState('?lodash-es')}
               >
                 Start Exploring
               </button>
@@ -228,8 +229,13 @@ export default () => {
             <aside key="aside">
               <h1
                 onClick=${() =>
-                  navigate(
-                    '?' + packageJSON.name + '@' + packageJSON.version
+                  pushState(
+                    '?' +
+                      packageJSON.name +
+                      '@' +
+                      packageJSON.version +
+                      '/' +
+                      setPackageJSON.main
                   )}
               >
                 ${packageJSON.name}
@@ -258,72 +264,71 @@ export default () => {
                     <span>${formatBytes(totalPackageSize(cache))}</span>
                   </div>
                 `}
-              ${Object.keys(meta.imports).length > 0 &&
+              ${cache[`https://unpkg.com/${request.url}`] &&
+                cache[`https://unpkg.com/${request.url}`].dependencies
+                  .length > 0 &&
                 html`
                   <div>
                     <h3>Dependencies</h3>
-                    <span>${Object.keys(meta.imports).length} Files</span>
+                    <span
+                      >${cache[`https://unpkg.com/${request.url}`]
+                        .dependencies.length}
+                      Files</span
+                    >
                   </div>
                   <ul>
-                    ${Object.entries(meta.imports).map(
-                      ([x, v]) =>
-                        html`
-                          <li key=${x}>
-                            <a
-                              onClick=${e => {
-                                e.preventDefault();
-                                navigate(
-                                  '?' +
-                                    (x.startsWith('./')
-                                      ? meta.entry.replace(
-                                          /\/[^\/]*\.js/,
-                                          ''
-                                        ) + x.replace('./', '/')
-                                      : x.replace('https://unpkg.com/', ''))
-                                );
-                              }}
-                            >
-                              <span>${x.replace('.js', '')}</span>
-                              <span>${formatBytes(v.length)}</span>
-                            </a>
-                          </li>
-                        `
+                    ${cache[
+                      `https://unpkg.com/${request.url}`
+                    ].dependencies.map(
+                      x => html`
+                        <li key=${x}>
+                          <a
+                            onClick=${e => {
+                              e.preventDefault();
+                              pushState(
+                                `?${x.replace('https://unpkg.com/', '')}`
+                              );
+                            }}
+                          >
+                            <span>${cache[x].name}</span>
+                            <span>${formatBytes(cache[x].code.length)}</span>
+                          </a>
+                        </li>
+                      `
                     )}
                   </ul>
                 `}
-              ${cache[meta.url] &&
-                cache[meta.url].dependants.length > 0 &&
+              ${cache[`https://unpkg.com/${request.url}`] &&
+                cache[`https://unpkg.com/${request.url}`].dependants.length >
+                  0 &&
                 html`
                   <div>
                     <h3>Dependants</h3>
-                    <span>${cache[meta.url].dependants.length} Files</span>
+                    <span>
+                      ${cache[`https://unpkg.com/${request.url}`].dependants
+                        .length}
+                      Files
+                    </span>
                   </div>
                   <ul key="ul">
-                    ${cache[meta.url].dependants.map(
-                      x =>
-                        html`
-                          <li key=${x}>
-                            <a
-                              onClick=${e => {
-                                e.preventDefault();
-                                navigate(
-                                  '?' +
-                                    (x.startsWith('./')
-                                      ? meta.entry.replace(
-                                          /\/[^\/]*\.js/,
-                                          ''
-                                        ) + x.replace('./', '/')
-                                      : x.replace('https://unpkg.com/', ''))
-                                );
-                              }}
-                            >
-                              <span>${cache[x].name}</span>
-                              <span
-                                >${formatBytes(cache[x].code.length)}</span
-                              >
-                            </a>
-                          </li>
-                        `
+                    ${cache[
+                      `https://unpkg.com/${request.url}`
+                    ].dependants.map(
+                      x => html`
+                        <li key=${x}>
+                          <a
+                            onClick=${e => {
+                              e.preventDefault();
+                              pushState(
+                                `?${x.replace('https://unpkg.com/', '')}`
+                              );
+                            }}
+                          >
+                            <span>${cache[x].name}</span>
+                            <span>${formatBytes(cache[x].code.length)}</span>
+                          </a>
+                        </li>
+                      `
                     )}
                   </ul>
                 `}

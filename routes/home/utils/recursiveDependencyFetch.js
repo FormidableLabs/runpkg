@@ -7,7 +7,7 @@ const makePath = base => x => {
 // cache keeps memory of what was run last
 let cache = {};
 
-const recursiveDependantsFetch = async (path, parent) => {
+const recursiveDependantsFetch = packageJSON => async (path, parent) => {
   const file = await fetch(path);
   const code = await file.text();
   const url = file.url;
@@ -31,15 +31,27 @@ const recursiveDependantsFetch = async (path, parent) => {
   // Base removes immediate js file from absolute URL to get
   // parent directory of current file.
   const base = url.replace(/\/[^\/]*\.js/, '');
-
   const name = './' + url.match(/\/([^\/]*)(\.js)|$/)[1];
+
+  const extractDependencies = input => {
+    const imports =
+      input.match(/^(import|export).*(from)[ \n]+['"](.*?)['"];?$/gm) || [];
+    const importsSanitised = imports.map(
+      x => x.match(/^(import|export).*(from)[ \n]+['"](.*?)['"];?$/)[3]
+    );
+    const requires = input.match(/(require\(['"])[^)]*(['"]\))/gm) || [];
+    const requiresSanitised = requires.map(x => x.match(/['"](.*)['"]/)[1]);
+    const requiresSanitisedFiltered = requiresSanitised.filter(
+      x =>
+        x.startsWith('./') ||
+        Object.keys(packageJSON.dependencies || {}).includes(x)
+    );
+    return [...importsSanitised, ...requiresSanitisedFiltered];
+  };
 
   // Checks for imports/ requires for current file then
   // coverts relative imports to absolute.
-  const dependencies = [
-    ...(code.match(/(?<=(import|export).*from ['"]).*(?=['"])/g) || []),
-    ...(code.match(/(?<=require\(['"])[^)]*(?=['"]\))/g) || []),
-  ].map(makePath(base));
+  const dependencies = extractDependencies(code).map(makePath(base));
 
   // Pushes collected info into cache
   cache[url] = {
@@ -54,16 +66,19 @@ const recursiveDependantsFetch = async (path, parent) => {
   // Then we call the function again for all dependencies of
   //  that file and wait for return.
 
-  return Promise.all(dependencies.map(x => recursiveDependantsFetch(x, url)));
+  return Promise.all(
+    dependencies.map(x => recursiveDependantsFetch(packageJSON)(x, url))
+  );
   /* eslint-enable consistent-return*/
 };
 
-export default async path => {
+export default async packageJSON => {
   // Every time this function is called it resets the cache
   // should only be called when package changes.
   cache = {};
-  await recursiveDependantsFetch(path);
-
+  await recursiveDependantsFetch(packageJSON)(
+    `https://unpkg.com/${packageJSON.name}@${packageJSON.version}`
+  );
   // Returns new cache.
   return cache;
 };
