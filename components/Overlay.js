@@ -6,7 +6,7 @@ const pushState = url => history.pushState(null, null, url);
 const Overlay = () => html`
   <div className="Overlay">
     <${ProjectBadge}
-      color="#ca5688"
+      color="#80EAC7"
       abbreviation="Rp"
       description="runpkg"
       number="43"

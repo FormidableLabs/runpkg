@@ -57,7 +57,7 @@ pre {
 .token.char,
 .token.builtin,
 .token.inserted {
-  color: #50fa7b;
+  color: #f8b1f1;
 }
 
 .token.operator,
@@ -77,7 +77,7 @@ pre {
 }
 
 .token.keyword {
-  color: #8be9fd;
+  color: #80EAC7;
 }
 
 .token.regex,

@@ -194,17 +194,17 @@
 }
 
 .Overlay-Button {
-  border: 1px solid #ca5688;
+  border: 1px solid #80EAC7;
   margin-top: 2rem;
   font-size: 1.2rem;
   padding: 1rem;
   border-radius: 1rem;
   color: #282c34;
-  background-color: #ca5688;
+  background-color: #80EAC7;
   font-weight: bold;
 }
 
 .Overlay-Button:hover {
-  color: #ca5688;
+  color: #80EAC7;
   background: transparent;
 }
