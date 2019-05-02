@@ -14,29 +14,31 @@ const NpmLogo = html`
   </svg>
 `;
 
-const FileList = ({ title, files, cache }) => html`
-  <div>
-    <h3>${title}</h3>
-    <span>${files.length} Files</span>
-  </div>
-  <ul>
-    ${files.map(
-      x => html`
-        <li key=${cache[x].name}>
-          <a
-            onClick=${e => {
-              e.preventDefault();
-              pushState(`?${x.replace('https://unpkg.com/', '')}`);
-            }}
-          >
-            <span>${cache[x].name}</span>
-            <span>${formatBytes(cache[x].code.length)}</span>
-          </a>
-        </li>
-      `
-    )}
-  </ul>
-`;
+const FileList = ({ title, files, cache }) =>
+  console.log(files) ||
+  html`
+    <div>
+      <h3>${title}</h3>
+      <span>${files.length} Files</span>
+    </div>
+    <ul key=${files.join('-')}>
+      ${files.map(
+        x => html`
+          <li key=${cache[x].name}>
+            <a
+              onClick=${e => {
+                e.preventDefault();
+                pushState(`?${x.replace('https://unpkg.com/', '')}`);
+              }}
+            >
+              <span>${cache[x].name}</span>
+              <span>${formatBytes(cache[x].code.length)}</span>
+            </a>
+          </li>
+        `
+      )}
+    </ul>
+  `;
 
 export default ({ cache, packageJSON, request }) => {
   const file = cache[`https://unpkg.com/${request.url}`];

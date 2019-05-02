@@ -46,7 +46,7 @@ const recursiveDependantsFetch = packageJSON => async (path, parent) => {
         x.startsWith('./') ||
         Object.keys(packageJSON.dependencies || {}).includes(x)
     );
-    return [...importsSanitised, ...requiresSanitisedFiltered];
+    return [...new Set([...importsSanitised, ...requiresSanitisedFiltered])];
   };
 
   // Checks for imports/ requires for current file then
