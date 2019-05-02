@@ -75,7 +75,7 @@ export default () => {
         setCode(code);
       })();
     }
-  }, [request.file]);
+  }, [request.package, request.file]);
 
   // /* Runs every time the package name changes */
   react.useEffect(() => {

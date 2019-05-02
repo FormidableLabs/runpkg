@@ -15,6 +15,11 @@ const recursiveDependantsFetch = packageJSON => async (path, parent) => {
   // Checks if we've already fetched the file and dependencies
   // and doesn't fetch it again.
 
+  if (cache[parent] && path !== url) {
+    const position = cache[parent].dependencies.indexOf(path);
+    cache[parent].dependencies[position] = url;
+  }
+
   if (cache[url]) {
     // If this file requests file 'x' but we've already
     // requested file 'x' then it infers that this file
@@ -31,7 +36,9 @@ const recursiveDependantsFetch = packageJSON => async (path, parent) => {
   // Base removes immediate js file from absolute URL to get
   // parent directory of current file.
   const base = url.replace(/\/[^\/]*\.js/, '');
-  const name = './' + url.match(/\/([^\/]*)(\.js)|$/)[1];
+  const name = url.includes(packageJSON.name)
+    ? './' + url.match(/\/([^\/]*)(\.js)|$/)[1]
+    : url.replace('https://unpkg.com/', '');
 
   const extractDependencies = input => {
     const imports =
@@ -41,11 +48,13 @@ const recursiveDependantsFetch = packageJSON => async (path, parent) => {
     );
     const requires = input.match(/(require\(['"])[^)]*(['"]\))/gm) || [];
     const requiresSanitised = requires.map(x => x.match(/['"](.*)['"]/)[1]);
-    const requiresSanitisedFiltered = requiresSanitised.filter(
-      x =>
-        x.startsWith('./') ||
-        Object.keys(packageJSON.dependencies || {}).includes(x)
-    );
+    const requiresSanitisedFiltered = requiresSanitised
+      .filter(
+        x =>
+          x.startsWith('./') ||
+          Object.keys(packageJSON.dependencies || {}).includes(x)
+      )
+      .map(x => (x.startsWith('./') && !x.endsWith('.js') ? `${x}.js` : x));
     return [...new Set([...importsSanitised, ...requiresSanitisedFiltered])];
   };
 

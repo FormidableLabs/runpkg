@@ -14,37 +14,34 @@ const NpmLogo = html`
   </svg>
 `;
 
-const FileList = ({ title, files, cache }) =>
-  console.log(files) ||
-  html`
-    <div>
-      <h3>${title}</h3>
-      <span>${files.length} Files</span>
-    </div>
-    <ul key=${files.join('-')}>
-      ${files.map(
-        x => html`
-          <li key=${cache[x].name}>
-            <a
-              onClick=${e => {
-                e.preventDefault();
-                pushState(`?${x.replace('https://unpkg.com/', '')}`);
-              }}
-            >
-              <span>${cache[x].name}</span>
-              <span>${formatBytes(cache[x].code.length)}</span>
-            </a>
-          </li>
-        `
-      )}
-    </ul>
-  `;
+const FileList = ({ title, files, cache, packageName }) => html`
+  <div>
+    <h3>${title}</h3>
+    <span>${files.length} Files</span>
+  </div>
+  <ul key=${files.join('-')}>
+    ${files.map(
+      x => html`
+        <li key=${x}>
+          <a
+            onClick=${e => {
+              e.preventDefault();
+              pushState(`?${x.replace('https://unpkg.com/', '')}`);
+            }}
+          >
+            <span>
+              ${x.replace(`https://unpkg.com/`, '').replace(packageName, '')}
+            </span>
+            <span>${formatBytes(cache[x].code.length)}</span>
+          </a>
+        </li>
+      `
+    )}
+  </ul>
+`;
 
 export default ({ cache, packageJSON, request }) => {
   const file = cache[`https://unpkg.com/${request.url}`];
-
-  console.log(file);
-
   const { name, version, main, readme, license, description } = packageJSON;
   const packageMainUrl = `?${name}@${version}/${main}`;
 
@@ -69,11 +66,13 @@ export default ({ cache, packageJSON, request }) => {
             title="Dependencies"
             files=${file.dependencies}
             cache=${cache}
+            packageName=${`${name}@${version}`}
           />
           <${FileList}
             title="Dependants"
             files=${file.dependants}
             cache=${cache}
+            packageName=${`${name}@${version}`}
           />
         `}
     </aside>
