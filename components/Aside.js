@@ -47,7 +47,7 @@ export default ({ cache, packageJSON, request }) => {
 
   return html`
     <aside key="aside">
-      <h1 onClick=${() => pushState(packageMainUrl)}>${name}</h1>
+      <h1 onClick=${() => pushState(packageMainUrl)} data-test='title'>${name}</h1>
       <span className="Info-Block">
         <p>v${version}</p>
         <p>${license}</p>
