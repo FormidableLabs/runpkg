@@ -53,6 +53,7 @@
     "react/no-find-dom-node": "off",
     "no-invalid-this": "off",
     "complexity": "off",
+    "no-console": "off",
     "no-unused-vars": [
       "error",
       {
