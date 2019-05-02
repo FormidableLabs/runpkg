@@ -7,6 +7,7 @@ const makePath = base => x => {
 // cache keeps memory of what was run last
 let cache = {};
 
+/* eslint-disable max-statements*/
 const recursiveDependantsFetch = packageJSON => async (path, parent) => {
   const file = await fetch(path);
   const code = await file.text();
@@ -70,16 +71,17 @@ const recursiveDependantsFetch = packageJSON => async (path, parent) => {
     dependencies,
     dependants: parent ? [parent] : [],
   };
-  /* eslint-disable consistent-return*/
 
   // Then we call the function again for all dependencies of
   //  that file and wait for return.
 
+  /* eslint-disable consistent-return*/
   return Promise.all(
     dependencies.map(x => recursiveDependantsFetch(packageJSON)(x, url))
   );
   /* eslint-enable consistent-return*/
 };
+/* eslint-enable max-statements*/
 
 export default async packageJSON => {
   // Every time this function is called it resets the cache

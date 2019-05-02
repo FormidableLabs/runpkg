@@ -60,6 +60,7 @@
         "argsIgnorePattern": "^_+$"
       }
     ],
+    "no-nested-ternary": "off",
     "import/no-unresolved": [2, { "ignore": ["https"] }],
     "no-var": "off",
     "prefer-template": "off",

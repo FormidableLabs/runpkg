@@ -2,7 +2,7 @@ import { react, html, css } from 'https://unpkg.com/rplus';
 import Editor from '../../components/editor.js';
 import FormidableIcon from '../../components/logo.js';
 import recursiveDependencyFetch from './utils/recursiveDependencyFetch.js';
-import Overlay from '../../components/Overlay.js';
+import overlay from '../../components/Overlay.js';
 import Aside from '../../components/Aside.js';
 
 const styles = css`/routes/home/index.css`;
@@ -70,9 +70,9 @@ export default () => {
       console.log('Getting file', fileURL);
       (async () => {
         const file = await fetch(fileURL);
-        const code = await file.text();
+        const text = await file.text();
         replaceState(`?${file.url.replace('https://unpkg.com/', '')}`);
-        setCode(code);
+        setCode(text);
       })();
     }
   }, [request.package, request.file]);
@@ -107,7 +107,7 @@ export default () => {
   return html`
     <main className=${styles}>
       ${request.url === ''
-        ? Overlay(pushState)
+        ? overlay(pushState)
         : html`
             <article>${CodeBlock}</article>
             <${Aside}

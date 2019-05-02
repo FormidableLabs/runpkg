@@ -1,5 +1,5 @@
 import { html } from 'https://unpkg.com/rplus';
-import ProjectBadge from '../../components/ProjectBadge.js';
+import ProjectBadge from './ProjectBadge.js';
 
 const pushState = url => history.pushState(null, null, url);
 
