@@ -46,7 +46,7 @@
   padding: 3rem;
   flex: 1 0 62%;
   @media screen and (min-width: 800px) {
-    width: 66vw;
+    width: 60vw;
     height: 100vh;
   }
   pre {
@@ -74,14 +74,13 @@
   }
 
   @media screen and (min-width: 800px) {
-    width: 33vw;
+    width: 40vw;
     height: unset;
   }
 
   @media screen and (min-width: 800px) and (max-width: 1000px) {
     padding-left: 2rem;
     padding-right: 2rem;
-
   }
 
   .Info-Block {
@@ -142,20 +141,21 @@
   ul {
     border-radius: 0.5rem;
     flex: none;
-    margin-top: 1rem;
+  }
+
+  ul:not(:empty) {
+    margin: 0.5rem 0 0;
   }
 
   li > a {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 1rem;
-    background: rgba(0, 0, 0, 0.05);
+    padding: 1rem 0;
+    font-weight: lighter;
+    /* background: rgba(0, 0, 0, 0.05); */
     &:hover {
-      background: rgba(0, 0, 0, 0.1);
-    }
-    > span:first-child {
-      font-weight: bold;
+      cursor: pointer;
     }
   }
 

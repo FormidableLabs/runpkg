@@ -53,12 +53,14 @@
     "react/no-find-dom-node": "off",
     "no-invalid-this": "off",
     "complexity": "off",
+    "no-console": "off",
     "no-unused-vars": [
       "error",
       {
         "argsIgnorePattern": "^_+$"
       }
     ],
+    "no-nested-ternary": "off",
     "import/no-unresolved": [2, { "ignore": ["https"] }],
     "no-var": "off",
     "prefer-template": "off",
