@@ -193,7 +193,8 @@
   font-family: Arial;
 }
 
-.Overlay-Button {
+.Overlay-Button,
+.Error-Button {
   border: 1px solid #80EAC7;
   margin-top: 2rem;
   font-size: 1.2rem;
@@ -207,4 +208,23 @@
 .Overlay-Button:hover {
   color: #80EAC7;
   background: transparent;
+}
+
+.Error {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 1rem;
+  border: 2px solid #80EAC7;
+
+  & p {
+    color: rgba(255, 255, 255, 0.8);
+    line-height: 162%;
+    text-align: center;
+  }
+
+  & h2 {
+    color: rgba(255, 255, 255, 0.8);
+    font-size: 2rem;
+  }
 }
