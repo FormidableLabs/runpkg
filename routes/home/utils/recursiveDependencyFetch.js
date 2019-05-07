@@ -5,7 +5,7 @@ const makePath = base => x => {
 };
 
 // cache keeps memory of what was run last
-let cache = {};
+const cache = {};
 
 /* eslint-disable max-statements*/
 const recursiveDependantsFetch = packageJSON => async (path, parent) => {
@@ -13,14 +13,15 @@ const recursiveDependantsFetch = packageJSON => async (path, parent) => {
   const code = await file.text();
   const url = file.url;
 
-  // Checks if we've already fetched the file and dependencies
-  // and doesn't fetch it again.
-
+  // If we asked for a file but got redirected by unpkg
+  // then update the url in the parents dependencies
   if (cache[parent] && path !== url) {
     const position = cache[parent].dependencies.indexOf(path);
     cache[parent].dependencies[position] = url;
   }
 
+  // Checks if we've already fetched the file and dependencies
+  // and doesn't fetch it again.
   if (cache[url]) {
     // If this file requests file 'x' but we've already
     // requested file 'x' then it infers that this file
@@ -49,14 +50,21 @@ const recursiveDependantsFetch = packageJSON => async (path, parent) => {
     );
     const requires = input.match(/(require\(['"])[^)]*(['"]\))/gm) || [];
     const requiresSanitised = requires.map(x => x.match(/['"](.*)['"]/)[1]);
-    const requiresSanitisedFiltered = requiresSanitised
-      .filter(
-        x =>
-          x.startsWith('./') ||
-          Object.keys(packageJSON.dependencies || {}).includes(x)
-      )
-      .map(x => (x.startsWith('./') && !x.endsWith('.js') ? `${x}.js` : x));
-    return [...new Set([...importsSanitised, ...requiresSanitisedFiltered])];
+    const requiresSanitisedFiltered = requiresSanitised.filter(
+      x =>
+        x.startsWith('./') ||
+        Object.keys(packageJSON.dependencies || {}).includes(x)
+    );
+    // Return array of unique dependencies appending js
+    // extention to any relative imports that have no extension
+    return [
+      ...new Set([...importsSanitised, ...requiresSanitisedFiltered]),
+    ].map(x =>
+      !x.startsWith('./') ||
+      (x.startsWith('./') && (x.endsWith('.js') || x.endsWith('.json')))
+        ? x
+        : `${x}.js`
+    );
   };
 
   // Checks for imports/ requires for current file then
@@ -83,12 +91,13 @@ const recursiveDependantsFetch = packageJSON => async (path, parent) => {
 };
 /* eslint-enable max-statements*/
 
-export default async packageJSON => {
-  // Every time this function is called it resets the cache
-  // should only be called when package changes.
-  cache = {};
+export default async (packageJSON, entry) => {
+  // Start tree walking dependencies from the given entry point
+  // otherwise start from the projects main entry point
   await recursiveDependantsFetch(packageJSON)(
-    `https://unpkg.com/${packageJSON.name}@${packageJSON.version}`
+    entry
+      ? `https://unpkg.com/${entry}`
+      : `https://unpkg.com/${packageJSON.name}@${packageJSON.version}`
   );
   // Returns new cache.
   return cache;
