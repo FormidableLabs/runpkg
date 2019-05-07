@@ -2,7 +2,7 @@ import { react, html, css } from 'https://unpkg.com/rplus';
 import Editor from '../../components/editor.js';
 import FormidableIcon from '../../components/logo.js';
 import recursiveDependencyFetch from './utils/recursiveDependencyFetch.js';
-import overlay from '../../components/Overlay.js';
+import Overlay from '../../components/Overlay.js';
 import Aside from '../../components/Aside.js';
 
 const styles = css`/routes/home/index.css`;
@@ -97,7 +97,10 @@ export default () => {
       console.log(
         `Recursively fetching ${packageJSON.name}@${packageJSON.version}`
       );
-      recursiveDependencyFetch(packageJSON).then(setCache);
+      Promise.all([
+        recursiveDependencyFetch(packageJSON),
+        recursiveDependencyFetch(packageJSON, request.url),
+      ]).then(([a, b]) => setCache({ ...a, ...b }));
     }
   }, [packageJSON.name, packageJSON.version]);
 
@@ -139,7 +142,7 @@ export default () => {
   return html`
     <main className=${styles}>
       ${request.url === ''
-        ? overlay(pushState)
+        ? Overlay(pushState)
         : html`
             <article>
               ${fetchErrorStatus ? ErrorBlock404 : CodeBlock}
