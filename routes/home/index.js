@@ -1,12 +1,12 @@
 import { react, html, css } from 'https://unpkg.com/rplus';
-import Editor from '../../components/editor.js';
+import Editor from '../../components/Editor.js';
 import FormidableIcon from '../../components/logo.js';
 import recursiveDependencyFetch from './utils/recursiveDependencyFetch.js';
 import Overlay from '../../components/Overlay.js';
+import ErrorBlock404 from '../../components/ErrorBlock404.js';
 import Aside from '../../components/Aside.js';
 
 const styles = css`/routes/home/index.css`;
-const pushState = url => history.pushState(null, null, url);
 const replaceState = url => history.replaceState(null, null, url);
 
 const parseUrl = (search = window.location.search.slice(1)) => ({
@@ -120,32 +120,15 @@ export default () => {
     [code]
   );
 
-  const ErrorBlock404 = html`
-    <div className="Error">
-      <h2>404</h2>
-      <p>
-        Oh no! It looks like you're trying to find a package that doesn't exist.
-        Please check that its name is spelled correctly.
-      </p>
-      <button
-        className="Error-Button"
-        onClick=${() => {
-          setFetchErrorStatus(false);
-          return pushState('/');
-        }}
-      >
-        Return to the home page
-      </button>
-    </div>
-  `;
-
   return html`
     <main className=${styles}>
       ${request.url === ''
-        ? Overlay(pushState)
+        ? Overlay
+        : fetchErrorStatus
+        ? ErrorBlock404(setFetchErrorStatus)
         : html`
             <article>
-              ${fetchErrorStatus ? ErrorBlock404 : CodeBlock}
+              ${CodeBlock}
             </article>
             <${Aside}
               cache=${cache}

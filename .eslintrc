@@ -64,6 +64,7 @@
     "import/no-unresolved": [2, { "ignore": ["https"] }],
     "no-var": "off",
     "prefer-template": "off",
-    "filenames/match-regex": "off"
+    "filenames/match-regex": "off",
+    "new-cap": "off"
   }
 }
