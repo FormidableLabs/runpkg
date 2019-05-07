@@ -120,12 +120,12 @@ export default () => {
     [code]
   );
 
-  const ErrorBlock = html`
+  const ErrorBlock404 = html`
     <div className="Error">
-      <h2>404 error</h2>
+      <h2>404</h2>
       <p>
         Oh no! It looks like you're trying to find a package that doesn't exist.
-        Please check that it's spelled correctly.
+        Please check that its name is spelled correctly.
       </p>
       <button
         className="Error-Button"
