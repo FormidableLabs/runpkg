@@ -22,7 +22,7 @@ const FileList = ({ title, files, cache, packageName }) => html`
   <ul key=${files.join('-')}>
     ${files.map(
       x => html`
-        <li key=${x}>
+        <li key=${x} data-test=${title + 'Item'}>
           <a
             onClick=${e => {
               e.preventDefault();
@@ -51,7 +51,7 @@ export default ({ cache, packageJSON, request }) => {
       <h1 onClick=${() => pushState(packageMainUrl)} data-test="title">
         ${name}
       </h1>
-      <span className="Info-Block">
+      <span className="info-block">
         <p>v${version}</p>
         <p>${license}</p>
         <a href=${npmUrl}>${NpmLogo}</a>

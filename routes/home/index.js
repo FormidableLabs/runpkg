@@ -1,12 +1,12 @@
 import { react, html, css } from 'https://unpkg.com/rplus';
-import Editor from '../../components/editor.js';
+import Editor from '../../components/Editor.js';
 import FormidableIcon from '../../components/logo.js';
 import recursiveDependencyFetch from './utils/recursiveDependencyFetch.js';
-import overlay from '../../components/Overlay.js';
+import Overlay from '../../components/Overlay.js';
+import ErrorBlock404 from '../../components/ErrorBlock404.js';
 import Aside from '../../components/Aside.js';
 
 const styles = css`/routes/home/index.css`;
-const pushState = url => history.pushState(null, null, url);
 const replaceState = url => history.replaceState(null, null, url);
 
 const parseUrl = (search = window.location.search.slice(1)) => ({
@@ -23,6 +23,7 @@ export default () => {
   const [packageJSON, setPackageJSON] = react.useState({});
   const [code, setCode] = react.useState('');
   const [cache, setCache] = react.useState({});
+  const [fetchErrorStatus, setFetchErrorStatus] = react.useState(false);
 
   /* Runs once and subscribes to url changes */
   react.useEffect(() => {
@@ -42,10 +43,19 @@ export default () => {
   /* Runs every time the URL changes */
   react.useEffect(() => {
     /* Fetch the package json */
-    if (request.package !== `${packageJSON.name}@${packageJSON.version}`) {
+    if (
+      request.package &&
+      request.package !== `${packageJSON.name}@${packageJSON.version}`
+    ) {
       console.log('Getting package json for', request.package);
+
       fetch(`https://unpkg.com/${request.package}/package.json`)
-        .then(res => res.json())
+        .then(res => {
+          if (res.status === 404) {
+            setFetchErrorStatus(true);
+          }
+          return res.json();
+        })
         .then(pkg => {
           setPackageJSON(pkg);
           replaceState(
@@ -58,7 +68,10 @@ export default () => {
             }`
           );
         })
-        .catch(() => setPackageJSON({}));
+        .catch(() => {
+          setFetchErrorStatus(true);
+          return setPackageJSON({});
+        });
     }
   }, [request.package]);
 
@@ -110,13 +123,16 @@ export default () => {
   return html`
     <main className=${styles}>
       ${request.url === ''
-        ? overlay(pushState)
+        ? Overlay
+        : fetchErrorStatus
+        ? ErrorBlock404(setFetchErrorStatus)
         : html`
-            <article>${CodeBlock}</article>
+            <article>
+              ${CodeBlock}
+            </article>
             <${Aside}
               cache=${cache}
               packageJSON=${packageJSON}
-              pushState=${pushState}
               request=${request}
             />
             <footer>
