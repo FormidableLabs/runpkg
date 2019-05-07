@@ -1,9 +1,9 @@
 import { html } from 'https://unpkg.com/rplus';
-import ProjectBadge from './ProjectBadge.js';
+import ProjectBadge from './ProjectBadge/index.js';
 
 const pushState = url => history.pushState(null, null, url);
 
-const Overlay = html`
+export default html`
   <dialog open>
     <div className="overlay">
       <${ProjectBadge}
@@ -22,5 +22,3 @@ const Overlay = html`
     </div>
   </dialog>
 `;
-
-export default Overlay;
