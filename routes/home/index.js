@@ -43,34 +43,35 @@ export default () => {
   /* Runs every time the URL changes */
   react.useEffect(() => {
     /* Fetch the package json */
-    if (request.package !== `${packageJSON.name}@${packageJSON.version}`) {
+    if (
+      request.package &&
+      request.package !== `${packageJSON.name}@${packageJSON.version}`
+    ) {
       console.log('Getting package json for', request.package);
-      (async () => {
-        await setFetchErrorStatus(false);
-        fetch(`https://unpkg.com/${request.package}/package.json`)
-          .then(res => {
-            if (res.status === 404) {
-              setFetchErrorStatus(true);
-            }
-            return res.json();
-          })
-          .then(pkg => {
-            setPackageJSON(pkg);
-            replaceState(
-              `?${pkg.name}@${pkg.version}${
-                request.file
-                  ? `/${request.file}`
-                  : pkg.main
-                  ? `/${pkg.main}`
-                  : '/index.js'
-              }`
-            );
-          })
-          .catch(() => {
+
+      fetch(`https://unpkg.com/${request.package}/package.json`)
+        .then(res => {
+          if (res.status === 404) {
             setFetchErrorStatus(true);
-            return setPackageJSON({});
-          });
-      })();
+          }
+          return res.json();
+        })
+        .then(pkg => {
+          setPackageJSON(pkg);
+          replaceState(
+            `?${pkg.name}@${pkg.version}${
+              request.file
+                ? `/${request.file}`
+                : pkg.main
+                ? `/${pkg.main}`
+                : '/index.js'
+            }`
+          );
+        })
+        .catch(() => {
+          setFetchErrorStatus(true);
+          return setPackageJSON({});
+        });
     }
   }, [request.package]);
 
