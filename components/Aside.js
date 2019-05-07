@@ -42,8 +42,9 @@ const FileList = ({ title, files, cache, packageName }) => html`
 
 export default ({ cache, packageJSON, request }) => {
   const file = cache[`https://unpkg.com/${request.url}`];
-  const { name, version, main, readme, license, description } = packageJSON;
+  const { name, version, main, license, description } = packageJSON;
   const packageMainUrl = `?${name}@${version}/${main}`;
+  const npmUrl = 'https://npmjs.com/' + name;
 
   return html`
     <aside key="aside">
@@ -53,7 +54,7 @@ export default ({ cache, packageJSON, request }) => {
       <span className="info-block">
         <p>v${version}</p>
         <p>${license}</p>
-        <a href=${readme}>${NpmLogo}</a>
+        <a href=${npmUrl}>${NpmLogo}</a>
       </span>
       <p>
         ${description || 'There is no description for this package.'}
