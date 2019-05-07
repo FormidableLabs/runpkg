@@ -84,7 +84,10 @@ export default () => {
       console.log(
         `Recursively fetching ${packageJSON.name}@${packageJSON.version}`
       );
-      recursiveDependencyFetch(packageJSON).then(setCache);
+      Promise.all([
+        recursiveDependencyFetch(packageJSON),
+        recursiveDependencyFetch(packageJSON, request.url),
+      ]).then(([a, b]) => setCache({ ...a, ...b }));
     }
   }, [packageJSON.name, packageJSON.version]);
 
