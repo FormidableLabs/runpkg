@@ -120,25 +120,6 @@ export default () => {
     [code]
   );
 
-  const ErrorBlock404 = html`
-    <div className="Error">
-      <h2>404</h2>
-      <p>
-        Oh no! It looks like you're trying to find a package that doesn't exist.
-        Please check that its name is spelled correctly.
-      </p>
-      <button
-        className="Error-Button"
-        onClick=${() => {
-          setFetchErrorStatus(false);
-          return pushState('/');
-        }}
-      >
-        Return to the home page
-      </button>
-    </div>
-  `;
-
   return html`
     <main className=${styles}>
       ${request.url === ''
