@@ -1,5 +1,5 @@
 import { react, html, css } from 'https://unpkg.com/rplus';
-import Editor from './components/editor.js';
+import Editor from './components/Editor.js';
 import FormidableIcon from './components/FormidableLogo.js';
 import recursiveDependencyFetch from './utils/recursiveDependencyFetch.js';
 import Overlay from './components/Overlay.js';
