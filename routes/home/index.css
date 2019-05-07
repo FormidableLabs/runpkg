@@ -195,18 +195,18 @@
 
 .Overlay-Button,
 .Error-Button {
-  border: 1px solid #80EAC7;
+  border: 1px solid #80eac7;
   margin-top: 2rem;
   font-size: 1.2rem;
   padding: 1rem;
   border-radius: 1rem;
   color: #282c34;
-  background-color: #80EAC7;
+  background-color: #80eac7;
   font-weight: bold;
 }
 
 .Overlay-Button:hover {
-  color: #80EAC7;
+  color: #80eac7;
   background: transparent;
 }
 
@@ -215,16 +215,21 @@
   flex-direction: column;
   align-items: center;
   padding: 1rem;
-  border: 2px solid #80EAC7;
 
   & p {
     color: rgba(255, 255, 255, 0.8);
     line-height: 162%;
+    margin: 1rem;
     text-align: center;
   }
 
   & h2 {
     color: rgba(255, 255, 255, 0.8);
-    font-size: 2rem;
+    font-size: 2.8rem;
+    margin: 1rem;
+  }
+
+  & .Error-Button {
+    margin: 1rem;
   }
 }
