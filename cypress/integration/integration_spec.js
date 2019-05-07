@@ -2,11 +2,11 @@ describe('Runpkg', () => {
   let url;
   before(() => {
     url =
-      Cypress.env('env') === 'local' ? 'localhost:8080' : 'https://runpkg.com';
+      Cypress.env('env') === 'local' ? 'http://localhost:8080' : 'https://runpkg.com';
   });
   it('Visits the page', () => {
     cy.visit(url + '/');
-    cy.get('.Overlay-Button', { timeout: 10000 }).click();
+    cy.get('[data-test=Overlay-Button]', { timeout: 10000 }).click();
     cy.url().should('include', '/?lodash-es');
     cy.get('[data-test=title]').contains('lodash-es');
     cy.get('[data-test=DependenciesItem]', { timeout: 10000 })

@@ -16,7 +16,7 @@ const Overlay = html`
         Explore, learn about and perform static analysis on npm packages in the
         browser.
       </p>
-      <button onClick=${() => pushState('?lodash-es')}>
+      <button data-test="Overlay-Button" onClick=${() => pushState('?lodash-es')}>
         Start Exploring
       </button>
     </div>
