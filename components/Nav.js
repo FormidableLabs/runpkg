@@ -8,7 +8,7 @@ import CloseIcon from './CloseIcon.js';
 const pushState = url => history.pushState(null, null, url);
 
 export default ({ packageJSON, packageMeta }) => {
-  const [isNavShowing, showNav] = react.useState(true);
+  const [isNavShowing, showNav] = react.useState(false);
   const { name, version, main, license, description } = packageJSON;
   const packageMainUrl = `?${name}@${version}/${main}`;
   const npmUrl = 'https://npmjs.com/' + packageJSON.name;
