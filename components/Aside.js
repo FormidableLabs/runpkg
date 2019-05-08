@@ -50,6 +50,14 @@ export default ({ packageJSON, request }) => {
     <aside key="aside">
       ${file
         ? html`
+            <div key="path">
+              <h3>File Path</h3>
+              <span>./${request.file}</span>
+            </div>
+            <div key="size">
+              <h3>File Size</h3>
+              <span>${formatBytes(file.code.length)}</span>
+            </div>
             <${FileList}
               title="Dependencies"
               files=${file.dependencies}

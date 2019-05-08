@@ -83,7 +83,6 @@
   }
 
   > p {
-    margin-bottom: 2rem;
     line-height: 162%;
   }
 
@@ -214,7 +213,7 @@
   flex: 1 0 auto;
 
   > * + * {
-    margin-top: 2rem;
+    margin-top: 1rem;
   }
 
   @media screen and (min-width: 1000px) and (max-width: 1000px) {
