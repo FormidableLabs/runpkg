@@ -6,12 +6,20 @@
   "version": 2,
   "routes": [
     {
-      "src": "/routes/(.*)",
-      "dest": "/routes/$1"
-    },
-    {
       "src": "/components/(.*)",
       "dest": "/components/$1"
+    },
+    {
+      "src": "/utils/(.*)",
+      "dest": "/utils/$1"
+    },
+    {
+      "src": "/favicon.ico",
+      "dest": "/favicon.ico"
+    },
+    {
+      "src": "/reset.css",
+      "dest": "/reset.css"
     },
     {
       "src": "/index.html",
