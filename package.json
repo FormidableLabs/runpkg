@@ -1,5 +1,5 @@
 {
-  "name": "dora",
+  "name": "runpkg",
   "version": "0.1.0",
   "description": "> the online package explorer",
   "main": "index.js",
@@ -10,14 +10,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/FormidableLabs/dora.git"
+    "url": "git+https://github.com/FormidableLabs/runpkg.git"
   },
   "author": "",
   "license": "MIT",
   "bugs": {
-    "url": "https://github.com/FormidableLabs/dora/issues"
+    "url": "https://github.com/FormidableLabs/runpkg/issues"
   },
-  "homepage": "https://github.com/FormidableLabs/dora#readme",
+  "homepage": "https://github.com/FormidableLabs/runpkg#readme",
   "devDependencies": {
     "babel-eslint": "^10.0.1",
     "concurrently": "^4.1.0",
