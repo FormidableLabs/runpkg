@@ -6,7 +6,7 @@ import Spinner from './Spinner.js';
 const pushState = url => history.pushState(null, null, url);
 
 const FileList = ({ title, files, cache, packageName }) => html`
-  <div>
+  <div key=${title}>
     <h3>${title}</h3>
     <span>${files.length} Files</span>
   </div>
@@ -37,11 +37,9 @@ export default ({ packageJSON, request }) => {
   // Runs when file changes + fetches dependencies.
   react.useEffect(() => {
     if (packageJSON.name && request.file) {
-      setCache({})
+      setCache({});
       /* Fetch all files in this module */
-      console.log(
-        `Recursively fetching ${request.url}`
-      );
+      console.log(`Recursively fetching ${request.url}`);
       recursiveDependencyFetch(packageJSON, request.url).then(setCache);
     }
   }, [packageJSON.name, request.file]);
@@ -57,12 +55,14 @@ export default ({ packageJSON, request }) => {
               files=${file.dependencies}
               cache=${cache}
               packageName=${`${name}@${version}`}
+              key="dependencies"
             />
             <${FileList}
               title="Dependants"
               files=${file.dependants}
               cache=${cache}
               packageName=${`${name}@${version}`}
+              key="dependants"
             />
           `
         : Spinner}

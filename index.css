@@ -268,7 +268,7 @@
   }
 }
 
-dialog {
+:global(dialog) {
   display: flex;
   position: fixed;
   background: none;

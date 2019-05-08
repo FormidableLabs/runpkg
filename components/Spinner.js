@@ -2,7 +2,7 @@ import { html, css } from 'https://unpkg.com/rplus';
 
 export default html`
   <div
-    class=${css`
+    className=${css`
       &,
       &::before,
       &::after {
