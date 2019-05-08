@@ -1,15 +1,12 @@
 & {
-  width: 100vw;
   height: 100vh;
   background: #2f3138;
-  display: flex;
-  flex-direction: column;
-  overflow: scroll;
-
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-areas:
+    ' article '
+    ' aside ';
   @media screen and (min-width: 800px) {
-    display: grid;
-    height: 100vh;
-
     grid-template-columns: 2fr 1fr 2fr;
     grid-template-rows: 1fr 4rem;
     grid-template-areas:
@@ -19,15 +16,64 @@
   }
 }
 
-& nav {
-  grid-area: nav;
-  padding: 3rem;
-  background: rgba(0, 0, 0, 0.2);
-  color: #fff;
-  overflow-y: auto;
+& button.toggleOpenButton {
+  position: absolute;
+  left: 1em;
+  top: 1em;
+  background-color: transparent;
+  border: none;
+  fill: #fff;
+  @media screen and (min-width: 800px) {
+    display: none;
+  }
+}
 
+& nav {
+  width: 62vw;
+  grid-area: nav;
+  background: rgb(46, 48, 53);
+  color: #fff;
+  position: absolute;
+  z-index: 1;
+  left: -62vw;
+
+  &.active {
+    transform: translateX(62vw);
+    transition: 0.25s;
+  }
+
+  &.hiding {
+    transform: translateX(0vw);
+    transition: 0.25s;
+  }
+
+  > div.scrollableContent {
+    padding: 3rem;
+    width: 100%;
+    overflow-x: scroll;
+    height: 100vh;
+  }
+
+  @media screen and (min-width: 800px) {
+    width: auto;
+    position: inherit;
+    z-index: initial;
+    background: rgba(0, 0, 0, 0.2);
+  }
   > * + * {
     margin-top: 2rem;
+  }
+
+  > button.toggleCloseButton {
+    position: fixed;
+    right: 1em;
+    top: 1em;
+    background-color: transparent;
+    border: none;
+    fill: #fff;
+    @media screen and (min-width: 800px) {
+      display: none;
+    }
   }
 
   > p {
@@ -108,7 +154,7 @@
   background: rgba(0, 0, 0, 0.2);
   color: rgba(255, 255, 255, 0.5);
 
-  display: flex;
+  display: none;
   align-items: center;
   justify-content: space-between;
   padding: 0 2rem;
@@ -121,6 +167,7 @@
 
   @media screen and (min-width: 800px) {
     width: auto;
+    display: flex;
   }
 }
 

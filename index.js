@@ -6,6 +6,8 @@ import ErrorBlock404 from './components/ErrorBlock404.js';
 import Aside from './components/Aside.js';
 import FolderIcon from './components/FolderIcon.js';
 import FileIcon from './components/FileIcon.js';
+import MenuIcon from './components/MenuIcon.js';
+import CloseIcon from './components/CloseIcon.js';
 
 const styles = css`/index.css`;
 const pushState = url => history.pushState(null, null, url);
@@ -24,6 +26,7 @@ const parseUrl = (search = window.location.search.slice(1)) => ({
 const Home = () => {
   const [request, setRequest] = react.useState(parseUrl());
   const [packageJSON, setPackageJSON] = react.useState({});
+  const [navShowing, showNav] = react.useState(false);
 
   const [code, setCode] = react.useState('');
   const [siblings, setSiblings] = react.useState({ files: [] });
@@ -147,24 +150,41 @@ const Home = () => {
 
   return html`
     <main className=${styles}>
+      <button
+        className="toggleOpenButton"
+        onClick=${() => showNav(!navShowing)}
+      >
+        ${MenuIcon}
+      </button>
       ${request.url === ''
         ? Overlay
         : fetchErrorStatus
         ? ErrorBlock404(setFetchErrorStatus)
         : html`
-            <nav>
-              <h1 onClick=${() => pushState(packageMainUrl)} data-test="title">
-                ${name}
-              </h1>
-              <span className="info-block">
-                <p>v${version}</p>
-                <p>${license}</p>
-                <a href=${npmUrl}>${NpmLogo}</a>
-              </span>
-              <p>
-                ${description || 'There is no description for this package.'}
-              </p>
-              <${Directory} rootMeta=${siblings} />
+            <nav className=${navShowing ? 'active' : 'hiding'}>
+              <button
+                className="toggleCloseButton"
+                onClick=${() => showNav(!navShowing)}
+              >
+                ${CloseIcon}
+              </button>
+              <div className="scrollableContent">
+                <h1
+                  onClick=${() => pushState(packageMainUrl)}
+                  data-test="title"
+                >
+                  ${name}
+                </h1>
+                <span className="info-block">
+                  <p>v${version}</p>
+                  <p>${license}</p>
+                  <a href=${npmUrl}>${NpmLogo}</a>
+                </span>
+                <p>
+                  ${description || 'There is no description for this package.'}
+                </p>
+                <${Directory} rootMeta=${siblings} />
+              </div>
             </nav>
             <article>${CodeBlock}</article>
             <${Aside} packageJSON=${packageJSON} request=${request} />
