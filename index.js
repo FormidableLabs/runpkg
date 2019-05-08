@@ -118,23 +118,29 @@ const Home = () => {
   const packageMainUrl = `?${name}@${version}/${main}`;
   const npmUrl = 'https://npmjs.com/' + packageJSON.name;
 
-  const File = ({ meta }) => html`
+  const File = ({ meta, parent }) => html`
     <li style=${{ order: 1 }}>
       ${FileIcon}
-      <a onClick=${e => pushState(`?${request.package}${meta.path}`)}
-        >${meta.path}</a
-      >
+      <a onClick=${() => pushState(`?${request.package}${meta.path}`)}
+        >${meta.path.replace(parent.path, '')}
+      </a>
     </li>
   `;
 
   const Directory = ({ rootMeta }) => html`
     <ul style=${{ order: 0 }}>
-      <div>
-        ${FolderIcon}
-        <h2>${rootMeta.path}</h2>
-      </div>
+      ${rootMeta.path &&
+        rootMeta.path !== '/' &&
+        html`
+          <div>
+            ${FolderIcon}
+            <h2>${rootMeta.path.slice(1)}</h2>
+          </div>
+        `}
       ${rootMeta.files.map(meta =>
-        meta.type === 'file' ? File({ meta }) : Directory({ rootMeta: meta })
+        meta.type === 'file'
+          ? File({ meta, parent: rootMeta })
+          : Directory({ rootMeta: meta })
       )}
     </ul>
   `;
