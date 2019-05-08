@@ -107,8 +107,10 @@ const Home = () => {
           <article>${CodeBlock}</article>
           <${Aside} packageJSON=${packageJSON} request=${request} />
           <footer>
-            <p>An experiment by the folks at Formidable</p>
-            ${FormidableIcon}
+            <a href="https://formidable.com/">
+              <p>An experiment by the folks at Formidable</p>
+              ${FormidableIcon}</a
+            >
           </footer>
         </main>
       `;
