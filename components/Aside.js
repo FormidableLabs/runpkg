@@ -1,18 +1,9 @@
-import { html } from 'https://unpkg.com/rplus';
-import formatBytes from '../routes/home/utils/formatBytes.js';
-import totalPackageSize from '../routes/home/utils/totalPackageSize.js';
+import { react, html } from 'https://unpkg.com/rplus';
+import recursiveDependencyFetch from '../utils/recursiveDependencyFetch.js';
+import formatBytes from '../utils/formatBytes.js';
+import Spinner from './Spinner.js';
 
 const pushState = url => history.pushState(null, null, url);
-
-const NpmLogo = html`
-  <svg viewBox="0 0 780 250">
-    <title>NPM repo link</title>
-    <path
-      fill="#fff"
-      d="M240,250h100v-50h100V0H240V250z M340,50h50v100h-50V50z M480,0v200h100V50h50v150h50V50h50v150h50V0H480z M0,200h100V50h50v150h50V0H0V200z"
-    ></path>
-  </svg>
-`;
 
 const FileList = ({ title, files, cache, packageName }) => html`
   <div>
@@ -40,44 +31,41 @@ const FileList = ({ title, files, cache, packageName }) => html`
   </ul>
 `;
 
-export default ({ cache, packageJSON, request }) => {
+export default ({ packageJSON, request }) => {
+  const [cache, setCache] = react.useState({});
+
+  // Runs when file changes + fetches dependencies.
+  react.useEffect(() => {
+    if (packageJSON.name && request.file) {
+      setCache({})
+      /* Fetch all files in this module */
+      console.log(
+        `Recursively fetching ${request.url}`
+      );
+      recursiveDependencyFetch(packageJSON, request.url).then(setCache);
+    }
+  }, [packageJSON.name, request.file]);
   const file = cache[`https://unpkg.com/${request.url}`];
-  const { name, version, main, license, description } = packageJSON;
-  const packageMainUrl = `?${name}@${version}/${main}`;
-  const npmUrl = 'https://npmjs.com/' + name;
+  const { name, version } = packageJSON;
 
   return html`
     <aside key="aside">
-      <h1 onClick=${() => pushState(packageMainUrl)} data-test="title">
-        ${name}
-      </h1>
-      <span className="info-block">
-        <p>v${version}</p>
-        <p>${license}</p>
-        <a href=${npmUrl}>${NpmLogo}</a>
-      </span>
-      <p>
-        ${description || 'There is no description for this package.'}
-      </p>
-      ${file &&
-        html`
-          <div>
-            <h3>Package Size</h3>
-            <span>${formatBytes(totalPackageSize(cache))}</span>
-          </div>
-          <${FileList}
-            title="Dependencies"
-            files=${file.dependencies}
-            cache=${cache}
-            packageName=${`${name}@${version}`}
-          />
-          <${FileList}
-            title="Dependants"
-            files=${file.dependants}
-            cache=${cache}
-            packageName=${`${name}@${version}`}
-          />
-        `}
+      ${file
+        ? html`
+            <${FileList}
+              title="Dependencies"
+              files=${file.dependencies}
+              cache=${cache}
+              packageName=${`${name}@${version}`}
+            />
+            <${FileList}
+              title="Dependants"
+              files=${file.dependants}
+              cache=${cache}
+              packageName=${`${name}@${version}`}
+            />
+          `
+        : Spinner}
     </aside>
   `;
 };

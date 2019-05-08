@@ -1,5 +1,7 @@
 import { react as React, html } from 'https://unpkg.com/rplus';
 
+/*eslint-disable */
+
 var _extends =
   Object.assign ||
   function(target) {
@@ -1184,3 +1186,5 @@ export default props =>
       ...${props}
     />
   `;
+
+/*eslint-enable */
