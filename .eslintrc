@@ -65,6 +65,7 @@
     "no-var": "off",
     "prefer-template": "off",
     "filenames/match-regex": "off",
-    "new-cap": "off"
+    "new-cap": "off",
+    "max-statements": "off"
   }
 }

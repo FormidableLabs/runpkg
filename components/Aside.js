@@ -1,5 +1,7 @@
-import { html } from 'https://unpkg.com/rplus';
+import { react, html } from 'https://unpkg.com/rplus';
+import recursiveDependencyFetch from '../utils/recursiveDependencyFetch.js';
 import formatBytes from '../utils/formatBytes.js';
+import Spinner from './Spinner.js';
 
 const pushState = url => history.pushState(null, null, url);
 
@@ -29,26 +31,41 @@ const FileList = ({ title, files, cache, packageName }) => html`
   </ul>
 `;
 
-export default ({ cache, packageJSON, request }) => {
+export default ({ packageJSON, request }) => {
+  const [cache, setCache] = react.useState({});
+
+  // Runs when file changes + fetches dependencies.
+  react.useEffect(() => {
+    if (packageJSON.name && request.file) {
+      setCache({})
+      /* Fetch all files in this module */
+      console.log(
+        `Recursively fetching ${request.url}`
+      );
+      recursiveDependencyFetch(packageJSON, request.url).then(setCache);
+    }
+  }, [packageJSON.name, request.file]);
   const file = cache[`https://unpkg.com/${request.url}`];
   const { name, version } = packageJSON;
+
   return html`
     <aside key="aside">
-      ${file &&
-        html`
-          <${FileList}
-            title="Dependencies"
-            files=${file.dependencies}
-            cache=${cache}
-            packageName=${`${name}@${version}`}
-          />
-          <${FileList}
-            title="Dependants"
-            files=${file.dependants}
-            cache=${cache}
-            packageName=${`${name}@${version}`}
-          />
-        `}
+      ${file
+        ? html`
+            <${FileList}
+              title="Dependencies"
+              files=${file.dependencies}
+              cache=${cache}
+              packageName=${`${name}@${version}`}
+            />
+            <${FileList}
+              title="Dependants"
+              files=${file.dependants}
+              cache=${cache}
+              packageName=${`${name}@${version}`}
+            />
+          `
+        : Spinner}
     </aside>
   `;
 };

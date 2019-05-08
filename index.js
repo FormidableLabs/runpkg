@@ -1,7 +1,6 @@
 import { react, html, css } from 'https://unpkg.com/rplus';
 import Editor from './components/Editor.js';
 import FormidableIcon from './components/FormidableLogo.js';
-import recursiveDependencyFetch from './utils/recursiveDependencyFetch.js';
 import Overlay from './components/Overlay.js';
 import ErrorBlock404 from './components/ErrorBlock404.js';
 import Aside from './components/Aside.js';
@@ -28,10 +27,7 @@ const Home = () => {
 
   const [code, setCode] = react.useState('');
   const [siblings, setSiblings] = react.useState({ files: [] });
-  const [cache, setCache] = react.useState({});
   const [fetchErrorStatus, setFetchErrorStatus] = react.useState(false);
-
-  console.log(request);
 
   /* Runs once and subscribes to url changes */
   react.useEffect(() => {
@@ -50,64 +46,47 @@ const Home = () => {
 
   /* Runs every time the URL changes */
   react.useEffect(() => {
-    /* Fetch the package json */
-    if (
-      request.package &&
-      request.package !== `${packageJSON.name}@${packageJSON.version}`
-    ) {
-      console.log('Getting package json for', request.package);
-      fetch(`https://unpkg.com/${request.package}/package.json`)
-        .then(res => res.json())
-        .then(pkg => {
-          setPackageJSON(pkg);
-          replaceState(
-            `?${pkg.name}@${pkg.version}${
-              request.file
-                ? `/${request.file}`
-                : pkg.main
-                ? `/${pkg.main}`
-                : '/index.js'
-            }`
-          );
-        })
-        .catch(() => {
-          setFetchErrorStatus(true);
-          return setPackageJSON({});
-        });
-    }
-  }, [request.package]);
-
-  /* Runs every time the requested file changes */
-  react.useEffect(() => {
-    /* Fetch the requested file */
-    if (request.file) {
-      const fileURL = `https://unpkg.com/${request.url}`;
-      const folderURL = `https://unpkg.com/${request.package}/?meta`;
-      console.log('Getting file', fileURL);
-      (async () => {
-        const file = await fetch(fileURL);
-        const text = await file.text();
-
+    (async () => {
+      /* Fetch the package json */
+      if (
+        request.package &&
+        request.package !== `${packageJSON.name}@${packageJSON.version}`
+      ) {
+        const folderURL = `https://unpkg.com/${request.package}/?meta`;
         const folder = await fetch(folderURL);
         const contents = await folder.json();
-
+        setSiblings(contents);
+        console.log('Getting package json for', request.package);
+        await fetch(`https://unpkg.com/${request.package}/package.json`)
+          .then(res => res.json())
+          .then(pkg => {
+            setPackageJSON(pkg);
+            replaceState(
+              `?${pkg.name}@${pkg.version}${
+                request.file
+                  ? `/${request.file}`
+                  : pkg.main
+                  ? `/${pkg.main}`
+                  : '/index.js'
+              }`
+            );
+          })
+          .catch(() => {
+            setFetchErrorStatus(true);
+            return setPackageJSON({});
+          });
+      }
+      /* Fetch the requested file */
+      if (request.file) {
+        const fileURL = `https://unpkg.com/${request.url}`;
+        console.log('Getting file', fileURL);
+        const file = await fetch(fileURL);
+        const text = await file.text();
         replaceState(`?${file.url.replace('https://unpkg.com/', '')}`);
         setCode(text);
-        setSiblings(contents);
-      })();
-    }
-  }, [request.package, request.file]);
-
-  /* Runs every time the package name changes */
-  react.useEffect(() => {
-    if (packageJSON.name && packageJSON.version) {
-      /* Fetch all files in this module */
-      console.log(
-        `Recursively fetching ${packageJSON.name}@${packageJSON.version}`
-      );
-      recursiveDependencyFetch(packageJSON, request.url).then(setCache);
-    }
-  }, [packageJSON.name, packageJSON.version]);
+      }
+    })();
+  }, [request.url]);
 
   const CodeBlock = react.useMemo(
     () => html`
@@ -124,8 +103,6 @@ const Home = () => {
     `,
     [code]
   );
-
-  console.log(siblings);
 
   const NpmLogo = html`
     <svg viewBox="0 0 780 250">
@@ -184,12 +161,7 @@ const Home = () => {
               <${Directory} rootMeta=${siblings} />
             </nav>
             <article>${CodeBlock}</article>
-            <${Aside}
-              cache=${cache}
-              siblings=${siblings.files}
-              packageJSON=${packageJSON}
-              request=${request}
-            />
+            <${Aside} packageJSON=${packageJSON} request=${request} />
             <footer>
               <p>An experiment by the folks at Formidable</p>
               ${FormidableIcon}
