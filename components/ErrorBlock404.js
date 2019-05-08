@@ -11,7 +11,7 @@ const ErrorBlock404 = setFetchErrorStatus => html`
         Please check that its name is spelled correctly.
       </p>
       <button
-      data-test="Error-Button"
+        data-test="Error-Button"
         onClick=${() => {
           setFetchErrorStatus(false);
           return pushState('/');
