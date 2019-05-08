@@ -17,9 +17,10 @@
 }
 
 & button.toggleOpenButton {
-  position: absolute;
-  left: 1em;
-  top: 1em;
+  position: fixed;
+  z-index: 2;
+  right: 2rem;
+  top: 2rem;
   background-color: transparent;
   border: none;
   fill: #fff;
@@ -29,31 +30,27 @@
 }
 
 & nav {
+  transform: translateX(-100%);
   width: 62vw;
   grid-area: nav;
   background: rgb(46, 48, 53);
   color: #fff;
   position: absolute;
   z-index: 1;
-  left: -62vw;
+  left: 0;
+  padding: 3rem;
+  transition: 0.25s;
+  height: 100vh;
+  overflow-y: auto;
+  min-width: 300px;
+  @media screen and (min-width: 800px) {
+    transform: translateX(0%);
+  }
 
   &.active {
-    transform: translateX(62vw);
-    transition: 0.25s;
+    box-shadow: 1rem 1rem 1rem rgba(0, 0, 0, 0.1);
+    transform: translateX(0%);
   }
-
-  &.hiding {
-    transform: translateX(0vw);
-    transition: 0.25s;
-  }
-
-  > div.scrollableContent {
-    padding: 3rem;
-    width: 100%;
-    overflow-x: scroll;
-    height: 100vh;
-  }
-
   @media screen and (min-width: 800px) {
     width: auto;
     position: inherit;
