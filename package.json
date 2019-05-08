@@ -4,10 +4,9 @@
   "description": "> the online package explorer",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
     "prettier": "prettier --config .prettierrc --write \"./**/*.{js,json,css,html}\"",
     "lint": "eslint --config .eslintrc \"./**/*.js\"",
-    "cy": "concurrently --kill-others \"node_modules/servor/servor.js --no-browser --no-reload\" \"wait-on http-get://localhost:8080 && npx cypress run --browser chrome --env env=local\" "
+    "test": "concurrently --kill-others \"node_modules/servor/servor.js --no-browser --no-reload\" \"wait-on http-get://localhost:8080 && npx cypress run --browser chrome --env env=local\" "
   },
   "repository": {
     "type": "git",
