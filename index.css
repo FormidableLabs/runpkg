@@ -1,14 +1,16 @@
 & {
+  width: 100%;
   height: 100vh;
+  overflow: hidden;
   background: #2f3138;
   display: grid;
   grid-template-columns: 1fr;
+  grid-template-rows: 62vh 38vh;
   grid-template-areas:
-    ' article '
-    ' aside ';
-
-  @media screen and (min-width: 800px) {
-    grid-template-columns: 2fr 1fr 2fr;
+    'article'
+    'aside';
+  @media screen and (min-width: 1000px) {
+    grid-template-columns: 22rem 1fr 26rem;
     grid-template-rows: 1fr 4rem;
     grid-template-areas:
       'nav article aside'
@@ -25,7 +27,7 @@
   background-color: transparent;
   border: none;
   fill: #fff;
-  @media screen and (min-width: 800px) {
+  @media screen and (min-width: 1000px) {
     display: none;
   }
 }
@@ -34,32 +36,38 @@
   transform: translateX(-100%);
   width: 62vw;
   grid-area: nav;
-  background: rgb(46, 48, 53);
+  background: #26272c;
   color: #fff;
   position: absolute;
   z-index: 1;
   left: 0;
   padding: 3rem;
-  transition: 0.25s;
+  transition: transform 0.25s;
   height: 100vh;
   overflow-y: auto;
   min-width: 300px;
-  @media screen and (min-width: 800px) {
+
+  > * + * {
+    margin-top: 2rem;
+  }
+
+  @media screen and (min-width: 1000px) {
     transform: translateX(0%);
   }
 
   &.active {
     box-shadow: 1rem 1rem 1rem rgba(0, 0, 0, 0.1);
     transform: translateX(0%);
+    @media screen and (min-width: 1000px) {
+      box-shadow: none;
+    }
   }
-  @media screen and (min-width: 800px) {
-    width: auto;
+
+  @media screen and (min-width: 1000px) {
     position: inherit;
     z-index: initial;
+    width: auto;
     background: rgba(0, 0, 0, 0.2);
-  }
-  > * + * {
-    margin-top: 2rem;
   }
 
   > button.toggleCloseButton {
@@ -69,7 +77,7 @@
     background-color: transparent;
     border: none;
     fill: #fff;
-    @media screen and (min-width: 800px) {
+    @media screen and (min-width: 1000px) {
       display: none;
     }
   }
@@ -77,6 +85,11 @@
   > p {
     margin-bottom: 2rem;
     line-height: 162%;
+  }
+
+  a {
+    cursor: pointer;
+    text-decoration: underline;
   }
 
   h1 {
@@ -153,41 +166,40 @@
   color: rgba(255, 255, 255, 0.5);
   display: none;
   a {
+    width: 100%;
     text-decoration: none;
     color: inherit;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 2rem;
+    padding: 0 1.62rem;
   }
 
   svg {
-    width: 2rem;
+    width: 1.62rem;
+    height: 1.62rem;
     fill: currentColor;
   }
 
-  @media screen and (min-width: 800px) {
+  @media screen and (min-width: 1000px) {
+    width: auto;
     display: flex;
   }
 }
 
 & article {
-  height: 50vh;
   grid-area: article;
   overflow: auto;
   padding: 3rem;
   flex: 1 0 62%;
-  @media screen and (min-width: 800px) {
-    width: 60vw;
+
+  @media screen and (min-width: 1000px) {
     height: 100vh;
   }
+
   pre {
     color: #fff;
     outline: none;
-
-    a {
-      color: #61dafb;
-    }
   }
 }
 
@@ -205,7 +217,7 @@
     margin-top: 2rem;
   }
 
-  @media screen and (min-width: 800px) and (max-width: 1000px) {
+  @media screen and (min-width: 1000px) and (max-width: 1000px) {
     padding-left: 2rem;
     padding-right: 2rem;
   }
