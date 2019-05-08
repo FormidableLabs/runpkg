@@ -6,6 +6,7 @@
   grid-template-areas:
     ' article '
     ' aside ';
+
   @media screen and (min-width: 800px) {
     grid-template-columns: 2fr 1fr 2fr;
     grid-template-rows: 1fr 4rem;
@@ -150,20 +151,22 @@
   grid-area: footer;
   background: rgba(0, 0, 0, 0.2);
   color: rgba(255, 255, 255, 0.5);
-
   display: none;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 2rem;
-  width: 100%;
+  a {
+    text-decoration: none;
+    color: inherit;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0 2rem;
+  }
 
   svg {
-    width: 1.6rem;
+    width: 2rem;
     fill: currentColor;
   }
 
   @media screen and (min-width: 800px) {
-    width: auto;
     display: flex;
   }
 }
