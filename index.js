@@ -84,7 +84,7 @@ const Home = () => {
     () => html`
       <${Editor}
         key="editor"
-        value=${code.slice(0, 100000)}
+        value=${code.replace(/\t/g, '  ').slice(0, 100000)}
         style=${{
           lineHeight: '138%',
           fontFamily: '"Inconsolata", monospace',
@@ -92,7 +92,7 @@ const Home = () => {
         padding=${42}
         disabled
       />
-      <pre key="pre">${code.slice(100000)}</pre>
+      <pre key="pre">${code.replace(/\t/g, '  ').slice(100000)}</pre>
     `,
     [code]
   );
