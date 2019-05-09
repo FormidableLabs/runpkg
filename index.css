@@ -22,8 +22,8 @@
 & button.toggleOpenButton {
   position: fixed;
   z-index: 2;
-  right: 2rem;
-  top: 2rem;
+  right: 1rem;
+  top: 0.7rem;
   background-color: transparent;
   border: none;
   fill: #fff;
@@ -34,18 +34,19 @@
 
 & nav {
   transform: translateX(-100%);
-  width: 62vw;
+  width: 90%;
   grid-area: nav;
   background: #26272c;
   color: #fff;
   position: absolute;
-  z-index: 1;
+  z-index: 2;
   left: 0;
   padding: 2rem;
   transition: transform 0.25s;
   height: 100vh;
   overflow-y: auto;
   min-width: 300px;
+  max-width: 360px;
 
   > * + * {
     margin-top: 1rem;
