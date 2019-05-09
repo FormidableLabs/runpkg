@@ -5,6 +5,7 @@ import Overlay from './components/Overlay.js';
 import ErrorBlock404 from './components/ErrorBlock404.js';
 import Aside from './components/Aside.js';
 import Nav from './components/Nav.js';
+import FileIcon from './components/FileIcon.js';
 
 const styles = css`/index.css`;
 const isEmpty = obj => Object.keys(obj).length === 0;
@@ -88,6 +89,7 @@ const Home = () => {
           lineHeight: '138%',
           fontFamily: '"Inconsolata", monospace',
         }}
+        padding=${42}
         disabled
       />
       <pre key="pre">${code.slice(100000)}</pre>
@@ -104,7 +106,12 @@ const Home = () => {
     : html`
         <main className=${styles}>
           <${Nav} packageJSON=${packageJSON} packageMeta=${packageMeta} />
-          <article>${CodeBlock}</article>
+          <article>
+            <h1>
+              ${FileIcon} ${request.file}
+            </h1>
+            ${CodeBlock}
+          </article>
           <${Aside} packageJSON=${packageJSON} request=${request} />
           <footer>
             <a href="https://formidable.com/">

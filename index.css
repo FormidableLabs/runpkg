@@ -10,7 +10,7 @@
     'article'
     'aside';
   @media screen and (min-width: 1000px) {
-    grid-template-columns: 22rem 1fr 26rem;
+    grid-template-columns: 20rem 1fr 30rem;
     grid-template-rows: 1fr 4rem;
     grid-template-areas:
       'nav article aside'
@@ -41,14 +41,14 @@
   position: absolute;
   z-index: 1;
   left: 0;
-  padding: 3rem;
+  padding: 2rem;
   transition: transform 0.25s;
   height: 100vh;
   overflow-y: auto;
   min-width: 300px;
 
   > * + * {
-    margin-top: 2rem;
+    margin-top: 1rem;
   }
 
   @media screen and (min-width: 1000px) {
@@ -83,22 +83,34 @@
   }
 
   > p {
+    font-size: 0.8rem;
     line-height: 162%;
+    color: rgba(255, 255, 255, 0.5);
+    margin-top: 2rem;
   }
 
   a {
     cursor: pointer;
     text-decoration: underline;
+    color: rgba(255, 255, 255, 0.62);
+
+    &:hover {
+      color: #fff;
+    }
   }
 
   h1 {
     font-weight: bold;
     font-size: 2rem;
     margin: 0;
+  }
 
-    @media screen and (min-width: 1000px) {
-      font-size: 3rem;
-    }
+  > h2 {
+    margin-top: 2rem;
+    font-size: 1.38rem;
+    font-weight: bold;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
   }
 
   .info-block {
@@ -132,29 +144,34 @@
   ul {
     display: flex;
     flex-direction: column;
-    margin: 1rem 0 2rem;
+    margin-bottom: 1rem;
 
     div,
     li {
       display: flex;
+      align-items: center;
       margin-top: 1rem;
       svg {
+        flex: none;
         width: 1rem;
         height: 1rem;
-        fill: #fff;
+        fill: rgba(255, 255, 255, 0.5);
         margin-right: 0.62rem;
       }
     }
 
+    > div ~ * {
+      margin-left: 0.5rem;
+    }
+
     div > svg {
-      width: 1.62rem;
-      height: 1.62rem;
+      width: 1.5rem;
+      height: 1.5rem;
     }
 
     h2 {
-      font-size: 1.62rem;
+      font-size: 1rem;
       font-weight: bold;
-      margin-bottom: 1rem;
     }
   }
 }
@@ -189,11 +206,31 @@
 & article {
   grid-area: article;
   overflow: auto;
-  padding: 3rem;
+  padding: 0rem;
   flex: 1 0 62%;
 
   @media screen and (min-width: 1000px) {
     height: 100vh;
+  }
+
+  h1 {
+    padding: 1rem;
+    width: 100%;
+    text-align: center;
+    background: #2a2c32;
+    color: #fff;
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    > svg {
+      width: 1.2rem;
+      height: 1.2rem;
+      margin-right: 0.38rem;
+      fill: rgba(255, 255, 255, 0.5);
+    }
   }
 
   pre {
@@ -206,7 +243,7 @@
   grid-area: aside;
   display: flex;
   flex-direction: column;
-  background: rgba(0, 0, 0, 0.1);
+  background: rgba(0, 0, 0, 0.062);
   padding: 3rem;
   color: #fff;
   overflow: auto;
@@ -216,9 +253,18 @@
     margin-top: 1rem;
   }
 
-  @media screen and (min-width: 1000px) and (max-width: 1000px) {
-    padding-left: 2rem;
-    padding-right: 2rem;
+  h1 {
+    font-size: 1.62rem;
+    font-weight: bold;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+  }
+
+  p {
+    font-size: 0.8rem;
+    line-height: 162%;
+    color: rgba(255, 255, 255, 0.5);
+    margin: 1rem 0;
   }
 
   h3 {
@@ -237,31 +283,30 @@
     align-items: center;
     justify-content: space-between;
     padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   }
 
   ul {
-    border-radius: 0.5rem;
     flex: none;
   }
 
   ul:not(:empty) {
-    margin: 0.5rem 0 0;
+    margin: 1rem 0;
   }
 
   li {
     display: flex;
     align-items: center;
-    padding: 1rem 0;
 
     svg {
       width: 1.38rem;
       height: 1.38rem;
-      fill: #fff;
+      fill: rgba(255, 255, 255, 0.5);
       margin-right: 0.62rem;
     }
 
     a {
+      color: rgba(255, 255, 255, 0.62);
       flex: 1 1 100%;
       display: flex;
       align-items: center;
@@ -270,12 +315,13 @@
       text-decoration: underline;
       &:hover {
         cursor: pointer;
+        color: #fff;
       }
     }
   }
 
   li + li {
-    border-top: 1px solid rgba(0, 0, 0, 0.1);
+    margin-top: 1rem;
   }
 }
 

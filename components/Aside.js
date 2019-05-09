@@ -2,6 +2,7 @@ import { react, html } from 'https://unpkg.com/rplus';
 import recursiveDependencyFetch from '../utils/recursiveDependencyFetch.js';
 import formatBytes from '../utils/formatBytes.js';
 import Spinner from './Spinner.js';
+import FileIcon from './FileIcon.js';
 
 const pushState = url => history.pushState(null, null, url);
 
@@ -14,6 +15,7 @@ const FileList = ({ title, files, cache, packageName }) => html`
     ${files.map(
       x => html`
         <li key=${x} data-test=${title + 'Item'}>
+          ${FileIcon}
           <a
             onClick=${e => {
               e.preventDefault();
@@ -50,23 +52,35 @@ export default ({ packageJSON, request }) => {
     <aside key="aside">
       ${file
         ? html`
-            <div key="path">
-              <h3>File Path</h3>
-              <span>./${request.file}</span>
-            </div>
+            <h1>Static Analysis</h1>
+            <p>
+              This is all the information we have derived from the contents of
+              this file as well as any previously explored files.
+            </p>
             <div key="size">
-              <h3>File Size</h3>
+              <h3>Individual File Size</h3>
               <span>${formatBytes(file.code.length)}</span>
             </div>
             <${FileList}
-              title="Dependencies"
-              files=${file.dependencies}
+              title="External Dependencies"
+              files=${file.dependencies.filter(
+                x => !x.includes(`${name}@${version}`)
+              )}
               cache=${cache}
               packageName=${`${name}@${version}`}
-              key="dependencies"
+              key="external_dependencies"
             />
             <${FileList}
-              title="Dependants"
+              title="Local Dependencies"
+              files=${file.dependencies.filter(x =>
+                x.includes(`${name}@${version}`)
+              )}
+              cache=${cache}
+              packageName=${`${name}@${version}`}
+              key="local_dependencies"
+            />
+            <${FileList}
+              title="Known Dependants"
               files=${file.dependants}
               cache=${cache}
               packageName=${`${name}@${version}`}
