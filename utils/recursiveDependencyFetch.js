@@ -37,7 +37,7 @@ const recursiveDependantsFetch = packageJSON => async (path, parent) => {
 
   // Base removes immediate js file from absolute URL to get
   // parent directory of current file.
-  const base = url.replace(/\/[^\/]*\.js/, '');
+  const base = url.replace(/\/[^\/]*\.(js|ts|mjs|json)/, '');
   const name = url.includes(packageJSON.name)
     ? './' + url.match(/\/([^\/]*)(\.js)|$/)[1]
     : url.replace('https://unpkg.com/', '');
@@ -61,7 +61,11 @@ const recursiveDependantsFetch = packageJSON => async (path, parent) => {
       ...new Set([...importsSanitised, ...requiresSanitisedFiltered]),
     ].map(x =>
       !x.startsWith('./') ||
-      (x.startsWith('./') && (x.endsWith('.js') || x.endsWith('.json')))
+      (x.startsWith('./') &&
+        (x.endsWith('.js') ||
+          x.endsWith('.ts') ||
+          x.endsWith('.mjs') ||
+          x.endsWith('.json')))
         ? x
         : `${x}.js`
     );

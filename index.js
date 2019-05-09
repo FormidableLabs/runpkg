@@ -14,7 +14,7 @@ const replaceState = url => history.replaceState(null, null, url);
 const parseUrl = (search = window.location.search.slice(1)) => ({
   url: search,
   package: search.split('/')[0],
-  folder: search.replace(/\/[^\/]*\.js/, ''),
+  folder: search.replace(/\/[^\/]*\.(js|mjs|json|ts)/, ''),
   file: search
     .split('/')
     .slice(1)
