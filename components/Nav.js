@@ -59,6 +59,7 @@ export default ({ packageJSON, packageMeta }) => {
       <p>
         ${description || 'There is no description for this package.'}
       </p>
+      <h2>Package Contents</h2>
       <${Directory} rootMeta=${packageMeta} />
     </nav>
   `;
