@@ -3,6 +3,7 @@ import recursiveDependencyFetch from '../utils/recursiveDependencyFetch.js';
 import formatBytes from '../utils/formatBytes.js';
 import Spinner from './Spinner.js';
 import FileIcon from './FileIcon.js';
+import dependenciesSizeCalculator from '../utils/dependenciesSizeCalculator.js';
 
 const pushState = url => history.pushState(null, null, url);
 
@@ -48,6 +49,12 @@ export default ({ packageJSON, request }) => {
   const file = cache[`https://unpkg.com/${request.url}`];
   const { name, version } = packageJSON;
 
+  let dependenciesSize;
+
+  if (file && file.dependencies) {
+    dependenciesSize = dependenciesSizeCalculator(cache, file.dependencies);
+  }
+
   return html`
     <aside key="aside">
       ${file
@@ -61,6 +68,13 @@ export default ({ packageJSON, request }) => {
               <h3>Individual File Size</h3>
               <span>${formatBytes(file.code.length)}</span>
             </div>
+            ${dependenciesSize &&
+              html`
+                <div key="size">
+                  <h3>Imports Size</h3>
+                  <span>${formatBytes(dependenciesSize)}</span>
+                </div>
+              `}
             <${FileList}
               title="External Dependencies"
               files=${file.dependencies.filter(
