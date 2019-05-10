@@ -10,7 +10,7 @@ Eventually we hope to be able to offer dependency tree flattening with dead code
 
 # Usage
 
-To view a package or module in the browser with runpkg, pre-append any unpkg url with: `r`.
+To view a package or module in the browser with runpkg, prepend any unpkg url with: `r`.
 
 For example: [`https://unpkg.com/es-react@16.8.30/index.js`](https://unpkg.com/es-react@16.8.30/index.js)
 Becomes: [`https://runpkg.com/es-react@16.8.30/index.js`](https://runpkg.com/es-react@16.8.30/index.js)
