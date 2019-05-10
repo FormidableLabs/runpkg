@@ -98,30 +98,32 @@ const Home = () => {
     [code]
   );
 
-  return fetchError
-    ? ErrorBlock404(setFetchError)
-    : request.url === ''
-    ? Overlay
-    : isEmpty(packageJSON) || isEmpty(packageMeta)
-    ? null
-    : html`
-        <main className=${styles}>
-          <${Nav} packageJSON=${packageJSON} packageMeta=${packageMeta} />
-          <article>
-            <h1>
-              ${FileIcon} ${request.file}
-            </h1>
-            ${CodeBlock}
-          </article>
-          <${Aside} packageJSON=${packageJSON} request=${request} />
-          <footer>
-            <a href="https://formidable.com/">
-              <p>An experiment by the folks at Formidable</p>
-              ${FormidableIcon}</a
-            >
-          </footer>
-        </main>
-      `;
+  return html`
+    <main className=${styles}>
+      ${fetchError
+        ? ErrorBlock404(setFetchError)
+        : request.url === ''
+        ? Overlay
+        : isEmpty(packageJSON) || isEmpty(packageMeta)
+        ? null
+        : html`
+            <${Nav} packageJSON=${packageJSON} packageMeta=${packageMeta} />
+            <article>
+              <h1>
+                ${FileIcon} ${request.file}
+              </h1>
+              ${CodeBlock}
+            </article>
+            <${Aside} packageJSON=${packageJSON} request=${request} />
+            <footer>
+              <a href="https://formidable.com/">
+                <p>An experiment by the folks at Formidable</p>
+                ${FormidableIcon}</a
+              >
+            </footer>
+          `}
+    </main>
+  `;
 };
 
 react.render(

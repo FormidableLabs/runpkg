@@ -327,7 +327,7 @@
   }
 }
 
-:global(dialog) {
+& dialog {
   display: flex;
   position: fixed;
   background: none;
@@ -346,10 +346,14 @@
 
     p {
       color: rgba(255, 255, 255, 0.8);
-      font-size: 1.5rem;
+      font-size: 1rem;
       line-height: 162%;
       text-align: center;
       max-width: 50ex;
+      @media screen and (min-width: 800px) {
+        font-size: 1.5rem;
+        line-height: 162%;
+      }
     }
 
     h1 {
@@ -360,13 +364,14 @@
     }
 
     svg {
-      width: 20vw;
+      width: 14rem;
+      margin: -2rem;
     }
 
     button {
       border: 1px solid #80eac7;
       margin-top: 2rem;
-      font-size: 1.2rem;
+      font-size: 1rem;
       padding: 1rem;
       border-radius: 1rem;
       color: #282c34;
