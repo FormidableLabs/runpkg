@@ -36,16 +36,14 @@ const recursiveDependantsFetch = packageJSON => async (path, parent) => {
 
   // Checks if we've already fetched the file and dependencies
   // and doesn't fetch it again.
-  if (cache[url]) {
+  if (cache[url] && parent) {
     // If this file requests file 'x' but we've already
     // requested file 'x' then it infers that this file
     // is a parent of file 'x'.
-    if (parent) {
-      cache[url] = {
-        ...cache[url],
-        dependants: [...cache[url].dependants, parent],
-      };
-    }
+    cache[url] = {
+      ...cache[url],
+      dependants: [...cache[url].dependants, parent],
+    };
     return;
   }
 
@@ -72,7 +70,8 @@ const recursiveDependantsFetch = packageJSON => async (path, parent) => {
     const requiresSanitisedFiltered = requiresSanitised.filter(
       x =>
         !isExternalPath(x) ||
-        Object.keys(packageJSON.dependencies || {}).includes(x)
+        // comparing just the root of the require, e.g. to handle `require('prop-types/checkPropTypes')`
+        Object.keys(packageJSON.dependencies || {}).includes(x.split('/')[0])
     );
     // Return array of unique dependencies appending js
     // extension to any relative imports that have no extension
