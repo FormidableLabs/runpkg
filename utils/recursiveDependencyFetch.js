@@ -1,5 +1,19 @@
+import fileNameRegEx from '../utils/fileNameRegEx.js';
+
+// Handles paths like "../../some-file.js"
+const handleDoubleDot = (pathEnd, base) => {
+  const howFarBack = -1 * pathEnd.match(/\.\.\//g).length;
+  const strippedPathEnd = pathEnd.replace(/\.\./g, '').replace(/\/+/g, '/');
+  const strippedBase = base
+    .split('/')
+    .slice(0, howFarBack)
+    .join('/');
+  return strippedBase + strippedPathEnd;
+};
+
 const makePath = base => x => {
   if (x.startsWith('./')) return base + x.replace('./', '/');
+  if (x.startsWith('../')) return handleDoubleDot(x, base);
   if (x.startsWith('https://')) return x;
   return 'https://unpkg.com/' + x;
 };
@@ -22,25 +36,28 @@ const recursiveDependantsFetch = packageJSON => async (path, parent) => {
 
   // Checks if we've already fetched the file and dependencies
   // and doesn't fetch it again.
-  if (cache[url]) {
+  if (cache[url] && parent) {
     // If this file requests file 'x' but we've already
     // requested file 'x' then it infers that this file
     // is a parent of file 'x'.
-    if (parent) {
-      cache[url] = {
-        ...cache[url],
-        dependants: [...cache[url].dependants, parent],
-      };
-    }
+    cache[url] = {
+      ...cache[url],
+      dependants: [...cache[url].dependants, parent],
+    };
     return;
   }
 
-  // Base removes immediate js file from absolute URL to get
+  // Dir removes immediate file from absolute URL to get
   // parent directory of current file.
-  const base = url.replace(/\/[^\/]*\.js/, '');
+  const dir = url.replace(fileNameRegEx, '');
   const name = url.includes(packageJSON.name)
     ? './' + url.match(/\/([^\/]*)(\.js)|$/)[1]
     : url.replace('https://unpkg.com/', '');
+
+  const isExternalPath = importOrRequire => !importOrRequire.startsWith('.');
+
+  const isLocalFile = importOrRequire =>
+    !isExternalPath(importOrRequire) && fileNameRegEx.test(importOrRequire);
 
   const extractDependencies = input => {
     const imports =
@@ -52,24 +69,20 @@ const recursiveDependantsFetch = packageJSON => async (path, parent) => {
     const requiresSanitised = requires.map(x => x.match(/['"](.*)['"]/)[1]);
     const requiresSanitisedFiltered = requiresSanitised.filter(
       x =>
-        x.startsWith('./') ||
-        Object.keys(packageJSON.dependencies || {}).includes(x)
+        !isExternalPath(x) ||
+        // comparing just the root of the require, e.g. to handle `require('prop-types/checkPropTypes')`
+        Object.keys(packageJSON.dependencies || {}).includes(x.split('/')[0])
     );
     // Return array of unique dependencies appending js
-    // extention to any relative imports that have no extension
+    // extension to any relative imports that have no extension
     return [
       ...new Set([...importsSanitised, ...requiresSanitisedFiltered]),
-    ].map(x =>
-      !x.startsWith('./') ||
-      (x.startsWith('./') && (x.endsWith('.js') || x.endsWith('.json')))
-        ? x
-        : `${x}.js`
-    );
+    ].map(x => (isExternalPath(x) || isLocalFile(x) ? x : `${x}.js`));
   };
 
   // Checks for imports/ requires for current file then
   // coverts relative imports to absolute.
-  const dependencies = extractDependencies(code).map(makePath(base));
+  const dependencies = extractDependencies(code).map(makePath(dir));
 
   // Pushes collected info into cache
   cache[url] = {

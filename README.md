@@ -18,7 +18,7 @@ We set out to solve a few very specific problems:
 
 # Usage
 
-To view a package or module in the browser with runpkg, pre-append any unpkg url with: `r`. For example:
+To view a package or module in the browser with runpkg, prepend any unpkg url with: `r`. For example:
 
 | Source | URL                                                                                            |
 | ------ | ---------------------------------------------------------------------------------------------- |
