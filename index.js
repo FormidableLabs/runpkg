@@ -6,6 +6,7 @@ import ErrorBlock404 from './components/ErrorBlock404.js';
 import Aside from './components/Aside.js';
 import Nav from './components/Nav.js';
 import FileIcon from './components/FileIcon.js';
+import fileNameRegEx from './utils/fileNameRegEx.js';
 
 const styles = css`/index.css`;
 const isEmpty = obj => Object.keys(obj).length === 0;
@@ -14,7 +15,7 @@ const replaceState = url => history.replaceState(null, null, url);
 const parseUrl = (search = window.location.search.slice(1)) => ({
   url: search,
   package: search.split('/')[0],
-  folder: search.replace(/\/[^\/]*\.(js|mjs|json|ts)/, ''),
+  folder: search.replace(fileNameRegEx, ''),
   file: search
     .split('/')
     .slice(1)

@@ -1,3 +1,5 @@
+import fileNameRegEx from '../utils/fileNameRegEx.js';
+
 // Handles paths like "../../some-file.js"
 const handleDoubleDot = (pathEnd, base) => {
   const howFarBack = -1 * pathEnd.match(/\.\.\//g).length;
@@ -49,7 +51,6 @@ const recursiveDependantsFetch = packageJSON => async (path, parent) => {
 
   // Dir removes immediate file from absolute URL to get
   // parent directory of current file.
-  const fileNameRegEx = /\/[^\/@]+[\.][^\/]+$/;
   const dir = url.replace(fileNameRegEx, '');
   const name = url.includes(packageJSON.name)
     ? './' + url.match(/\/([^\/]*)(\.js)|$/)[1]
