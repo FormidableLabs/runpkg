@@ -59,13 +59,22 @@ const recursiveDependantsFetch = packageJSON => async (path, parent) => {
   const isLocalFile = importOrRequire =>
     !isExternalPath(importOrRequire) && fileNameRegEx.test(importOrRequire);
 
+  // "Conservative" regex to remove a large number of comments from JS without accidentally matching anything
+  // Helps to avoid accidentally "finding" imports/requires in comments
+  const removeSomeComments = js =>
+    js.replace(/^\/\*(.|\r|\n)*?\*\/|^[\t ]*\/\/.*/gm, '');
+
   const extractDependencies = input => {
+    const inputWithoutComments = removeSomeComments(input);
     const imports =
-      input.match(/^(import|export).*(from)[ \n]+['"](.*?)['"];?$/gm) || [];
+      inputWithoutComments.match(
+        /^(import|export).*(from)[ \n]+['"](.*?)['"];?$/gm
+      ) || [];
     const importsSanitised = imports.map(
       x => x.match(/^(import|export).*(from)[ \n]+['"](.*?)['"];?$/)[3]
     );
-    const requires = input.match(/(require\(['"])[^)]*(['"]\))/gm) || [];
+    const requires =
+      inputWithoutComments.match(/(require\(['"])[^)\n\r]*(['"]\))/gm) || [];
     const requiresSanitised = requires.map(x => x.match(/['"](.*)['"]/)[1]);
     const requiresSanitisedFiltered = requiresSanitised.filter(
       x =>
