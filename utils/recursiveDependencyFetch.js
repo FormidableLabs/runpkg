@@ -18,14 +18,50 @@ const makePath = base => x => {
   return 'https://unpkg.com/' + x;
 };
 
+const isExternalPath = str => !str.startsWith('.');
+const isLocalFile = str => !isExternalPath(str) && fileNameRegEx.test(str);
+const stripComments = str =>
+  str.replace(/^\/\*(.|\r|\n)*?\*\/|^[\t ]*\/\/.*/gm, '');
+
+const extractDependencies = (input, pkg) => {
+  const code = stripComments(input);
+  const imports =
+    code.match(/^(import|export).*(from)[ \n]+['"](.*?)['"];?$/gm) || [];
+  const importsSanitised = imports.map(
+    x => x.match(/^(import|export).*(from)[ \n]+['"](.*?)['"];?$/)[3]
+  );
+  const requires = code.match(/(require\(['"])[^)\n\r]*(['"]\))/gm) || [];
+  const requiresSanitised = requires.map(x => x.match(/['"](.*)['"]/)[1]);
+  const requiresSanitisedFiltered = requiresSanitised.filter(
+    x =>
+      !isExternalPath(x) ||
+      // comparing just the root of the require, e.g. to handle `require('prop-types/checkPropTypes')`
+      Object.keys(pkg.dependencies || {}).includes(x.split('/')[0])
+  );
+  // Return array of unique dependencies appending js
+  // extension to any relative imports that have no extension
+  return [...new Set([...importsSanitised, ...requiresSanitisedFiltered])].map(
+    x => (isExternalPath(x) || isLocalFile(x) ? x : `${x}.js`)
+  );
+};
+
+const packageJsonUrl = path =>
+  'https://unpkg.com/' +
+  path.replace('https://unpkg.com/', '').split('/')[0] +
+  '/package.json';
+
 // cache keeps memory of what was run last
 const cache = {};
+const pkgCache = (items => async key =>
+  (items[key] = items[key] || (await fetch(key).then(res => res.json()))))({});
 
 /* eslint-disable max-statements*/
-const recursiveDependantsFetch = packageJSON => async (path, parent) => {
+const recursiveDependantsFetch = async (path, parent) => {
   const file = await fetch(path);
   const code = await file.text();
   const url = file.url;
+  const dir = url.replace(fileNameRegEx, '');
+  const pkg = await pkgCache(packageJsonUrl(url));
 
   // If we asked for a file but got redirected by unpkg
   // then update the url in the parents dependencies
@@ -36,59 +72,24 @@ const recursiveDependantsFetch = packageJSON => async (path, parent) => {
 
   // Checks if we've already fetched the file and dependencies
   // and doesn't fetch it again.
-  if (cache[url] && parent) {
+  if (cache[url]) {
     // If this file requests file 'x' but we've already
     // requested file 'x' then it infers that this file
     // is a parent of file 'x'.
-    cache[url] = {
-      ...cache[url],
-      dependants: [...cache[url].dependants, parent],
-    };
+    if (parent) {
+      cache[url] = {
+        ...cache[url],
+        dependants: [...cache[url].dependants, parent],
+      };
+    }
     return;
   }
 
-  // Dir removes immediate file from absolute URL to get
-  // parent directory of current file.
-  const dir = url.replace(fileNameRegEx, '');
-  const name = url.includes(packageJSON.name)
-    ? './' + url.match(/\/([^\/]*)(\.js)|$/)[1]
-    : url.replace('https://unpkg.com/', '');
+  const dependencies = extractDependencies(code, pkg).map(makePath(dir));
 
-  const isExternalPath = importOrRequire => !importOrRequire.startsWith('.');
-
-  const isLocalFile = importOrRequire =>
-    !isExternalPath(importOrRequire) && fileNameRegEx.test(importOrRequire);
-
-  const extractDependencies = input => {
-    const imports =
-      input.match(/^(import|export).*(from)[ \n]+['"](.*?)['"];?$/gm) || [];
-    const importsSanitised = imports.map(
-      x => x.match(/^(import|export).*(from)[ \n]+['"](.*?)['"];?$/)[3]
-    );
-    const requires = input.match(/(require\(['"])[^)]*(['"]\))/gm) || [];
-    const requiresSanitised = requires.map(x => x.match(/['"](.*)['"]/)[1]);
-    const requiresSanitisedFiltered = requiresSanitised.filter(
-      x =>
-        !isExternalPath(x) ||
-        // comparing just the root of the require, e.g. to handle `require('prop-types/checkPropTypes')`
-        Object.keys(packageJSON.dependencies || {}).includes(x.split('/')[0])
-    );
-    // Return array of unique dependencies appending js
-    // extension to any relative imports that have no extension
-    return [
-      ...new Set([...importsSanitised, ...requiresSanitisedFiltered]),
-    ].map(x => (isExternalPath(x) || isLocalFile(x) ? x : `${x}.js`));
-  };
-
-  // Checks for imports/ requires for current file then
-  // coverts relative imports to absolute.
-  const dependencies = extractDependencies(code).map(makePath(dir));
-
-  // Pushes collected info into cache
   cache[url] = {
     url,
-    name,
-    code,
+    size: code.length,
     dependencies,
     dependants: parent ? [parent] : [],
   };
@@ -97,21 +98,15 @@ const recursiveDependantsFetch = packageJSON => async (path, parent) => {
   //  that file and wait for return.
 
   /* eslint-disable consistent-return*/
-  return Promise.all(
-    dependencies.map(x => recursiveDependantsFetch(packageJSON)(x, url))
-  );
+  return Promise.all(dependencies.map(x => recursiveDependantsFetch(x, url)));
   /* eslint-enable consistent-return*/
 };
 /* eslint-enable max-statements*/
 
-export default async (packageJSON, entry) => {
+export default async entry => {
   // Start tree walking dependencies from the given entry point
   // otherwise start from the projects main entry point
-  await recursiveDependantsFetch(packageJSON)(
-    entry
-      ? `https://unpkg.com/${entry}`
-      : `https://unpkg.com/${packageJSON.name}@${packageJSON.version}`
-  );
+  await recursiveDependantsFetch(`https://unpkg.com/${entry}`);
   // Returns new cache.
   return cache;
 };

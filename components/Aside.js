@@ -6,7 +6,7 @@ import FileIcon from './FileIcon.js';
 
 const pushState = url => history.pushState(null, null, url);
 
-const FileList = ({ title, files, cache, packageName }) => html`
+const FileList = ({ title, files, packageName }) => html`
   <div key=${title}>
     <h3>${title}</h3>
     <span>${files.length} Files</span>
@@ -14,18 +14,20 @@ const FileList = ({ title, files, cache, packageName }) => html`
   <ul key=${files.join('-')}>
     ${files.map(
       x => html`
-        <li key=${x} data-test=${title + 'Item'}>
+        <li key=${x.url} data-test=${title + 'Item'}>
           ${FileIcon}
           <a
             onClick=${e => {
               e.preventDefault();
-              pushState(`?${x.replace('https://unpkg.com/', '')}`);
+              pushState(`?${x.url.replace('https://unpkg.com/', '')}`);
             }}
           >
             <span>
-              ${x.replace(`https://unpkg.com/`, '').replace(packageName, '')}
+              ${x.url
+                .replace(`https://unpkg.com/`, '')
+                .replace(packageName, '')}
             </span>
-            <span>${formatBytes(cache[x].code.length)}</span>
+            <span>${formatBytes(x.size)}</span>
           </a>
         </li>
       `
@@ -33,20 +35,61 @@ const FileList = ({ title, files, cache, packageName }) => html`
   </ul>
 `;
 
+// const fetchDependencies = all => key =>
+//   all[key].dependencies.reduce(
+//     (deps, dep) => ({
+//       ...deps,
+//       [dep]: all[dep],
+//       ...(all[key].dependencies ? fetchDependencies(all)(dep) : {}),
+//     }),
+//     {}
+//   );
+
 export default ({ packageJSON, request }) => {
   const [cache, setCache] = react.useState({});
 
-  // Runs when file changes + fetches dependencies.
   react.useEffect(() => {
-    if (packageJSON.name && request.file) {
-      setCache({});
-      /* Fetch all files in this module */
-      console.log(`Recursively fetching ${request.url}`);
-      recursiveDependencyFetch(packageJSON, request.url).then(setCache);
+    setCache({});
+    if (request.file) {
+      console.log(`Analysing ${request.url}`);
+      recursiveDependencyFetch(request.url).then(setCache);
     }
-  }, [packageJSON.name, request.file]);
-  const file = cache[`https://unpkg.com/${request.url}`];
+  }, [request.url]);
+
+  const key = `https://unpkg.com/${request.url}`;
+  const file = cache[key];
+
+  if (!file)
+    return html`
+      <aside key="aside">
+        ${Spinner}
+      </aside>
+    `;
+
   const { name, version } = packageJSON;
+  // const deepDependencies = fetchDependencies(cache)(key);
+
+  const externalDependencies = file.dependencies
+    .filter(x => !x.includes(`${name}@${version}`))
+    .map(x => cache[x]);
+
+  const internalDependencies = file.dependencies
+    .filter(x => x.includes(`${name}@${version}`))
+    .map(x => cache[x]);
+
+  const knownDependants = file.dependants.map(x => cache[x]);
+  // <div key="imported-size">
+  //   <h3>Imported Size</h3>
+  //   <span
+  //     >${formatBytes(
+  //       file.code.length +
+  //         Object.values(deepDependencies).reduce(
+  //           (a, b) => a + b.code.length,
+  //           0
+  //         )
+  //     )}</span
+  //   >
+  // </div>
 
   return html`
     <aside key="aside">
@@ -57,34 +100,27 @@ export default ({ packageJSON, request }) => {
               This is all the information we have derived from the contents of
               this file as well as any previously explored files.
             </p>
-            <div key="size">
-              <h3>Individual File Size</h3>
-              <span>${formatBytes(file.code.length)}</span>
+            <div key="filesize">
+              <h3>File Size</h3>
+              <span>${formatBytes(file.size)}</span>
             </div>
             <${FileList}
               title="External Dependencies"
-              files=${file.dependencies.filter(
-                x => !x.includes(`${name}@${version}`)
-              )}
-              cache=${cache}
-              packageName=${`${name}@${version}`}
+              files=${externalDependencies}
               key="external_dependencies"
+              packageName=${`${name}@${version}`}
             />
             <${FileList}
-              title="Local Dependencies"
-              files=${file.dependencies.filter(x =>
-                x.includes(`${name}@${version}`)
-              )}
-              cache=${cache}
+              title="Internal Dependencies"
+              files=${internalDependencies}
+              key="internal_dependencies"
               packageName=${`${name}@${version}`}
-              key="local_dependencies"
             />
             <${FileList}
               title="Known Dependants"
-              files=${file.dependants}
-              cache=${cache}
-              packageName=${`${name}@${version}`}
+              files=${knownDependants}
               key="dependants"
+              packageName=${`${name}@${version}`}
             />
           `
         : Spinner}
