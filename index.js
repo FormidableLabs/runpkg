@@ -12,7 +12,9 @@ const styles = css`/index.css`;
 const isEmpty = obj => Object.keys(obj).length === 0;
 const replaceState = url => history.replaceState(null, null, url);
 
-const parseUrl = (search = window.location.search.slice(1)) => ({
+const parseUrl = (
+  search = window.location.search.slice(1).replace(/\/$/, '')
+) => ({
   url: search,
   package: search.startsWith('@')
     ? search
