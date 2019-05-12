@@ -1,5 +1,7 @@
 import fileNameRegEx from '../utils/fileNameRegEx.js';
 
+const UNPKG = 'https://unpkg.com/';
+
 // Handles paths like "../../some-file.js"
 const handleDoubleDot = (pathEnd, base) => {
   const howFarBack = -1 * pathEnd.match(/\.\.\//g).length;
@@ -11,11 +13,12 @@ const handleDoubleDot = (pathEnd, base) => {
   return strippedBase + strippedPathEnd;
 };
 
-const makePath = base => x => {
+const makePath = url => x => {
+  const base = url.replace(fileNameRegEx, '');
   if (x.startsWith('./')) return base + x.replace('./', '/');
   if (x.startsWith('../')) return handleDoubleDot(x, base);
   if (x.startsWith('https://')) return x;
-  return 'https://unpkg.com/' + x;
+  return UNPKG + x;
 };
 
 const isExternalPath = str => !str.startsWith('.');
@@ -25,42 +28,53 @@ const stripComments = str =>
 
 const extractDependencies = (input, pkg) => {
   const code = stripComments(input);
-  const imports =
-    code.match(/^(import|export).*(from)[ \n]+['"](.*?)['"];?$/gm) || [];
-  const importsSanitised = imports.map(
-    x => x.match(/^(import|export).*(from)[ \n]+['"](.*?)['"];?$/)[3]
-  );
-  const requires = code.match(/(require\(['"])[^)\n\r]*(['"]\))/gm) || [];
-  const requiresSanitised = requires.map(x => x.match(/['"](.*)['"]/)[1]);
-  const requiresSanitisedFiltered = requiresSanitised.filter(
-    x =>
-      !isExternalPath(x) ||
-      // comparing just the root of the require, e.g. to handle `require('prop-types/checkPropTypes')`
-      Object.keys(pkg.dependencies || {}).includes(x.split('/')[0])
-  );
+
+  const imports = (
+    code.match(/^(import|export).*(from)[ \n]+['"](.*?)['"];?$/gm) || []
+  ).map(x => x.match(/^(import|export).*(from)[ \n]+['"](.*?)['"];?$/)[3]);
+
+  const requires = (code.match(/(require\(['"])[^)\n\r]*(['"]\))/gm) || [])
+    .map(x => x.match(/['"](.*)['"]/)[1])
+    .filter(
+      x =>
+        !isExternalPath(x) ||
+        // Allows both @babel/core and proptypes/something
+        Object.keys(pkg.dependencies || {}).includes(
+          x.startsWith('@') ? x : x.split('/')[0]
+        )
+    );
+
   // Return array of unique dependencies appending js
   // extension to any relative imports that have no extension
-  return [...new Set([...importsSanitised, ...requiresSanitisedFiltered])].map(
-    x => (isExternalPath(x) || isLocalFile(x) ? x : `${x}.js`)
+  return [...new Set([...imports, ...requires])].map(x =>
+    isExternalPath(x) || isLocalFile(x) ? x : `${x}.js`
   );
 };
 
-const packageJsonUrl = path =>
-  'https://unpkg.com/' +
-  path.replace('https://unpkg.com/', '').split('/')[0] +
-  '/package.json';
+const packageJsonUrl = path => {
+  const [full, name, version] = path.match(
+    /https:\/\/unpkg.com\/(@?[^@\n]*)@?(\d+\.\d+\.\d+)?/
+  );
+  return `${UNPKG}${name}@${version}` + '/package.json';
+};
 
 // cache keeps memory of what was run last
 const cache = {};
+
 const pkgCache = (items => async key =>
   (items[key] = items[key] || (await fetch(key).then(res => res.json()))))({});
 
+const fileCache = (items => async key =>
+  (items[key] =
+    items[key] ||
+    (await fetch(key).then(async res => ({
+      url: res.url,
+      code: await res.text(),
+    })))))({});
+
 /* eslint-disable max-statements*/
 const recursiveDependantsFetch = async (path, parent) => {
-  const file = await fetch(path);
-  const code = await file.text();
-  const url = file.url;
-  const dir = url.replace(fileNameRegEx, '');
+  const { url, code } = await fileCache(path);
   const pkg = await pkgCache(packageJsonUrl(url));
 
   // If we asked for a file but got redirected by unpkg
@@ -85,7 +99,7 @@ const recursiveDependantsFetch = async (path, parent) => {
     return;
   }
 
-  const dependencies = extractDependencies(code, pkg).map(makePath(dir));
+  const dependencies = extractDependencies(code, pkg).map(makePath(url));
 
   cache[url] = {
     url,
@@ -96,10 +110,8 @@ const recursiveDependantsFetch = async (path, parent) => {
 
   // Then we call the function again for all dependencies of
   //  that file and wait for return.
-
-  /* eslint-disable consistent-return*/
+  // eslint-disable-next-line consistent-return
   return Promise.all(dependencies.map(x => recursiveDependantsFetch(x, url)));
-  /* eslint-enable consistent-return*/
 };
 /* eslint-enable max-statements*/
 

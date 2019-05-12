@@ -14,7 +14,12 @@ const replaceState = url => history.replaceState(null, null, url);
 
 const parseUrl = (search = window.location.search.slice(1)) => ({
   url: search,
-  package: search.split('/')[0],
+  package: search.startsWith('@')
+    ? search
+        .split('/')
+        .slice(0, 2)
+        .join('/')
+    : search.split('/')[0],
   folder: search.replace(fileNameRegEx, ''),
   file: search
     .split('/')
