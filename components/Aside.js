@@ -50,7 +50,7 @@ export default ({ packageJSON, request }) => {
 
   react.useEffect(() => {
     setCache({});
-    if (request.file) {
+    if (request.file.match(/\/.*\..*/)) {
       console.log(`Analysing ${request.url}`);
       recursiveDependencyFetch(request.url).then(setCache);
     }
