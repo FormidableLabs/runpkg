@@ -1,10 +1,12 @@
 import { html } from 'https://unpkg.com/rplus-production@1.0.0';
 import ProjectBadge from './ProjectBadge/index.js';
+import FormidableLogo from './FormidableLogo.js';
 
 const pushState = url => history.pushState(null, null, url);
 
 export default html`
   <dialog open>
+    ${FormidableLogo}
     <div className="overlay">
       <${ProjectBadge}
         color="#80EAC7"
