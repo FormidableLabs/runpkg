@@ -22,13 +22,9 @@ const FileList = ({ title, files, packageName }) => html`
               pushState(`?${x.url.replace('https://unpkg.com/', '')}`);
             }}
           >
-            <span>
-              ${x.url
-                .replace(`https://unpkg.com/`, '')
-                .replace(packageName, '')}
-            </span>
-            <span>${formatBytes(x.size)}</span>
+            ${x.url.replace(`https://unpkg.com/`, '').replace(packageName, '')}
           </a>
+          <span>${formatBytes(x.size)}</span>
         </li>
       `
     )}
