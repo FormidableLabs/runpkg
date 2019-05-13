@@ -301,6 +301,7 @@
     align-items: center;
 
     svg {
+      flex: none;
       width: 1.38rem;
       height: 1.38rem;
       fill: rgba(255, 255, 255, 0.5);
@@ -315,10 +316,18 @@
       justify-content: space-between;
       font-weight: lighter;
       text-decoration: underline;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       &:hover {
         cursor: pointer;
         color: #fff;
       }
+    }
+
+    > span {
+      white-space: nowrap;
+      margin-left: 1rem;
     }
   }
 
