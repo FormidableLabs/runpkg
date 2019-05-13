@@ -24,7 +24,7 @@ const makePath = url => x => {
 const isExternalPath = str => !str.startsWith('.');
 const isLocalFile = str => !isExternalPath(str) && fileNameRegEx.test(str);
 const stripComments = str =>
-  str.replace(/^\/\*(.|\r|\n)*?\*\/|^[\t ]*\/\/.*/gm, '');
+  str.replace(/^[\t ]*\/\*(.|\r|\n)*?\*\/|^[\t ]*\/\/.*/gm, '');
 
 const extractDependencies = (input, pkg) => {
   const code = stripComments(input);
