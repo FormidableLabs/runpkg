@@ -113,7 +113,7 @@ const Home = () => {
                   fontFamily: '"Inconsolata", monospace',
                 }}
                 padding=${42}
-                disabled
+                readOnly
               />
               <pre key="pre">${file.code.slice(100000)}</pre>
             </article>
