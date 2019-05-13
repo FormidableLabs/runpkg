@@ -1,4 +1,4 @@
-import { html } from 'https://unpkg.com/rplus';
+import { html } from 'https://unpkg.com/rplus-production@1.0.0';
 import ProjectBadge from './ProjectBadge/index.js';
 
 const pushState = url => history.pushState(null, null, url);
@@ -16,8 +16,11 @@ export default html`
         Explore, learn about and perform static analysis on npm packages in the
         browser.
       </p>
-      <button data-test="Overlay-Button" onClick=${() => pushState('?lodash-es')}>
-        Start Exploring
+      <button
+        data-test="Overlay-Button"
+        onClick=${() => pushState('?lodash-es')}
+      >
+        Explore An Example Package
       </button>
     </div>
   </dialog>

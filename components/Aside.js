@@ -1,4 +1,4 @@
-import { react, html } from 'https://unpkg.com/rplus';
+import { react, html } from 'https://unpkg.com/rplus-production@1.0.0';
 import recursiveDependencyFetch from '../utils/recursiveDependencyFetch.js';
 import formatBytes from '../utils/formatBytes.js';
 import Spinner from './Spinner.js';

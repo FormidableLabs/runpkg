@@ -1,4 +1,4 @@
-import { html, react } from 'https://unpkg.com/rplus';
+import { html, react } from 'https://unpkg.com/rplus-production@1.0.0';
 import NpmLogo from './NpmLogo.js';
 import FolderIcon from './FolderIcon.js';
 import FileIcon from './FileIcon.js';

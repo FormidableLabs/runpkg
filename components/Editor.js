@@ -1,4 +1,4 @@
-import { react as React, html } from 'https://unpkg.com/rplus';
+import { react as React, html } from 'https://unpkg.com/rplus-production@1.0.0';
 
 /*eslint-disable */
 

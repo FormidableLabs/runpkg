@@ -1,4 +1,4 @@
-import { react, html, css } from 'https://unpkg.com/rplus';
+import { react, html, css } from 'https://unpkg.com/rplus-production@1.0.0';
 import Editor from './components/Editor.js';
 import FormidableIcon from './components/FormidableLogo.js';
 import Overlay from './components/Overlay.js';
