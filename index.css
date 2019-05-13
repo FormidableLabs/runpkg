@@ -1,7 +1,7 @@
 & {
   width: 100%;
-  height: 100vh;
-  overflow: hidden;
+  min-height: 100vh;
+  overflow: auto;
   background: #2f3138;
   display: grid;
   grid-template-columns: 1fr;
@@ -244,11 +244,11 @@
 & aside {
   grid-area: aside;
   display: flex;
+  overflow: visible;
   flex-direction: column;
   background: rgba(0, 0, 0, 0.062);
   padding: 3rem;
   color: #fff;
-  overflow: auto;
   flex: 1 0 auto;
 
   > * + * {
@@ -334,6 +334,11 @@
   li + li {
     margin-top: 1rem;
   }
+
+  @media screen and (min-width: 1000px) {
+    overflow: auto;
+    height: 100vh;
+  }
 }
 
 & dialog {
@@ -342,6 +347,7 @@
   background: none;
   border: none;
   height: 100vh;
+  width: 100%;
 
   > div > * + * {
     margin-top: 2rem;
@@ -350,7 +356,6 @@
   > div {
     margin: auto;
     padding: 1rem;
-    width: 100%;
     text-align: center;
 
     p {
