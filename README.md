@@ -10,11 +10,9 @@ Runpkg turns a static file into an interactive and informative browsing experien
 
 # Features
 
-We set out to solve a few very specific problems:
-
 - 🔭 Navigable project directory listing
 - 🎨 Syntax highlighted file contents
-- 📝 Insight through some static analysis
+- 📝 Insights through static analysis
 
 # Usage
 
