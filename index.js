@@ -31,10 +31,13 @@ const parseUrl = (
 
 const Home = () => {
   const [request, setRequest] = react.useState(parseUrl());
-  const [packageJSON, setPackageJSON] = react.useState({});
-  const [packageMeta, setPackageMeta] = react.useState({});
-  const [code, setCode] = react.useState('');
+  const [file, setFile] = react.useState({});
   const [fetchError, setFetchError] = react.useState(false);
+
+  // Whenever the URL changes then
+  // 1. Resolve the unpkg url for the request url
+  // 2. Fetch the package.json for the requested package
+  // 3. Fetch the /?meta for the requested package
 
   /* Runs once and subscribes to url changes */
   react.useEffect(() => {
@@ -51,59 +54,41 @@ const Home = () => {
     addEventListener('popstate', () => setRequest(parseUrl()));
   }, []);
 
-  /* Runs every time the URL changes */
   react.useEffect(() => {
-    if (
-      request.package &&
-      request.package !== `${packageJSON.name}@${packageJSON.version}`
-    ) {
-      console.log(`Fetching ${request.package} meta data`);
-      Promise.all([
-        fetch(`https://unpkg.com/${request.package}/?meta`).then(res =>
-          res.json()
-        ),
-        fetch(`https://unpkg.com/${request.package}/package.json`).then(res =>
-          res.json()
-        ),
-      ])
-        .then(([meta, pkg]) => {
-          setPackageJSON(pkg);
-          setPackageMeta(meta);
-        })
-        .catch(() => {
-          setPackageJSON({});
-          setPackageMeta({});
-          setFetchError(true);
-        });
+    if (!request.package) {
+      setFile({});
+      setFetchError(false);
     }
-
-    fetch(`https://unpkg.com/${request.url}`)
-      .then(async res => ({
-        text: await res.text(),
-        url: res.url,
-      }))
-      .then(file => {
-        setCode(file.text.replace(/\t/g, '  '));
-        replaceState(`?${file.url.replace('https://unpkg.com/', '')}`);
-      });
+    if (request.package) {
+      (async () => {
+        // Fetch the file contents and check for redirect
+        const { url, code } = await fetch(
+          `https://unpkg.com/${request.url}`
+        ).then(async res => ({
+          code: await res.text(),
+          url: res.url,
+        }));
+        // Fetch the meta data
+        const meta = await fetch(`https://unpkg.com/${request.package}/?meta`)
+          .then(res => res.json())
+          .catch(e => setFetchError(true));
+        // Fetch the package json
+        const pkg = await fetch(
+          `https://unpkg.com/${request.package}/package.json`
+        )
+          .then(res => res.json())
+          .catch(e => setFetchError(true));
+        setFile({
+          url,
+          meta,
+          pkg,
+          code: code.replace(/\t/g, '  '),
+          name: url.replace(`https://unpkg.com/${pkg.name}@${pkg.version}`, ''),
+        });
+        replaceState(`?${url.replace('https://unpkg.com/', '')}`);
+      })();
+    }
   }, [request.url]);
-
-  const CodeBlock = react.useMemo(
-    () => html`
-      <${Editor}
-        key="editor"
-        value=${code.slice(0, 100000)}
-        style=${{
-          lineHeight: '138%',
-          fontFamily: '"Inconsolata", monospace',
-        }}
-        padding=${42}
-        disabled
-      />
-      <pre key="pre">${code.slice(100000)}</pre>
-    `,
-    [code]
-  );
 
   return html`
     <main className=${styles}>
@@ -111,17 +96,27 @@ const Home = () => {
         ? ErrorBlock404(setFetchError)
         : request.url === ''
         ? Overlay
-        : isEmpty(packageJSON) || isEmpty(packageMeta)
+        : isEmpty(file)
         ? null
         : html`
-            <${Nav} packageJSON=${packageJSON} packageMeta=${packageMeta} />
+            <${Nav} file=${file} />
             <article>
               <h1>
-                ${FileIcon} ${request.file}
+                ${FileIcon} ${file.name}
               </h1>
-              ${CodeBlock}
+              <${Editor}
+                key="editor"
+                value=${file.code.slice(0, 100000)}
+                style=${{
+                  lineHeight: '138%',
+                  fontFamily: '"Inconsolata", monospace',
+                }}
+                padding=${42}
+                disabled
+              />
+              <pre key="pre">${file.code.slice(100000)}</pre>
             </article>
-            <${Aside} packageJSON=${packageJSON} request=${request} />
+            <${Aside} file=${file} />
             <footer>
               <a href="https://formidable.com/">
                 <p>An experiment by the folks at Formidable</p>

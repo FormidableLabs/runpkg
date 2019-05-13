@@ -118,7 +118,7 @@ const recursiveDependantsFetch = async (path, parent) => {
 export default async entry => {
   // Start tree walking dependencies from the given entry point
   // otherwise start from the projects main entry point
-  await recursiveDependantsFetch(`https://unpkg.com/${entry}`);
+  await recursiveDependantsFetch(entry);
   // Returns new cache.
   return cache;
 };

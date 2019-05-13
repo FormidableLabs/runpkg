@@ -7,11 +7,12 @@ import CloseIcon from './CloseIcon.js';
 
 const pushState = url => history.pushState(null, null, url);
 
-export default ({ packageJSON, packageMeta }) => {
+export default ({ file }) => {
   const [isNavShowing, showNav] = react.useState(false);
-  const { name, version, main, license, description } = packageJSON;
+  const { name, version, main, license, description } = file.pkg;
+
   const packageMainUrl = `?${name}@${version}/${main}`;
-  const npmUrl = 'https://npmjs.com/' + packageJSON.name;
+  const npmUrl = 'https://npmjs.com/' + name;
 
   const File = ({ meta, parent }) => html`
     <li key=${meta.path} style=${{ order: 1 }}>
@@ -60,7 +61,7 @@ export default ({ packageJSON, packageMeta }) => {
         ${description || 'There is no description for this package.'}
       </p>
       <h2>Package Contents</h2>
-      <${Directory} rootMeta=${packageMeta} />
+      <${Directory} rootMeta=${file.meta} />
     </nav>
   `;
 };

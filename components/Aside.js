@@ -45,44 +45,45 @@ const FileList = ({ title, files, packageName }) => html`
 //     {}
 //   );
 
-export default ({ packageJSON, request }) => {
+export default ({ file }) => {
   const [cache, setCache] = react.useState({});
 
   react.useEffect(() => {
     setCache({});
-    if (request.file.match(/\/.*\..*/)) {
-      console.log(`Analysing ${request.url}`);
-      recursiveDependencyFetch(request.url).then(setCache);
+    // Match breaks this ?enhanced-resolve@4.1.0/lib/NodeJsInputFileSystem
+    // No match breaks preact@8.4.2/devtools
+    if (file.url) {
+      console.log(`Analysing ${file.url}`);
+      recursiveDependencyFetch(file.url).then(setCache);
     }
-  }, [request.url]);
+  }, [file.url]);
 
-  const key = `https://unpkg.com/${request.url}`;
-  const file = cache[key];
+  const target = cache[file.url];
 
-  if (!file)
+  if (!target)
     return html`
       <aside key="aside">
         ${Spinner}
       </aside>
     `;
 
-  const { name, version } = packageJSON;
+  const { name, version } = file.pkg;
   // const deepDependencies = fetchDependencies(cache)(key);
 
-  const externalDependencies = file.dependencies
+  const externalDependencies = target.dependencies
     .filter(x => !x.includes(`${name}@${version}`))
     .map(x => cache[x]);
 
-  const internalDependencies = file.dependencies
+  const internalDependencies = target.dependencies
     .filter(x => x.includes(`${name}@${version}`))
     .map(x => cache[x]);
 
-  const knownDependants = file.dependants.map(x => cache[x]);
+  const knownDependants = target.dependants.map(x => cache[x]);
   // <div key="imported-size">
   //   <h3>Imported Size</h3>
   //   <span
   //     >${formatBytes(
-  //       file.code.length +
+  //       target.code.length +
   //         Object.values(deepDependencies).reduce(
   //           (a, b) => a + b.code.length,
   //           0
@@ -102,7 +103,7 @@ export default ({ packageJSON, request }) => {
             </p>
             <div key="filesize">
               <h3>File Size</h3>
-              <span>${formatBytes(file.size)}</span>
+              <span>${formatBytes(target.size)}</span>
             </div>
             <${FileList}
               title="External Dependencies"
