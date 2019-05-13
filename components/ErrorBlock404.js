@@ -8,7 +8,7 @@ const ErrorBlock404 = setFetchErrorStatus => html`
       <h1 data-test="Error-Title">404</h1>
       <p>
         Oh no, we couldn't find that package! Check the package name was spelt
-        it correctly or create an issue.
+        correctly or create an issue.
       </p>
       <button
         data-test="Error-Button"
