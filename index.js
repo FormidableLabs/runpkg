@@ -7,6 +7,7 @@ import Aside from './components/Aside.js';
 import Nav from './components/Nav.js';
 import FileIcon from './components/FileIcon.js';
 import fileNameRegEx from './utils/fileNameRegEx.js';
+import GitHubLogo from './components/GitHubLogo.js';
 
 const styles = css`/index.css`;
 const isEmpty = obj => Object.keys(obj).length === 0;
@@ -118,10 +119,13 @@ const Home = () => {
             </article>
             <${Aside} file=${file} />
             <footer>
-              <a href="https://formidable.com/">
-                <p>An experiment by the folks at Formidable</p>
+              <a href="https://formidable.com/blog/2019/runpkg/">
+                <p>Read about how we made this at Formidable..</p>
                 ${FormidableIcon}</a
               >
+              <a href="https://github.com/formidablelabs/runpkg">
+                ${GitHubLogo}
+              </a>
             </footer>
           `}
     </main>

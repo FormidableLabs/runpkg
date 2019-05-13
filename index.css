@@ -16,6 +16,7 @@
       'nav article aside'
       'nav article footer';
     overflow: hidden;
+    height: 100vh;
   }
 }
 
@@ -183,25 +184,30 @@
   background: rgba(0, 0, 0, 0.2);
   color: rgba(255, 255, 255, 0.5);
   display: none;
+  padding: 0 1.62rem;
+
   a {
-    width: 100%;
     text-decoration: none;
     color: inherit;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 0 1.62rem;
+    &:first-child {
+      width: 100%;
+    }
   }
 
   svg {
     width: 1.62rem;
     height: 1.62rem;
     fill: currentColor;
+    margin-left: 1rem;
   }
 
   @media screen and (min-width: 1000px) {
     width: auto;
     display: flex;
+    align-items: center;
   }
 }
 
@@ -337,7 +343,6 @@
 
   @media screen and (min-width: 1000px) {
     overflow: auto;
-    height: 100vh;
   }
 }
 
@@ -348,6 +353,14 @@
   border: none;
   height: 100vh;
   width: 100%;
+
+  > svg {
+    position: absolute;
+    top: 1rem;
+    left: 1rem;
+    width: 10vw;
+    fill: rgba(255, 255, 255, 0.1);
+  }
 
   > div > * + * {
     margin-top: 2rem;

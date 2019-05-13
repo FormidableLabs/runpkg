@@ -109,7 +109,7 @@ const recursiveDependantsFetch = async (path, parent) => {
   };
 
   // Then we call the function again for all dependencies of
-  //  that file and wait for return.
+  // that file and wait for return.
   // eslint-disable-next-line consistent-return
   return Promise.all(dependencies.map(x => recursiveDependantsFetch(x, url)));
 };
