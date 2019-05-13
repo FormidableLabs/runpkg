@@ -120,7 +120,7 @@ const Home = () => {
             <${Aside} file=${file} />
             <footer>
               <a href="https://formidable.com/blog/2019/runpkg/">
-                <p>Read about how we made this at Formidable..</p>
+                <p>Read about how we made this at Formidable</p>
                 ${FormidableIcon}</a
               >
               <a href="https://github.com/formidablelabs/runpkg">
