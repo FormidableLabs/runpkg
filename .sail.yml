@@ -5,6 +5,13 @@ tasks:
       - yarn
     args:
       - install
+  prettier:
+    image: node:carbon
+    command:
+      - yarn
+    args:
+      - prettier
+      - --check
   lint:
     image: node:carbon
     command:
@@ -14,4 +21,6 @@ tasks:
 
 workflow:
   - install
-  - lint
+  - sail:parallel:
+      - lint
+      - prettier
