@@ -15,7 +15,7 @@ export default ({ file }) => {
   const npmUrl = 'https://npmjs.com/' + name;
 
   const File = ({ meta, parent }) => html`
-    <li key=${meta.path} style=${{ order: 1 }}>
+    <li key=${meta.path}>
       ${FileIcon}
       <a
         href=${`/?${name}@${version}${meta.path}`}
@@ -26,7 +26,7 @@ export default ({ file }) => {
   `;
 
   const Directory = ({ rootMeta }) => html`
-    <ul style=${{ order: 0 }}>
+    <ul>
       ${rootMeta.path &&
         rootMeta.path !== '/' &&
         html`
