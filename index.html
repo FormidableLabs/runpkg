@@ -26,7 +26,11 @@
       window.dataLayer = window.dataLayer || [];
       function gtag(){dataLayer.push(arguments);}
       gtag('js', new Date());
-      gtag('config', 'UA-85615794-2', { anonymizeIp: true, allowAdFeatures: false });
+      gtag('config', 'UA-85615794-2', { 
+        anonymizeIp: true, 
+        storage: 'none',
+        allowAdFeatures: false
+      });
     </script>
 
     <meta property="og:site_name" content="runpkg" />
