@@ -17,7 +17,9 @@ export default ({ file }) => {
   const File = ({ meta, parent }) => html`
     <li key=${meta.path} style=${{ order: 1 }}>
       ${FileIcon}
-      <a onClick=${() => pushState(`?${name}@${version}${meta.path}`)}
+      <a
+        href=${`/?${name}@${version}${meta.path}`}
+        onClick=${() => pushState(`?${name}@${version}${meta.path}`)}
         >${meta.path.replace(parent.path, '')}
       </a>
     </li>

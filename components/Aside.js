@@ -17,6 +17,7 @@ const FileList = ({ title, files, packageName }) => html`
         <li key=${x.url} data-test=${title + 'Item'}>
           ${FileIcon}
           <a
+            href=${x.url.replace('https://unpkg.com/', '/?')}
             onClick=${e => {
               e.preventDefault();
               pushState(`?${x.url.replace('https://unpkg.com/', '')}`);

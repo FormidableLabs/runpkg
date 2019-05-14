@@ -705,7 +705,6 @@ var styles = {
     resize: 'none',
     color: 'inherit',
     overflow: 'hidden',
-    outline: 'none',
     MozOsxFontSmoothing: 'grayscale',
     WebkitFontSmoothing: 'antialiased',
     WebkitTextFillColor: 'transparent',
