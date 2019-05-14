@@ -1158,11 +1158,11 @@ Prism.languages.clike = {
   }),
   Prism.languages.insertBefore('javascript', 'string', {
     'template-string': {
-      pattern: /`(?:\\[\s\S]|\${[^}]+}|[^\\`])*`/,
+      pattern: /`(?:\\[\s\S]|\${(?:[^{}]|{(?:[^{}]|{[^}]*})*})+}|[^\\`])*`/,
       greedy: !0,
       inside: {
         interpolation: {
-          pattern: /\${[^}]+}/,
+          pattern: /\${(?:[^{}]|{(?:[^{}]|{[^}]*})*})+}/,
           inside: {
             'interpolation-punctuation': {
               pattern: /^\${|}$/,
