@@ -174,6 +174,17 @@ const Home = () => {
     }
   }, [state.request.url, state.fetchError]);
 
+  react.useEffect(() => {
+    const check = e => {
+      if (e.key === 'p' && e.metaKey) {
+        e.preventDefault();
+        setIsSearching(true);
+      }
+      if (e.key === 'Escape') setIsSearching(false);
+    };
+    window.addEventListener('keydown', check);
+  }, []);
+
   return html`
     <main className=${css`/index.css`}>
       ${state.fetchError
