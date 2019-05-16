@@ -1,13 +1,12 @@
 import { react, html, css } from 'https://unpkg.com/rplus-production@1.0.0';
 import Editor from './components/Editor.js';
-import FormidableIcon from './components/FormidableLogo.js';
 import Overlay from './components/Overlay.js';
 import ErrorBlock404 from './components/ErrorBlock404.js';
 import Aside from './components/Aside.js';
 import Nav from './components/Nav.js';
+import Footer from './components/Footer.js';
 import FileIcon from './components/FileIcon.js';
 import fileNameRegEx from './utils/fileNameRegEx.js';
-import GitHubLogo from './components/GitHubLogo.js';
 
 const styles = css`/index.css`;
 const isEmpty = obj => Object.keys(obj).length === 0;
@@ -118,15 +117,7 @@ const Home = () => {
               <pre key="pre">${file.code.slice(100000)}</pre>
             </article>
             <${Aside} file=${file} />
-            <footer>
-              <a href="https://formidable.com/blog/2019/runpkg/">
-                <p>Read about how we made this at Formidable</p>
-                ${FormidableIcon}</a
-              >
-              <a href="https://github.com/formidablelabs/runpkg">
-                ${GitHubLogo}
-              </a>
-            </footer>
+            <${Footer} />
           `}
     </main>
   `;
