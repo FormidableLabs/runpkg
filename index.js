@@ -6,6 +6,7 @@ import Article from './components/Article.js';
 import Aside from './components/Aside.js';
 import Footer from './components/Footer.js';
 import NotFound from './components/NotFound.js';
+import Search from './components/Search.js';
 
 import fileNameRegEx from './utils/fileNameRegEx.js';
 
@@ -74,6 +75,7 @@ const Home = () => {
   const [file, setFile] = react.useState({});
   const [fetchError, setFetchError] = react.useState(false);
   const [versions, setVersions] = react.useState([]);
+  const [isSearching, setIsSearching] = react.useState(false);
 
   // Runs once and subscribes to url changes
   react.useEffect(() => {
@@ -82,6 +84,7 @@ const Home = () => {
       const original = window.history[event];
       window.history[event] = function() {
         original.apply(history, arguments);
+        setIsSearching(false);
         setRequest(parseUrl());
       };
     });
@@ -161,10 +164,25 @@ const Home = () => {
     }
   }, [request.url, fetchError]);
 
+  react.useEffect(() => {
+    const check = e => {
+      if (e.key === 'p' && e.metaKey) {
+        e.preventDefault();
+        setIsSearching(true);
+      }
+      if (e.key === 'Escape') setIsSearching(false);
+    };
+    window.addEventListener('keydown', check);
+  }, []);
+
   return html`
     <main className=${css`/index.css`}>
       ${fetchError
         ? NotFound
+        : isSearching
+        ? html`
+            <${Search} isSearching=${isSearching} />
+          `
         : !request.url
         ? Dialog
         : isEmpty(file)
