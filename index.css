@@ -358,6 +358,7 @@
   border: none;
   height: 100vh;
   width: 100%;
+  z-index: 3;
 
   > svg {
     position: absolute;
@@ -393,6 +394,11 @@
       color: rgba(255, 255, 255, 0.8);
       font-size: 6rem;
       margin: 0;
+    }
+
+    h6 {
+      font-weight: bold;
+      color: rgba(255, 255, 255, 0.5);
     }
 
     svg {

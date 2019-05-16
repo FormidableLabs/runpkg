@@ -24,6 +24,7 @@ export default html`
       >
         Explore An Example Package
       </button>
+      <h6>PRESS CMD+P TO SEARCH PACKAGES</h6>
     </div>
   </dialog>
 `;
