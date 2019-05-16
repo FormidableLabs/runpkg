@@ -1,17 +1,16 @@
 import { react, html, css } from 'https://unpkg.com/rplus-production@1.0.0';
-import Editor from './components/Editor.js';
-import Overlay from './components/Overlay.js';
-import ErrorBlock404 from './components/ErrorBlock404.js';
-import Aside from './components/Aside.js';
+
+import Dialog from './components/Overlay.js';
 import Nav from './components/Nav.js';
+import Article from './components/Article.js';
+import Aside from './components/Aside.js';
 import Footer from './components/Footer.js';
-import FileIcon from './components/FileIcon.js';
+import NotFound from './components/NotFound.js';
+
 import fileNameRegEx from './utils/fileNameRegEx.js';
 
-const styles = css`/index.css`;
 const isEmpty = obj => Object.keys(obj).length === 0;
 const replaceState = url => history.replaceState(null, null, url);
-
 const parseUrl = (
   search = window.location.search.slice(1).replace(/\/$/, '')
 ) => ({
@@ -34,27 +33,27 @@ const Home = () => {
   const [file, setFile] = react.useState({});
   const [fetchError, setFetchError] = react.useState(false);
 
-  // Whenever the URL changes then
-  // 1. Resolve the unpkg url for the request url
-  // 2. Fetch the package.json for the requested package
-  // 3. Fetch the /?meta for the requested package
-
-  /* Runs once and subscribes to url changes */
+  // Runs once and subscribes to url changes
   react.useEffect(() => {
     console.log('Setting up URL listener');
-    /* Rerender the app when pushState or replaceState are called */
-    ['pushState', 'replaceState'].map(event => {
+    // Rerender the app when pushState is called
+    ['pushState'].map(event => {
       const original = window.history[event];
       window.history[event] = function() {
         original.apply(history, arguments);
         setRequest(parseUrl());
       };
     });
-    /* Rerender when the back and forward buttons are pressed */
+    // Rerender when the back and forward buttons are pressed
     addEventListener('popstate', () => setRequest(parseUrl()));
   }, []);
 
+  // Whenever the URL changes then:
+  // 1. Resolve the unpkg url and file contents for the request url
+  // 2. Fetch the package.json for the requested package
+  // 3. Fetch the /?meta for the requested package
   react.useEffect(() => {
+    // Reset any previous state
     if (!request.package) {
       setFile({});
       setFetchError(false);
@@ -65,7 +64,7 @@ const Home = () => {
         const { url, code } = await fetch(
           `https://unpkg.com/${request.url}`
         ).then(async res => ({
-          code: await res.text(),
+          code: (await res.text()).replace(/\t/g, '  '),
           url: res.url,
         }));
         // Fetch the meta data
@@ -78,44 +77,24 @@ const Home = () => {
         )
           .then(res => res.json())
           .catch(e => setFetchError(true));
-        setFile({
-          url,
-          meta,
-          pkg,
-          code: code.replace(/\t/g, '  '),
-          name: url.replace(`https://unpkg.com/${pkg.name}@${pkg.version}`, ''),
-        });
+        // Set the new state
+        setFile({ url, meta, pkg, code });
         replaceState(`?${url.replace('https://unpkg.com/', '')}`);
       })();
     }
   }, [request.url]);
 
   return html`
-    <main className=${styles}>
+    <main className=${css`/index.css`}>
       ${fetchError
-        ? ErrorBlock404(setFetchError)
-        : request.url === ''
-        ? Overlay
+        ? NotFound
+        : !request.url
+        ? Dialog
         : isEmpty(file)
         ? null
         : html`
             <${Nav} file=${file} />
-            <article>
-              <h1>
-                ${FileIcon} ${file.name}
-              </h1>
-              <${Editor}
-                key="editor"
-                value=${file.code.slice(0, 100000)}
-                style=${{
-                  lineHeight: '138%',
-                  fontFamily: '"Inconsolata", monospace',
-                }}
-                padding=${42}
-                readOnly
-              />
-              <pre key="pre">${file.code.slice(100000)}</pre>
-            </article>
+            <${Article} file=${file} />
             <${Aside} file=${file} />
             <${Footer} />
           `}
