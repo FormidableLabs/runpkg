@@ -72,13 +72,13 @@ const Home = () => {
         // Fetch the meta data
         const meta = await fetch(`https://unpkg.com/${request.package}/?meta`)
           .then(res => res.json())
-          .catch(e => setFetchError(true));
+          .catch(() => setFetchError(true));
         // Fetch the package json
         const pkg = await fetch(
           `https://unpkg.com/${request.package}/package.json`
         )
           .then(res => res.json())
-          .catch(e => setFetchError(true));
+          .catch(() => setFetchError(true));
         setFile({
           url,
           meta,

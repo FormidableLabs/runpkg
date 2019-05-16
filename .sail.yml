@@ -11,6 +11,7 @@ tasks:
       - yarn
     args:
       - prettier
+      - --check
   lint:
     image: node:carbon
     command:

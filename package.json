@@ -4,7 +4,7 @@
   "description": "> the online package explorer",
   "main": "index.js",
   "scripts": {
-    "prettier": "prettier --config .prettierrc --write \"./**/*.{js,json,css,html}\"",
+    "prettier": "prettier --config .prettierrc --write \"./**/*.{css,html,json,md,yml}\"",
     "lint": "eslint --config .eslintrc \"./**/*.js\"",
     "test": "concurrently --kill-others \"node_modules/servor/servor.js --no-browser --no-reload\" \"wait-on http-get://localhost:8080 && npx cypress run --browser chrome --env env=local\" "
   },
@@ -28,8 +28,26 @@
     "eslint-plugin-filenames": "^1.2.0",
     "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-react": "^7.7.0",
+    "husky": "^2.3.0",
+    "lint-staged": "^8.1.6",
     "prettier": "^1.17.0",
     "servor": "^2.2.1",
     "wait-on": "^3.2.0"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
+  },
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "prettier --write",
+      "git add"
+    ],
+    "*.{css,html,json,md,yml}": [
+      "prettier --write",
+      "git add"
+    ]
   }
 }
