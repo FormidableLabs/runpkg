@@ -114,6 +114,7 @@ const Home = () => {
                 }}
                 padding=${42}
                 readOnly
+                extension=${file.name.split('.')[1]}
               />
               <pre key="pre">${file.code.slice(100000)}</pre>
             </article>
