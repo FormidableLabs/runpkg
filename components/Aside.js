@@ -14,7 +14,7 @@ const FileList = ({ title, files, packageName }) => html`
   <ul key=${files.join('-')}>
     ${files.map(
       x => html`
-        <li key=${x.url} data-test=${title + 'Item'}>
+        <li key=${x.url} data-test='Item'>
           ${FileIcon}
           <a
             onClick=${e => {
