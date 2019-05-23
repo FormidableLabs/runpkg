@@ -85,16 +85,16 @@
   }
 
   > p {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     line-height: 162%;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.6);
     margin-top: 2rem;
   }
 
   a {
     cursor: pointer;
     text-decoration: underline;
-    color: rgba(255, 255, 255, 0.62);
+    color: rgba(255, 255, 255, 0.7);
 
     &:hover {
       color: #fff;
@@ -182,7 +182,7 @@
 & footer {
   grid-area: footer;
   background: rgba(0, 0, 0, 0.2);
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.6);
   display: none;
   padding: 0 1.62rem;
 
@@ -268,9 +268,9 @@
   }
 
   p {
-    font-size: 0.8rem;
+    font-size: 0.9rem;
     line-height: 162%;
-    color: rgba(255, 255, 255, 0.5);
+    color: rgba(255, 255, 255, 0.6);
     margin: 1rem 0;
   }
 
@@ -314,7 +314,7 @@
     }
 
     a {
-      color: rgba(255, 255, 255, 0.62);
+      color: rgba(255, 255, 255, 0.7);
       flex: 1 1 100%;
       display: flex;
       align-items: center;
