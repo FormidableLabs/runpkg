@@ -13,13 +13,20 @@ tasks:
       - lint
   cypress:
     image: cypress/browsers
-    command: 
+    command:
       - yarn
     args:
       - test
+  a11y-test:
+    image: cypress/browsers
+    command:
+      - yarn
+    args:
+      - a11y-test
 
 workflow:
   - install
   - sail:parallel:
       - lint
       - cypress
+      - a11y-test

@@ -6,7 +6,8 @@
   "scripts": {
     "prettier": "prettier --config .prettierrc --write \"./**/*.{css,html,json,md,yml}\"",
     "lint": "eslint --config .eslintrc \"./**/*.js\"",
-    "test": "cypress install && concurrently --kill-others \"node_modules/servor/servor.js --no-browser --no-reload\" \"wait-on http-get://localhost:8080 && npx cypress run --browser chrome --env env=local\" --success first "
+    "test": "cypress install && concurrently --kill-others \"node_modules/servor/servor.js --no-browser --no-reload\" \"wait-on http-get://localhost:8080 && npx cypress run --browser chrome --env env=local\" --success first ",
+    "a11y-test": "concurrently --kill-others \"node_modules/servor/servor.js --no-browser --no-reload\" \"wait-on http-get://localhost:8080 && pa11y-ci\" --success first "
   },
   "repository": {
     "type": "git",
@@ -19,6 +20,7 @@
   },
   "homepage": "https://github.com/FormidableLabs/runpkg#readme",
   "devDependencies": {
+    "pa11y-ci": "^2.3.0",
     "babel-eslint": "^10.0.1",
     "concurrently": "^4.1.0",
     "cypress": "^3.2.0",

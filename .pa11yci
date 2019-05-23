@@ -1,0 +1,12 @@
+{
+  "urls": [
+    "http://localhost:8080",
+    "http://localhost:8080/?es-react@16.8.30/index.js"
+  ],
+  "defaults": {
+    "chromeLaunchConfig": {
+      "args": ["--no-sandbox"]
+    },
+    "timeout": 60000
+  }
+}
