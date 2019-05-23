@@ -52,6 +52,9 @@ export default ({ file }) => {
   return html`
     <button
       className="toggleOpenButton"
+      aria-label=${isNavShowing
+        ? 'Hide Navigation Menu'
+        : 'Show Navigation Menu'}
       onClick=${() => showNav(!isNavShowing)}
     >
       ${isNavShowing ? CloseIcon : MenuIcon}
