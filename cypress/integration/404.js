@@ -2,7 +2,9 @@ describe('Runpkg', () => {
   let url;
   before(() => {
     url =
-      Cypress.env('env') === 'local' ? 'http://localhost:8080' : 'https://runpkg.com';
+      Cypress.env('env') === 'local'
+        ? 'http://localhost:8080'
+        : 'https://runpkg.com';
   });
   it('Visits the 404 page', () => {
     cy.visit(url + '/');

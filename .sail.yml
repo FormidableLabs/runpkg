@@ -1,25 +1,25 @@
 tasks:
   install:
-    image: node:carbon
+    image: cypress/browsers
     command:
       - yarn
     args:
       - install
-  prettier:
-    image: node:carbon
-    command:
-      - yarn
-    args:
-      - prettier
   lint:
-    image: node:carbon
+    image: cypress/browsers
     command:
       - yarn
     args:
       - lint
+  cypress:
+    image: cypress/browsers
+    command: 
+      - yarn
+    args:
+      - test
 
 workflow:
   - install
   - sail:parallel:
       - lint
-      - prettier
+      - cypress

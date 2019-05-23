@@ -52,10 +52,10 @@ const extractDependencies = (input, pkg) => {
 };
 
 const packageJsonUrl = path => {
-  const [full, name, version] = path.match(
+  const [_full, name, version] = path.match(
     /https:\/\/unpkg.com\/(@?[^@\n]*)@?(\d+\.\d+\.\d+)?/
   );
-  return `${UNPKG}${name}@${version}` + '/package.json';
+  return `${UNPKG}${name}@${version}/package.json`;
 };
 
 // cache keeps memory of what was run last
