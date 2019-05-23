@@ -9,7 +9,10 @@ export default () => html`
       <p>Read about how we made this at Formidable</p>
       ${FormidableIcon}</a
     >
-    <a href="https://github.com/formidablelabs/runpkg">
+    <a
+      href="https://github.com/formidablelabs/runpkg"
+      aria-label="Project GitHub Repo"
+    >
       ${GitHubLogo}
     </a>
   </footer>
