@@ -711,8 +711,7 @@ var styles = {
     WebkitTextFillColor: 'transparent',
   },
   highlight: {
-    position: 'relative',
-    pointerEvents: 'none',
+    position: 'relative'
   },
   editor: {
     margin: 0,

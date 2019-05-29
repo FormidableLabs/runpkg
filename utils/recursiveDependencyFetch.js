@@ -26,7 +26,25 @@ const isLocalFile = str => !isExternalPath(str) && fileNameRegEx.test(str);
 const stripComments = str =>
   str.replace(/^[\t ]*\/\*(.|\r|\n)*?\*\/|^[\t ]*\/\/.*/gm, '');
 
-const extractDependencies = (input, pkg) => {
+const logDepsOnFirstRun = (input, pkg, url) => {
+  const fff = extractDependencies(input, pkg, true).map(x => [
+    x,
+    makePath(url)(x),
+  ]);
+  fff.forEach(y => {
+    const boop = [...document.querySelectorAll('.token.string')].find(x =>
+      x.innerText.includes(y[0])
+    );
+    const clonedBoop = boop.cloneNode(true);
+    const anchor = document.createElement('a');
+    anchor.href = y[1];
+    anchor.appendChild(clonedBoop);
+    boop.replaceWith(anchor);
+  });
+  return fff;
+};
+
+const extractDependencies = (input, pkg, isFirstRun) => {
   const code = stripComments(input);
 
   const imports = (
@@ -46,9 +64,11 @@ const extractDependencies = (input, pkg) => {
 
   // Return array of unique dependencies appending js
   // extension to any relative imports that have no extension
-  return [...new Set([...imports, ...requires])].map(x =>
+  const ggg = [...new Set([...imports, ...requires])].map(x =>
     isExternalPath(x) || isLocalFile(x) ? x : `${x}.js`
   );
+  isFirstRun && console.log('ggg', ggg);
+  return ggg;
 };
 
 const packageJsonUrl = path => {
@@ -132,6 +152,8 @@ const recursiveDependantsFetch = async (path, parent, fileCache, pkgCache) => {
   }
 
   const dependencies = extractDependencies(code, pkg).map(makePath(url));
+
+  parent === undefined && logDepsOnFirstRun(code, pkg, url);
 
   cache[url] = {
     url,
