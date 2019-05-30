@@ -1,50 +1,14 @@
 import fileNameRegEx from '../utils/fileNameRegEx.js';
+import makePath from '../utils/makePath.js';
 
 const UNPKG = 'https://unpkg.com/';
-
-// Handles paths like "../../some-file.js"
-const handleDoubleDot = (pathEnd, base) => {
-  const howFarBack = -1 * pathEnd.match(/\.\.\//g).length;
-  const strippedPathEnd = pathEnd.replace(/\.\./g, '').replace(/\/+/g, '/');
-  const strippedBase = base
-    .split('/')
-    .slice(0, howFarBack)
-    .join('/');
-  return strippedBase + strippedPathEnd;
-};
-
-const makePath = url => x => {
-  const base = url.replace(fileNameRegEx, '');
-  if (x.startsWith('./')) return base + x.replace('./', '/');
-  if (x.startsWith('../')) return handleDoubleDot(x, base);
-  if (x.startsWith('https://')) return x;
-  return UNPKG + x;
-};
 
 const isExternalPath = str => !str.startsWith('.');
 const isLocalFile = str => !isExternalPath(str) && fileNameRegEx.test(str);
 const stripComments = str =>
   str.replace(/^[\t ]*\/\*(.|\r|\n)*?\*\/|^[\t ]*\/\/.*/gm, '');
 
-const logDepsOnFirstRun = (input, pkg, url) => {
-  const fff = extractDependencies(input, pkg, true).map(x => [
-    x,
-    makePath(url)(x),
-  ]);
-  fff.forEach(y => {
-    const boop = [...document.querySelectorAll('.token.string')].find(x =>
-      x.innerText.includes(y[0])
-    );
-    const clonedBoop = boop.cloneNode(true);
-    const anchor = document.createElement('a');
-    anchor.href = y[1];
-    anchor.appendChild(clonedBoop);
-    boop.replaceWith(anchor);
-  });
-  return fff;
-};
-
-const extractDependencies = (input, pkg, isFirstRun) => {
+const extractDependencies = (input, pkg) => {
   const code = stripComments(input);
 
   const imports = (
@@ -67,11 +31,11 @@ const extractDependencies = (input, pkg, isFirstRun) => {
   const ggg = [...new Set([...imports, ...requires])].map(x =>
     isExternalPath(x) || isLocalFile(x) ? x : `${x}.js`
   );
-  isFirstRun && console.log('ggg', ggg);
   return ggg;
 };
 
 const packageJsonUrl = path => {
+  console.log(path);
   const [_full, name, version] = path.match(
     /https:\/\/unpkg.com\/(@?[^@\n]*)@?(\d+\.\d+\.\d+)?/
   );
@@ -151,9 +115,10 @@ const recursiveDependantsFetch = async (path, parent, fileCache, pkgCache) => {
     return;
   }
 
-  const dependencies = extractDependencies(code, pkg).map(makePath(url));
-
-  parent === undefined && logDepsOnFirstRun(code, pkg, url);
+  const dependencies = extractDependencies(code, pkg).map(x => [
+    x,
+    makePath(url)(x),
+  ]);
 
   cache[url] = {
     url,
@@ -166,7 +131,7 @@ const recursiveDependantsFetch = async (path, parent, fileCache, pkgCache) => {
   // that file and wait for return.
   // eslint-disable-next-line consistent-return
   return Promise.all(
-    dependencies.map(x => recursiveDependantsFetch(x, url, fileCache, pkgCache))
+    dependencies.map(x => recursiveDependantsFetch(x[1], url, fileCache, pkgCache))
   );
 };
 /* eslint-enable max-statements*/
