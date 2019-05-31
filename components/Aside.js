@@ -1,6 +1,6 @@
 import { react, html } from 'https://unpkg.com/rplus-production@1.0.0';
 import recursiveDependencyFetch from '../utils/recursiveDependencyFetch.js';
-import shouldPreventDefault from '../utils/shouldPreventDefault.js';
+import Link from './Link.js';
 import formatBytes from '../utils/formatBytes.js';
 import Spinner from './Spinner.js';
 import FileIcon from './FileIcon.js';
@@ -17,17 +17,15 @@ const FileList = ({ title, files, packageName }) => html`
       x => html`
         <li key=${x.url} data-test="Item">
           ${FileIcon}
-          <a
+          <${Link}
             href=${x.url.replace('https://unpkg.com/', '/?')}
-            onClick=${e => {
-              if (shouldPreventDefault(e)) {
-                e.preventDefault();
-                pushState(`?${x.url.replace('https://unpkg.com/', '')}`);
-              }
+            onClick=${() => {
+              pushState(`?${x.url.replace('https://unpkg.com/', '')}`);
             }}
-          >
-            ${x.url.replace(`https://unpkg.com/`, '').replace(packageName, '')}
-          </a>
+            innerText=${x.url
+              .replace(`https://unpkg.com/`, '')
+              .replace(packageName, '')}
+          />
           <span>${formatBytes(x.size)}</span>
         </li>
       `

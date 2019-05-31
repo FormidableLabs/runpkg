@@ -4,7 +4,7 @@ import FolderIcon from './FolderIcon.js';
 import FileIcon from './FileIcon.js';
 import MenuIcon from './MenuIcon.js';
 import CloseIcon from './CloseIcon.js';
-import shouldPreventDefault from '../utils/shouldPreventDefault.js';
+import Link from './Link.js';
 
 const pushState = url => history.pushState(null, null, url);
 
@@ -18,16 +18,13 @@ export default ({ file }) => {
   const File = ({ meta, parent }) => html`
     <li key=${meta.path}>
       ${FileIcon}
-      <a
+      <${Link}
         href=${`/?${name}@${version}${meta.path}`}
-        onClick=${e => {
-          if (shouldPreventDefault(e)) {
-            e.preventDefault();
-            pushState(`?${name}@${version}${meta.path}`);
-          }
-        }}
-        >${meta.path.replace(parent.path, '')}
-      </a>
+        onClick="${() => {
+          pushState(`?${name}@${version}${meta.path}`);
+        }}}"
+        innerText=${meta.path.replace(parent.path, '')}
+      />
     </li>
   `;
 
