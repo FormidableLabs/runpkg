@@ -35,7 +35,6 @@ const extractDependencies = (input, pkg) => {
 };
 
 const packageJsonUrl = path => {
-  console.log(path);
   const [_full, name, version] = path.match(
     /https:\/\/unpkg.com\/(@?[^@\n]*)@?(\d+\.\d+\.\d+)?/
   );

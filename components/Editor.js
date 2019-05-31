@@ -30,6 +30,7 @@ const handleCtrlUp = e => {
 const anchorAppender = deps => {
   const dependenciesArray = deps.map(x => [x[0], x[1]]);
   dependenciesArray.forEach(y => {
+    console.log(document);
     const imports = [...document.querySelectorAll('.token.string')].find(x =>
       x.innerText.includes(y[0])
     );
@@ -588,6 +589,8 @@ var Editor = (function(_React$Component) {
       key: 'componentDidMount',
       value: function componentDidMount() {
         this._recordCurrentState();
+        window.addEventListener('keydown', handleCtrlDown, true);
+        window.addEventListener('keyup', handleCtrlUp, true);
       },
     },
     {
@@ -603,6 +606,13 @@ var Editor = (function(_React$Component) {
               this.props.dependencyState[this.props.url].dependencies
             )
           : null;
+      },
+    },
+    {
+      key: 'componentWillUnmount',
+      value: function componentWillUnmount() {
+        window.removeEventListener('keydown', handleCtrlDown, true);
+        window.removeEventListener('keyup', handleCtrlUp, true);
       },
     },
     {
@@ -707,8 +717,6 @@ var Editor = (function(_React$Component) {
             _extends(
               {
                 onClick: handleEditorOnClick,
-                onKeyDown: handleCtrlDown,
-                onKeyUp: handleCtrlUp,
                 'aria-hidden': 'true',
                 style: _extends(
                   {},
