@@ -11,6 +11,20 @@ const handleEditorOnClick = e => {
   }
 };
 
+const handleCtrlDown = e => {
+  if (e.keyCode === 17 || e.keyCode === 91) {
+    document.querySelectorAll('.imports').forEach(x => x.classList.add('ctrl'));
+  }
+};
+
+const handleCtrlUp = e => {
+  if (e.keyCode === 17 || e.keyCode === 91) {
+    document
+      .querySelectorAll('.imports')
+      .forEach(x => x.classList.remove('ctrl'));
+  }
+};
+
 // this function maps over dependencies and appends
 // anchor tags to imports in the editor
 const anchorAppender = deps => {
@@ -141,7 +155,7 @@ var cssText =
   ' {\n    color: transparent !important;\n  }\n\n  .' +
   className +
   '::selection {\n    background-color: #accef7 !important;\n    color: transparent !important;\n  }\n}\n' +
-  '\na {text-decoration: none} .imports:hover {text-decoration: underline; \n text-decoration-color: white;}';
+  '\na {text-decoration: none} .imports:hover {text-decoration: underline; \n text-decoration-color: white;} .ctrl{text-decoration: underline; \n text-decoration-color: white;}';
 
 var Editor = (function(_React$Component) {
   _inherits(Editor, _React$Component);
@@ -693,6 +707,8 @@ var Editor = (function(_React$Component) {
             _extends(
               {
                 onClick: handleEditorOnClick,
+                onKeyDown: handleCtrlDown,
+                onKeyUp: handleCtrlUp,
                 'aria-hidden': 'true',
                 style: _extends(
                   {},
