@@ -45,12 +45,12 @@ export default ({ file }) => {
   return html`
     <button
       className="toggleOpenButton"
-      aria-label=${isNavShowing
-        ? 'Hide Navigation Menu'
-        : 'Show Navigation Menu'}
       onClick=${() => showNav(!isNavShowing)}
     >
       ${isNavShowing ? CloseIcon : MenuIcon}
+      <span class="visually-hidden">
+        ${isNavShowing ? 'Hide navigation menu' : 'Show navigation menu'}
+      </span>
     </button>
     <nav className=${isNavShowing ? 'active' : 'hiding'}>
       <h1 onClick=${() => pushState(packageMainUrl)} data-test="title">
