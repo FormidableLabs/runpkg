@@ -32,6 +32,7 @@ const Home = () => {
   const [request, setRequest] = react.useState(parseUrl());
   const [file, setFile] = react.useState({});
   const [fetchError, setFetchError] = react.useState(false);
+  const [versions, setVersions] = react.useState([]);
 
   // Runs once and subscribes to url changes
   react.useEffect(() => {
@@ -80,6 +81,29 @@ const Home = () => {
         // Set the new state
         setFile({ url, meta, pkg, code });
         replaceState(`?${url.replace('https://unpkg.com/', '')}`);
+        try {
+          var parser = new DOMParser();
+          const unpkgPage = await fetch(
+            `https://unpkg.com/${request.package}/`
+          ).then(async res =>
+            parser.parseFromString(await res.text(), 'text/html')
+          );
+
+          const scriptElements = unpkgPage.getElementsByTagName('script');
+
+          setVersions(
+            JSON.parse(
+              `${
+                Object.values(scriptElements)
+                  .filter(x => x.innerHTML.includes('window.__DATA__'))[0]
+                  .innerHTML.split('window.__DATA__ = ')[1]
+              }`
+            ).availableVersions
+          );
+        } catch (err) {
+          console.log('error in version parser');
+          console.log(err);
+        }
       })();
     }
   }, [request.url]);
@@ -93,7 +117,7 @@ const Home = () => {
         : isEmpty(file)
         ? null
         : html`
-            <${Nav} file=${file} />
+            <${Nav} versions=${versions} file=${file} />
             <${Article} file=${file} />
             <${Aside} file=${file} />
             <${Footer} />
