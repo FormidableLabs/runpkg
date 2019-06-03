@@ -20,9 +20,6 @@ export default ({ file }) => {
       ${FileIcon}
       <${Link}
         href=${`/?${name}@${version}${meta.path}`}
-        onClick="${() => {
-          pushState(`?${name}@${version}${meta.path}`);
-        }}}"
         innerText=${meta.path.replace(parent.path, '')}
       />
     </li>

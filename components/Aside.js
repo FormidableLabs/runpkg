@@ -5,8 +5,6 @@ import formatBytes from '../utils/formatBytes.js';
 import Spinner from './Spinner.js';
 import FileIcon from './FileIcon.js';
 
-const pushState = url => history.pushState(null, null, url);
-
 const FileList = ({ title, files, packageName }) => html`
   <div key=${title}>
     <h3>${title}</h3>
@@ -19,9 +17,6 @@ const FileList = ({ title, files, packageName }) => html`
           ${FileIcon}
           <${Link}
             href=${x.url.replace('https://unpkg.com/', '/?')}
-            onClick=${() => {
-              pushState(`?${x.url.replace('https://unpkg.com/', '')}`);
-            }}
             innerText=${x.url
               .replace(`https://unpkg.com/`, '')
               .replace(packageName, '')}
