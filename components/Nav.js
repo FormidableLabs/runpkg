@@ -4,6 +4,7 @@ import FolderIcon from './FolderIcon.js';
 import FileIcon from './FileIcon.js';
 import MenuIcon from './MenuIcon.js';
 import CloseIcon from './CloseIcon.js';
+import Link from './Link.js';
 
 const pushState = url => history.pushState(null, null, url);
 
@@ -15,11 +16,11 @@ export default ({ file, versions }) => {
   const npmUrl = 'https://npmjs.com/' + name;
 
   const File = ({ meta, parent }) => html`
-    <li key=${meta.path} style=${{ order: 1 }}>
+    <li key=${meta.path}>
       ${FileIcon}
-      <a onClick=${() => pushState(`?${name}@${version}${meta.path}`)}
-        >${meta.path.replace(parent.path, '')}
-      </a>
+      <${Link} href=${`/?${name}@${version}${meta.path}`}>
+        ${meta.path.replace(parent.path, '')}
+      <//>
     </li>
   `;
 
@@ -33,7 +34,7 @@ export default ({ file, versions }) => {
   }, [selectedVersion]);
 
   const Directory = ({ rootMeta }) => html`
-    <ul style=${{ order: 0 }}>
+    <ul>
       ${rootMeta.path &&
         rootMeta.path !== '/' &&
         html`
@@ -56,6 +57,9 @@ export default ({ file, versions }) => {
       onClick=${() => showNav(!isNavShowing)}
     >
       ${isNavShowing ? CloseIcon : MenuIcon}
+      <span class="visually-hidden">
+        ${isNavShowing ? 'Hide navigation menu' : 'Show navigation menu'}
+      </span>
     </button>
     <nav className=${isNavShowing ? 'active' : 'hiding'}>
       <h1 onClick=${() => pushState(packageMainUrl)} data-test="title">

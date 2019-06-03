@@ -637,6 +637,7 @@ var Editor = (function(_React$Component) {
             autoComplete: 'off',
             autoCorrect: 'off',
             spellCheck: false,
+            'aria-label': 'File contents (code)',
             'data-gramm': false,
           }),
           React.createElement(
@@ -684,7 +685,7 @@ var Editor = (function(_React$Component) {
 Editor.defaultProps = {
   tabSize: 2,
   insertSpaces: true,
-  ignoreTabKey: false,
+  ignoreTabKey: true,
   padding: 0,
 };
 
@@ -705,7 +706,6 @@ var styles = {
     resize: 'none',
     color: 'inherit',
     overflow: 'hidden',
-    outline: 'none',
     MozOsxFontSmoothing: 'grayscale',
     WebkitFontSmoothing: 'antialiased',
     WebkitTextFillColor: 'transparent',

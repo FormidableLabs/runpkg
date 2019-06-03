@@ -8,7 +8,9 @@ export default html`
     y="0px"
     viewBox="0 0 245.37 315.25"
     xmlSpace="preserve"
+    aria-hidden="true"
   >
+    <title>Formidable logo</title>
     <g>
       <g>
         <path
