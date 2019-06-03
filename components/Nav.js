@@ -70,7 +70,11 @@ export default ({ file, versions }) => {
         ${description || 'There is no description for this package.'}
       </p>
       <h2>Versions</h2>
-      <select id="version" onChange=${e => changeVersion(e.target.value)}>
+      <select
+        id="version"
+        value=${selectedVersion}
+        onChange=${e => changeVersion(e.target.value)}
+      >
         ${versions.length !== 0
           ? versions.map(
               x =>
