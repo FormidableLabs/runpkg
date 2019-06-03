@@ -46,6 +46,21 @@ As we're not using Zeit to resolve queries locally, you have to pass in the pack
 | unpkg     | `https://unpkg.com/es-react@16.8.30/index.js`      |
 | localhost | `http://localhost:8080/?es-react@16.8.30/index.js` |
 
+# Browsers Supported
+
+| Browser           | Supported | Versions    |
+| ----------------- | --------- | ----------- |
+| Chrome            | Yes       | 73+         |
+| Chrome (Android)  | Yes       | 73+         |
+| Firefox           | Yes       | 66+         |
+| Firefox (Android) | Yes       | 66+         |
+| Safari            | Yes       | 11+         |
+| Safari (iOS)      | Yes       | 11+         |
+| Opera             | Yes       | 59+         |
+| Edge (Blink)      | Yes       | Dev, Canary |
+| Edge (EdgeHTML)   | No        |             |
+| IE 11             | No        |             |
+
 # Testing
 
 We're currently doing end to end tests via Cypress, you can run them using the following:
