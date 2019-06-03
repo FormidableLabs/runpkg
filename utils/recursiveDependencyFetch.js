@@ -28,10 +28,9 @@ const extractDependencies = (input, pkg) => {
 
   // Return array of unique dependencies appending js
   // extension to any relative imports that have no extension
-  const ggg = [...new Set([...imports, ...requires])].map(x =>
+  return [...new Set([...imports, ...requires])].map(x =>
     isExternalPath(x) || isLocalFile(x) ? x : `${x}.js`
   );
-  return ggg;
 };
 
 const packageJsonUrl = path => {

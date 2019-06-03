@@ -30,7 +30,6 @@ const handleCtrlUp = e => {
 const anchorAppender = deps => {
   const dependenciesArray = deps.map(x => [x[0], x[1]]);
   dependenciesArray.forEach(y => {
-    console.log(document);
     const imports = [...document.querySelectorAll('.token.string')].find(x =>
       x.innerText.includes(y[0])
     );
