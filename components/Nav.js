@@ -18,10 +18,9 @@ export default ({ file }) => {
   const File = ({ meta, parent }) => html`
     <li key=${meta.path}>
       ${FileIcon}
-      <${Link}
-        href=${`/?${name}@${version}${meta.path}`}
-        innerText=${meta.path.replace(parent.path, '')}
-      />
+      <${Link} href=${`/?${name}@${version}${meta.path}`}>
+        ${meta.path.replace(parent.path, '')}
+      <//>
     </li>
   `;
 

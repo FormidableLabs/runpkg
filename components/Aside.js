@@ -15,12 +15,9 @@ const FileList = ({ title, files, packageName }) => html`
       x => html`
         <li key=${x.url} data-test="Item">
           ${FileIcon}
-          <${Link}
-            href=${x.url.replace('https://unpkg.com/', '/?')}
-            innerText=${x.url
-              .replace(`https://unpkg.com/`, '')
-              .replace(packageName, '')}
-          />
+          <${Link} href=${x.url.replace('https://unpkg.com/', '/?')}>
+            ${x.url.replace(`https://unpkg.com/`, '').replace(packageName, '')}
+          <//>
           <span>${formatBytes(x.size)}</span>
         </li>
       `
