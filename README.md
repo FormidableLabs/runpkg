@@ -48,14 +48,18 @@ As we're not using Zeit to resolve queries locally, you have to pass in the pack
 
 # Browsers Supported
 
-| Browser         | Supported | Versions |
-| --------------- | --------- | -------- |
-| Chrome          | Yes       | Last 2   |
-| Firefox         | Yes       | Last 2   |
-| Opera           | Yes       | Last 2   |
-| Edge Canary     | Yes       | Last 2   |
-| Edge (EdgeHTML) | No        |          |
-| IE 11           | No        |          |
+| Browser           | Supported | Versions    |
+| ----------------- | --------- | ----------- |
+| Chrome            | Yes       | 74, 73      |
+| Chrome (Android)  | Yes       | 74, 73      |
+| Firefox           | Yes       | 67, 66      |
+| Firefox (Android) | Yes       | 67, 66      |
+| Safari            | Yes       | 12, 11      |
+| Safari (iOS)      | Yes       | 12, 11      |
+| Opera             | Yes       | 60, 59      |
+| Edge (Blink)      | Yes       | Dev, Canary |
+| Edge (EdgeHTML)   | No        |             |
+| IE 11             | No        |             |
 
 # Testing
 
