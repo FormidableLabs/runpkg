@@ -7,7 +7,7 @@ import CloseIcon from './CloseIcon.js';
 
 const pushState = url => history.pushState(null, null, url);
 
-export default ({ file }) => {
+export default ({ file, versions }) => {
   const [isNavShowing, showNav] = react.useState(false);
   const { name, version, main, license, description } = file.pkg;
 
@@ -22,6 +22,15 @@ export default ({ file }) => {
       </a>
     </li>
   `;
+
+  const [selectedVersion, changeVersion] = react.useState(version);
+
+  react.useEffect(() => {
+    const [, path] = file.url.match(
+      /https:\/\/unpkg.com\/(?:@?[^@\n]*)@?(?:\d+\.\d+\.\d+)(.*)$/
+    );
+    pushState(`?${name}@${selectedVersion}${path}`);
+  }, [selectedVersion]);
 
   const Directory = ({ rootMeta }) => html`
     <ul style=${{ order: 0 }}>
@@ -60,6 +69,21 @@ export default ({ file }) => {
       <p>
         ${description || 'There is no description for this package.'}
       </p>
+      <h2>Versions</h2>
+      <select
+        id="version"
+        value=${selectedVersion}
+        onChange=${e => changeVersion(e.target.value)}
+      >
+        ${versions.length !== 0
+          ? versions.map(
+              x =>
+                html`
+                  <option value=${x}>${x}</option>
+                `
+            )
+          : null}</select
+      >
       <h2>Package Contents</h2>
       <${Directory} rootMeta=${file.meta} />
     </nav>
