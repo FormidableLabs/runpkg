@@ -102,10 +102,16 @@
   }
 
   h1 {
+    display: inline-block;
     font-weight: bold;
     font-size: 2rem;
     margin: 0;
     line-height: 138%;
+    cursor: pointer;
+  }
+
+  h1:hover {
+    color: rgba(255, 255, 255, 0.62);
   }
 
   > h2 {
