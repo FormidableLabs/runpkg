@@ -61,21 +61,53 @@ const packageJsonUrl = path => {
 // cache keeps memory of what was run last
 const cache = {};
 
-const pkgCache = (items => async key =>
-  (items[key] = items[key] || (await fetch(key).then(res => res.json()))))({});
+// PkgCache is a class that maintains a cache of package.jsons we've fetched
+// the fetchPkg method checks if pkgjson is in cache, if so it
+// returns it, if not it fetches it.
 
-const fileCache = (items => async key =>
-  (items[key] =
-    items[key] ||
-    (await fetch(key).then(async res => ({
+class PkgCache {
+  cache = new Map();
+  async fetchPkg(key) {
+    if (this.cache.has(key)) {
+      return await this.cache.get(key);
+    }
+    const resultPromise = fetch(key).then(
+      fetch(key).then(async res => await res.json())
+    );
+    this.cache.set(key, resultPromise);
+    return await resultPromise;
+  }
+}
+
+// FileCache is a class that maintains a cache of files we've fetched
+// the fetchFiles method checks if file is in cache, if so it
+// returns it, if not it fetches it.
+
+class FileCache {
+  cache = new Map();
+  async fetchFiles(key) {
+    if (this.cache.has(key)) {
+      return await this.cache.get(key);
+    }
+    const resultPromise = fetch(key).then(async res => ({
       url: res.url,
       code: await res.text(),
-    })))))({});
+    }));
+    this.cache.set(key, resultPromise);
+    return await resultPromise;
+  }
+}
 
-/* eslint-disable max-statements*/
-const recursiveDependantsFetch = async (path, parent) => {
-  const { url, code } = await fileCache(path);
-  const pkg = await pkgCache(packageJsonUrl(url));
+/* eslint-disable max-statements, max-params */
+const recursiveDependantsFetch = async (path, parent, fileCache, pkgCache) => {
+  if (!fileCache) {
+    fileCache = new FileCache();
+  }
+  if (!pkgCache) {
+    pkgCache = new PkgCache();
+  }
+  const { url, code } = await fileCache.fetchFiles(path);
+  const pkg = await pkgCache.fetchPkg(packageJsonUrl(url));
 
   // If we asked for a file but got redirected by unpkg
   // then update the url in the parents dependencies
@@ -111,7 +143,9 @@ const recursiveDependantsFetch = async (path, parent) => {
   // Then we call the function again for all dependencies of
   // that file and wait for return.
   // eslint-disable-next-line consistent-return
-  return Promise.all(dependencies.map(x => recursiveDependantsFetch(x, url)));
+  return Promise.all(
+    dependencies.map(x => recursiveDependantsFetch(x, url, fileCache, pkgCache))
+  );
 };
 /* eslint-enable max-statements*/
 
