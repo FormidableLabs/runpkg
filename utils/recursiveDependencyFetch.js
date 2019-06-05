@@ -71,9 +71,9 @@ class PkgCache {
     if (this.cache.has(key)) {
       return await this.cache.get(key);
     }
-    const resultPromise = fetch(key).then(
-      fetch(key).then(async res => await res.json())
-    );
+    const resultPromise = fetch(key)
+      .then(fetch(key))
+      .then(res => res.json());
     this.cache.set(key, resultPromise);
     return await resultPromise;
   }
