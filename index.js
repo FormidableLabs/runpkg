@@ -28,6 +28,22 @@ const parseUrl = (
     .join('/'),
 });
 
+// For now, add warning in console if popular bundler detected
+const warnAboutBundler = pkgJSON => {
+  if (
+    Object.values(pkgJSON.scripts).some(
+      x =>
+        x.startsWith('rollup') ||
+        x.startsWith('webpack') ||
+        x.startsWith('parcel')
+    )
+  ) {
+    console.warn(
+      'Bundler (rollup, webpack or parcel) detected in package.json. File path resoltion may not work as expected on runpkg.'
+    );
+  }
+};
+
 // Initialise context for passing cache from Aside to Article
 
 export const DependencyContext = react.createContext(null);
@@ -60,7 +76,6 @@ const Home = () => {
 
   // Runs once and subscribes to url changes
   react.useEffect(() => {
-    console.log('Setting up URL listener');
     // Rerender the app when pushState is called
     ['pushState'].map(event => {
       const original = window.history[event];
@@ -102,6 +117,9 @@ const Home = () => {
         )
           .then(res => res.json())
           .catch(() => setFetchError(true));
+
+        if (pkg) warnAboutBundler(pkg);
+
         // Set the new state
         setFile({ url, meta, pkg, code });
         replaceState(`?${url.replace('https://unpkg.com/', '')}`);

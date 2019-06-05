@@ -129,7 +129,9 @@ const recursiveDependantsFetch = async (path, parent, fileCache, pkgCache) => {
   // that file and wait for return.
   // eslint-disable-next-line consistent-return
   return Promise.all(
-    dependencies.map(x => recursiveDependantsFetch(x[1], url, fileCache, pkgCache))
+    dependencies.map(x =>
+      recursiveDependantsFetch(x[1], url, fileCache, pkgCache)
+    )
   );
 };
 /* eslint-enable max-statements*/

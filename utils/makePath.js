@@ -13,8 +13,14 @@ const handleDoubleDot = (pathEnd, base) => {
   return strippedBase + strippedPathEnd;
 };
 
+// Handles cases like Svelte, where - on runpkg - the index url doesn't have a file ext
+const getCurrentdir = currentPath =>
+  currentPath.match(fileNameRegEx)
+    ? currentPath.replace(fileNameRegEx, '')
+    : currentPath.replace(/\/[^\/]+$/, '');
+
 const makePath = url => x => {
-  const base = url.replace(fileNameRegEx, '');
+  const base = getCurrentdir(url);
   if (x.startsWith('./')) return base + x.replace('./', '/');
   if (x.startsWith('../')) return handleDoubleDot(x, base);
   if (x.startsWith('https://')) return x;

@@ -18,7 +18,6 @@ const handleCtrlDown = e => {
 };
 
 const handleCtrlUp = e => {
-  console.log(e);
   if (e.key === 'Meta' || e.key === 'Control') {
     document
       .querySelectorAll('.imports')
@@ -29,8 +28,7 @@ const handleCtrlUp = e => {
 // this function maps over dependencies and appends
 // anchor tags to imports in the editor
 const anchorAppender = deps => {
-  const dependenciesArray = deps.map(x => [x[0], x[1]]);
-  dependenciesArray.forEach(y => {
+  deps.forEach(y => {
     const imports = [...document.querySelectorAll('.token.string')].find(x =>
       x.innerText.includes(y[0])
     );
