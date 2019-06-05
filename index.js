@@ -31,6 +31,7 @@ const parseUrl = (
 // For now, add warning in console if popular bundler detected
 const warnAboutBundler = pkgJSON => {
   if (
+    pkgJSON.scripts instanceof Object &&
     Object.values(pkgJSON.scripts).some(
       x =>
         x.startsWith('rollup') ||
