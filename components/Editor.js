@@ -18,7 +18,8 @@ const handleCtrlDown = e => {
 };
 
 const handleCtrlUp = e => {
-  if (e.key === 'meta' || e.key === 'ctrlKey') {
+  console.log(e);
+  if (e.key === 'Meta' || e.key === 'Control') {
     document
       .querySelectorAll('.imports')
       .forEach(x => x.classList.remove('ctrl'));
