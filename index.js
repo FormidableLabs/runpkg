@@ -76,7 +76,6 @@ const Home = () => {
 
   // Runs once and subscribes to url changes
   react.useEffect(() => {
-    console.log('Setting up URL listener');
     // Rerender the app when pushState is called
     ['pushState'].map(event => {
       const original = window.history[event];
