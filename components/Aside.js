@@ -4,6 +4,7 @@ import Link from './Link.js';
 import formatBytes from '../utils/formatBytes.js';
 import Spinner from './Spinner.js';
 import FileIcon from './FileIcon.js';
+import { DependencyContext } from '../index.js';
 
 const FileList = ({ title, files, packageName }) => html`
   <div key=${title}>
@@ -38,13 +39,23 @@ const FileList = ({ title, files, packageName }) => html`
 export default ({ file }) => {
   const [cache, setCache] = react.useState({});
 
+  //eslint-disable-next-line no-unused-vars
+  const [dependencyState, setDependencyState] = react.useContext(
+    DependencyContext
+  );
+
   react.useEffect(() => {
     setCache({});
     // Match breaks this ?enhanced-resolve@4.1.0/lib/NodeJsInputFileSystem
     // No match breaks preact@8.4.2/devtools
     if (file.url) {
       console.log(`Analysing ${file.url}`);
-      recursiveDependencyFetch(file.url).then(setCache);
+      recursiveDependencyFetch(file.url).then(x => {
+        // Side effects for setting various caches
+        //eslint-disable-next-line no-unused-expressions
+        setCache(x);
+        setDependencyState(x);
+      });
     }
   }, [file.url]);
 
@@ -61,12 +72,12 @@ export default ({ file }) => {
   // const deepDependencies = fetchDependencies(cache)(key);
 
   const externalDependencies = target.dependencies
-    .filter(x => !x.includes(`${name}@${version}`))
-    .map(x => cache[x]);
+    .filter(x => !x[1].includes(`${name}@${version}`))
+    .map(x => cache[x[1]]);
 
   const internalDependencies = target.dependencies
-    .filter(x => x.includes(`${name}@${version}`))
-    .map(x => cache[x]);
+    .filter(x => x[1].includes(`${name}@${version}`))
+    .map(x => cache[x[1]]);
 
   const knownDependants = target.dependants.map(x => cache[x]);
   // <div key="imported-size">

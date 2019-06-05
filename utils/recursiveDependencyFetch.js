@@ -1,25 +1,7 @@
 import fileNameRegEx from '../utils/fileNameRegEx.js';
+import makePath from '../utils/makePath.js';
 
 const UNPKG = 'https://unpkg.com/';
-
-// Handles paths like "../../some-file.js"
-const handleDoubleDot = (pathEnd, base) => {
-  const howFarBack = -1 * pathEnd.match(/\.\.\//g).length;
-  const strippedPathEnd = pathEnd.replace(/\.\./g, '').replace(/\/+/g, '/');
-  const strippedBase = base
-    .split('/')
-    .slice(0, howFarBack)
-    .join('/');
-  return strippedBase + strippedPathEnd;
-};
-
-const makePath = url => x => {
-  const base = url.replace(fileNameRegEx, '');
-  if (x.startsWith('./')) return base + x.replace('./', '/');
-  if (x.startsWith('../')) return handleDoubleDot(x, base);
-  if (x.startsWith('https://')) return x;
-  return UNPKG + x;
-};
 
 const isExternalPath = str => !str.startsWith('.');
 const isLocalFile = str => !isExternalPath(str) && fileNameRegEx.test(str);
@@ -112,8 +94,8 @@ const recursiveDependantsFetch = async (path, parent, fileCache, pkgCache) => {
   // If we asked for a file but got redirected by unpkg
   // then update the url in the parents dependencies
   if (cache[parent] && path !== url) {
-    const position = cache[parent].dependencies.indexOf(path);
-    cache[parent].dependencies[position] = url;
+    const position = cache[parent].dependencies.map(x => x[1]).indexOf(path);
+    cache[parent].dependencies[position][1] = url;
   }
 
   // Checks if we've already fetched the file and dependencies
@@ -131,7 +113,10 @@ const recursiveDependantsFetch = async (path, parent, fileCache, pkgCache) => {
     return;
   }
 
-  const dependencies = extractDependencies(code, pkg).map(makePath(url));
+  const dependencies = extractDependencies(code, pkg).map(x => [
+    x,
+    makePath(url)(x),
+  ]);
 
   cache[url] = {
     url,
@@ -144,7 +129,7 @@ const recursiveDependantsFetch = async (path, parent, fileCache, pkgCache) => {
   // that file and wait for return.
   // eslint-disable-next-line consistent-return
   return Promise.all(
-    dependencies.map(x => recursiveDependantsFetch(x, url, fileCache, pkgCache))
+    dependencies.map(x => recursiveDependantsFetch(x[1], url, fileCache, pkgCache))
   );
 };
 /* eslint-enable max-statements*/
