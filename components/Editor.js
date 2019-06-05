@@ -1,5 +1,52 @@
 import { react as React, html } from 'https://unpkg.com/rplus-production@1.0.0';
 
+import pushState from '../utils/pushState.js';
+
+// redirects req from unpkg -> runpkg
+const handleEditorOnClick = e => {
+  const href = e.nativeEvent.target.parentNode.href;
+  if (href) {
+    e.preventDefault();
+    pushState(href.replace('https://unpkg.com/', '?'));
+  }
+};
+
+const handleCtrlDown = e => {
+  if (e.metaKey || e.ctrlKey) {
+    document.querySelectorAll('.imports').forEach(x => x.classList.add('ctrl'));
+  }
+};
+
+const handleCtrlUp = e => {
+  console.log(e);
+  if (e.key === 'Meta' || e.key === 'Control') {
+    document
+      .querySelectorAll('.imports')
+      .forEach(x => x.classList.remove('ctrl'));
+  }
+};
+
+// this function maps over dependencies and appends
+// anchor tags to imports in the editor
+const anchorAppender = deps => {
+  const dependenciesArray = deps.map(x => [x[0], x[1]]);
+  dependenciesArray.forEach(y => {
+    const imports = [...document.querySelectorAll('.token.string')].find(x =>
+      x.innerText.includes(y[0])
+    );
+    if (!imports) {
+      return;
+    }
+    const clonedImports = imports.cloneNode(true);
+    clonedImports.classList.add('imports');
+    const anchor = document.createElement('a');
+    anchor.href = y[1];
+    anchor.appendChild(clonedImports);
+    imports.replaceWith(anchor);
+  });
+  return;
+};
+
 /*eslint-disable */
 
 var _extends =
@@ -104,11 +151,12 @@ var className = 'npm__react-simple-code-editor__textarea';
 var cssText =
   /* CSS */ '\n/**\n * Reset the text fill color so that placeholder is visible\n */\n.' +
   className +
-  ":empty {\n  -webkit-text-fill-color: inherit !important;\n}\n\n/**\n * Hack to apply on some CSS on IE10 and IE11\n */\n@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {\n  /**\n    * IE doesn't support '-webkit-text-fill-color'\n    * So we use 'color: transparent' to make the text transparent on IE\n    * Unlike other browsers, it doesn't affect caret color in IE\n    */\n  ." +
+  ":empty {\n  -webkit-text-fill-color: inherit !important;\n}\n\n/**\n * Hack to apply on some CSS on IE10 and IE11\n */\n@media all and (-ms-high-contrast: none), (-ms-high-contrast: active) {\n  /**\n    * IE does n't support '-webkit-text-fill-color'\n    * So we use 'color: transparent' to make the text transparent on IE\n    * Unlike other browsers, it doesn't affect caret color in IE\n    */\n  ." +
   className +
   ' {\n    color: transparent !important;\n  }\n\n  .' +
   className +
-  '::selection {\n    background-color: #accef7 !important;\n    color: transparent !important;\n  }\n}\n';
+  '::selection {\n    background-color: #accef7 !important;\n    color: transparent !important;\n  }\n}\n' +
+  '\na {text-decoration: none} .imports:hover {text-decoration: underline; \n text-decoration-color: white;} .ctrl{text-decoration: underline; \n text-decoration-color: white;}';
 
 var Editor = (function(_React$Component) {
   _inherits(Editor, _React$Component);
@@ -541,6 +589,30 @@ var Editor = (function(_React$Component) {
       key: 'componentDidMount',
       value: function componentDidMount() {
         this._recordCurrentState();
+        window.addEventListener('keydown', handleCtrlDown, true);
+        window.addEventListener('keyup', handleCtrlUp, true);
+      },
+    },
+    {
+      key: 'componentDidUpdate',
+      value: function componentDidUpdate() {
+        // narly check but it works
+        Object.entries(this.props.dependencyState).length !== 0 &&
+        this.props.dependencyState[this.props.url] &&
+        this.props.dependencyState[this.props.url].hasOwnProperty(
+          'dependencies'
+        )
+          ? anchorAppender(
+              this.props.dependencyState[this.props.url].dependencies
+            )
+          : null;
+      },
+    },
+    {
+      key: 'componentWillUnmount',
+      value: function componentWillUnmount() {
+        window.removeEventListener('keydown', handleCtrlDown, true);
+        window.removeEventListener('keyup', handleCtrlUp, true);
       },
     },
     {
@@ -644,6 +716,7 @@ var Editor = (function(_React$Component) {
             'pre',
             _extends(
               {
+                onClick: handleEditorOnClick,
                 'aria-hidden': 'true',
                 style: _extends(
                   {},
@@ -712,7 +785,6 @@ var styles = {
   },
   highlight: {
     position: 'relative',
-    pointerEvents: 'none',
   },
   editor: {
     margin: 0,

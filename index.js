@@ -28,6 +28,30 @@ const parseUrl = (
     .join('/'),
 });
 
+// Initialise context for passing cache from Aside to Article
+
+export const DependencyContext = react.createContext(null);
+
+const DependencyContextProvider = props => {
+  const [dependencyState, setdependencyState] = react.useState({});
+
+  // This useEffect makes sure that our context updates with the file
+  // updates, otherwise this results in our editor trying to determine
+  // dependencies with an out of date file.url
+
+  react.useEffect(() => {
+    setdependencyState(state => ({ ...state }));
+  }, [props.file]);
+  return html`
+       <${DependencyContext.Provider} value=${[
+    dependencyState,
+    setdependencyState,
+  ]}>
+${props.children}
+              </${DependencyContext.Provider}>
+        `;
+};
+
 const Home = () => {
   const [request, setRequest] = react.useState(parseUrl());
   const [file, setFile] = react.useState({});
@@ -117,11 +141,21 @@ const Home = () => {
         : isEmpty(file)
         ? null
         : html`
-            <${Nav} versions=${versions} file=${file} />
-            <${Article} file=${file} />
-            <${Aside} file=${file} />
-            <${Footer} />
-          `}
+              <${Nav} versions=${versions} file=${file} />    
+              <${DependencyContextProvider} file=${file}>
+              <${DependencyContext.Consumer}>
+                ${([dependencyState]) =>
+                  html`
+                    <${Article}
+                      file=${file}
+                      dependencyState=${dependencyState}
+                    />
+                  `}
+              </${DependencyContext.Consumer}>
+              <${Aside} file=${file} />
+              </${DependencyContextProvider}>
+              <${Footer} />
+            `}
     </main>
   `;
 };
