@@ -54,6 +54,7 @@ const Home = () => {
   // 2. Fetch the package.json for the requested package
   // 3. Fetch the /?meta for the requested package
   react.useEffect(() => {
+    console.log('file effect', file);
     // Reset any previous state
     if (!request.package) {
       setFile({});

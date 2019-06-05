@@ -14,7 +14,10 @@ const handleDoubleDot = (pathEnd, base) => {
 };
 
 const makePath = url => x => {
-  const base = url.replace(fileNameRegEx, '');
+  // need to update this! e.g. for svelte index
+  let base = url.replace(fileNameRegEx, '');
+  // Following line fixes edge case where current file has no extension, e.g. in Svelte
+  if (base === url) base = url.replace(/\/[^\/]+$/, '');
   if (x.startsWith('./')) return base + x.replace('./', '/');
   if (x.startsWith('../')) return handleDoubleDot(x, base);
   if (x.startsWith('https://')) return x;
@@ -26,7 +29,7 @@ const isLocalFile = str => !isExternalPath(str) && fileNameRegEx.test(str);
 const stripComments = str =>
   str.replace(/^[\t ]*\/\*(.|\r|\n)*?\*\/|^[\t ]*\/\/.*/gm, '');
 
-const extractDependencies = (input, pkg) => {
+const extractDependencies = (input, pkg, metaPaths) => {
   const code = stripComments(input);
 
   const imports = (
@@ -46,8 +49,17 @@ const extractDependencies = (input, pkg) => {
 
   // Return array of unique dependencies appending js
   // extension to any relative imports that have no extension
+  // Need to update this file resolution, using meta!
+  // console.log('input and pkg', input, pkg);
+
+  const localFileResolver = (inputName, pathList) => {
+    console.log('trying to resolve', inputName, 'against', pathList);
+    console.log('pathlist find', pathList.find(x => x.includes(inputName)));
+    return `${inputName}.js`;
+  };
+
   return [...new Set([...imports, ...requires])].map(x =>
-    isExternalPath(x) || isLocalFile(x) ? x : `${x}.js`
+    isExternalPath(x) || isLocalFile(x) ? x : localFileResolver(x, metaPaths)
   );
 };
 
@@ -56,6 +68,25 @@ const packageJsonUrl = path => {
     /https:\/\/unpkg.com\/(@?[^@\n]*)@?(\d+\.\d+\.\d+)?/
   );
   return `${UNPKG}${name}@${version}/package.json`;
+};
+
+const packageMetaUrl = path => {
+  const [_full, name, version] = path.match(
+    /https:\/\/unpkg.com\/(@?[^@\n]*)@?(\d+\.\d+\.\d+)?/
+  );
+  return `${UNPKG}${name}@${version}/?meta`;
+};
+
+const getFilePathsFromMeta = meta => {
+  const reducer = (acc, curr) => {
+    if (curr.type === 'file') {
+      return acc.concat(curr.path);
+    } else if (curr.type === 'directory') {
+      return acc.concat(curr.files.reduce(reducer, []));
+    }
+  };
+
+  return meta.files.reduce(reducer, []);
 };
 
 // cache keeps memory of what was run last
@@ -76,6 +107,12 @@ const fileCache = (items => async key =>
 const recursiveDependantsFetch = async (path, parent) => {
   const { url, code } = await fileCache(path);
   const pkg = await pkgCache(packageJsonUrl(url));
+
+  // This means we're fetching meta twice: redundant but easier for now...
+  const meta = await fetch(packageMetaUrl(url)).then(res => res.json());
+  const metaPaths = getFilePathsFromMeta(meta);
+
+  // console.log('new meta!', meta, metaPaths);
 
   // If we asked for a file but got redirected by unpkg
   // then update the url in the parents dependencies
@@ -99,7 +136,9 @@ const recursiveDependantsFetch = async (path, parent) => {
     return;
   }
 
-  const dependencies = extractDependencies(code, pkg).map(makePath(url));
+  const dependencies = extractDependencies(code, pkg, metaPaths).map(
+    makePath(url)
+  );
 
   cache[url] = {
     url,

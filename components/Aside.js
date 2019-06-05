@@ -5,25 +5,31 @@ import formatBytes from '../utils/formatBytes.js';
 import Spinner from './Spinner.js';
 import FileIcon from './FileIcon.js';
 
-const FileList = ({ title, files, packageName }) => html`
-  <div key=${title}>
-    <h3>${title}</h3>
-    <span>${files.length} Files</span>
-  </div>
-  <ul key=${files.join('-')}>
-    ${files.map(
-      x => html`
-        <li key=${x.url} data-test="Item">
-          ${FileIcon}
-          <${Link} href=${x.url.replace('https://unpkg.com/', '/?')}>
-            ${x.url.replace(`https://unpkg.com/`, '').replace(packageName, '')}
-          <//>
-          <span>${formatBytes(x.size)}</span>
-        </li>
-      `
-    )}
-  </ul>
-`;
+const FileList = ({ title, files, packageName }) => {
+  console.log(files);
+
+  return html`
+    <div key=${title}>
+      <h3>${title}</h3>
+      <span>${files.length} Files</span>
+    </div>
+    <ul key=${files.join('-')}>
+      ${files.map(
+        x => html`
+          <li key=${x.url} data-test="Item">
+            ${FileIcon}
+            <${Link} href=${x.url.replace('https://unpkg.com/', '/?')}>
+              ${x.url
+                .replace(`https://unpkg.com/`, '')
+                .replace(packageName, '')}
+            <//>
+            <span>${formatBytes(x.size)}</span>
+          </li>
+        `
+      )}
+    </ul>
+  `;
+};
 
 // const fetchDependencies = all => key =>
 //   all[key].dependencies.reduce(
