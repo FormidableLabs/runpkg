@@ -1,4 +1,4 @@
-import { html } from 'https://unpkg.com/rplus-production@1.0.0';
+import { html, css } from 'https://unpkg.com/rplus-production@1.0.0';
 import ProjectBadge from './ProjectBadge/index.js';
 import FormidableLogo from './FormidableLogo.js';
 
@@ -24,7 +24,15 @@ export default html`
       >
         Explore An Example Package
       </button>
-      <h6>PRESS CMD+P TO SEARCH PACKAGES</h6>
+      <h6
+        className=${css`
+          & {
+            text-transform: uppercase;
+          }
+        `}
+      >
+        To search packages: press cmd + p (Mac) or ctrl + p (Windows & Linux)
+      </h6>
     </div>
   </dialog>
 `;
