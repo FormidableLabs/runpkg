@@ -12,13 +12,13 @@ const handleEditorOnClick = e => {
 };
 
 const handleCtrlDown = e => {
-  if (e.keyCode === 17 || e.keyCode === 91) {
+  if (e.metaKey || e.ctrlKey) {
     document.querySelectorAll('.imports').forEach(x => x.classList.add('ctrl'));
   }
 };
 
 const handleCtrlUp = e => {
-  if (e.keyCode === 17 || e.keyCode === 91) {
+  if (e.key === 'meta' || e.key === 'ctrlKey') {
     document
       .querySelectorAll('.imports')
       .forEach(x => x.classList.remove('ctrl'));
