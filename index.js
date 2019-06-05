@@ -34,6 +34,14 @@ export const DependencyContext = react.createContext(null);
 
 const DependencyContextProvider = props => {
   const [dependencyState, setdependencyState] = react.useState({});
+
+  // This useEffect makes sure that our context updates with the file
+  // updates, otherwise this results in our editor trying to determine
+  // dependencies with an out of date file.url
+
+  react.useEffect(() => {
+    setdependencyState(state => ({ ...state }));
+  }, [props.file]);
   return html`
        <${DependencyContext.Provider} value=${[
     dependencyState,
@@ -134,7 +142,7 @@ const Home = () => {
         ? null
         : html`
               <${Nav} versions=${versions} file=${file} />    
-              <${DependencyContextProvider}>
+              <${DependencyContextProvider} file=${file}>
               <${DependencyContext.Consumer}>
                 ${([dependencyState]) =>
                   html`

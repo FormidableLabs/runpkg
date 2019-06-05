@@ -94,8 +94,8 @@ const recursiveDependantsFetch = async (path, parent, fileCache, pkgCache) => {
   // If we asked for a file but got redirected by unpkg
   // then update the url in the parents dependencies
   if (cache[parent] && path !== url) {
-    const position = cache[parent].dependencies.indexOf(path);
-    cache[parent].dependencies[position] = url;
+    const position = cache[parent].dependencies.map(x => x[1]).indexOf(path);
+    cache[parent].dependencies[position][1] = url;
   }
 
   // Checks if we've already fetched the file and dependencies
