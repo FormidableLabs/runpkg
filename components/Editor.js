@@ -18,7 +18,6 @@ const handleCtrlDown = e => {
 };
 
 const handleCtrlUp = e => {
-  console.log(e);
   if (e.key === 'Meta' || e.key === 'Control') {
     document
       .querySelectorAll('.imports')
