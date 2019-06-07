@@ -46,58 +46,45 @@ const warnAboutBundler = pkgJSON => {
   }
 };
 
-// Initialise context for passing cache from Aside to Article
-
-export const DependencyContext = react.createContext(null);
-
-const DependencyContextProvider = props => {
-  const [dependencyState, setdependencyState] = react.useState({});
-
-  // This useEffect makes sure that our context updates with the file
-  // updates, otherwise this results in our editor trying to determine
-  // dependencies with an out of date file.url
-
-  react.useEffect(() => {
-    setdependencyState(state => ({ ...state }));
-  }, [props.file]);
-  return html`
-       <${DependencyContext.Provider} value=${[
-    dependencyState,
-    setdependencyState,
-  ]}>
-${props.children}
-              </${DependencyContext.Provider}>
-        `;
-};
-
 const Home = () => {
-  const [request, setRequest] = react.useState(parseUrl());
-  const [file, setFile] = react.useState({});
-  const [fetchError, setFetchError] = react.useState(false);
-  const [versions, setVersions] = react.useState([]);
-
   function reducer(state, action) {
     switch (action.type) {
-      case 'toggle':
-        return { isSearching: !state.isSearching };
-      case 'open':
-        return { isSearching: true };
-      case 'close':
-        return { isSearching: false };
+      case 'toggleIsSearching':
+        return { ...state, isSearching: !state.isSearching };
+      case 'setIsSearching':
+        return { ...state, isSearching: action.payload };
+      case 'setRequest':
+        return { ...state, request: action.payload, isSearching: false };
+      case 'setFile':
+        return { ...state, file: action.payload };
+      case 'setFetchError':
+        return { ...state, fetchError: action.payload };
+      case 'setVersions':
+        return { ...state, versions: action.payload };
+      case 'setDependencies':
+        return { ...state, dependencyState: action.payload };
       default:
-        throw new Error();
+        return { ...state };
     }
   }
 
-  const [state, dispatch] = react.useReducer(reducer, { isSearching: false });
+  const [state, dispatch] = react.useReducer(reducer, {
+    isSearching: false,
+    request: parseUrl(),
+    file: {},
+    fetchError: false,
+    versions: [],
+    dependencyState: {},
+  });
 
   react.useEffect(() => {
     const check = e => {
       if (e.key === 'p' && e.metaKey) {
         e.preventDefault();
-        dispatch({ type: 'toggle' });
+        dispatch({ type: 'toggleIsSearching' });
       }
-      if (e.key === 'Escape') dispatch({ type: 'close' });
+      if (e.key === 'Escape')
+        dispatch({ type: 'setIsSearching', payload: false });
     };
     window.addEventListener('keydown', check);
   }, []);
@@ -109,12 +96,13 @@ const Home = () => {
       const original = window.history[event];
       window.history[event] = function() {
         original.apply(history, arguments);
-        dispatch({ type: 'close' });
-        setRequest(parseUrl());
+        dispatch({ type: 'setRequest', payload: parseUrl() });
       };
     });
     // Rerender when the back and forward buttons are pressed
-    addEventListener('popstate', () => setRequest(parseUrl()));
+    addEventListener('popstate', () =>
+      dispatch({ type: 'setRequest', payload: parseUrl() })
+    );
   }, []);
 
   // Whenever the URL changes then:
@@ -123,11 +111,12 @@ const Home = () => {
   // 3. Fetch the /?meta for the requested package
   react.useEffect(() => {
     // Reset any previous state
-    if (!request.package) {
-      setFile({});
-      setFetchError(false);
+    if (!state.request.package) {
+      dispatch({ type: 'setFile', payload: {} });
+      dispatch({ type: 'setFetchError', payload: true });
     }
-    if (request.package) {
+    if (state.request.package) {
+      const { request } = state;
       (async () => {
         // Fetch the file contents and check for redirect
         const { url, code } = await fetch(
@@ -139,18 +128,18 @@ const Home = () => {
         // Fetch the meta data
         const meta = await fetch(`https://unpkg.com/${request.package}/?meta`)
           .then(res => res.json())
-          .catch(() => setFetchError(true));
+          .catch(() => dispatch({ type: 'setFetchError', payload: true }));
         // Fetch the package json
         const pkg = await fetch(
           `https://unpkg.com/${request.package}/package.json`
         )
           .then(res => res.json())
-          .catch(() => setFetchError(true));
+          .catch(() => dispatch({ type: 'setFetchError', payload: true }));
 
         if (pkg) warnAboutBundler(pkg);
 
         // Set the new state
-        setFile({ url, meta, pkg, code });
+        dispatch({ type: 'setFile', payload: { url, meta, pkg, code } });
         replaceState(`?${url.replace('https://unpkg.com/', '')}`);
         try {
           var parser = new DOMParser();
@@ -162,51 +151,49 @@ const Home = () => {
 
           const scriptElements = unpkgPage.getElementsByTagName('script');
 
-          setVersions(
-            JSON.parse(
+          dispatch({
+            type: 'setVersions',
+            payload: JSON.parse(
               `${
                 Object.values(scriptElements)
                   .filter(x => x.innerHTML.includes('window.__DATA__'))[0]
                   .innerHTML.split('window.__DATA__ = ')[1]
               }`
-            ).availableVersions
-          );
+            ).availableVersions,
+          });
         } catch (err) {
           console.log('error in version parser');
           console.log(err);
         }
       })();
     }
-  }, [request.url]);
+  }, [state.request.url]);
 
   return html`
     <main className=${css`/index.css`}>
-      ${fetchError
+      ${state.fetchError
         ? NotFound
         : state.isSearching
         ? html`
             <${Search} isSearching=${state.isSearching} dispatch=${dispatch} />
           `
-        : !request.url
+        : !state.request.url
         ? Dialog
-        : isEmpty(file)
+        : isEmpty(state.file)
         ? null
         : html`
-              <${Nav} versions=${versions} file=${file} dispatch=${dispatch}/>    
-              <${DependencyContextProvider} file=${file}>
-              <${DependencyContext.Consumer}>
-                ${([dependencyState]) =>
-                  html`
-                    <${Article}
-                      file=${file}
-                      dependencyState=${dependencyState}
-                    />
-                  `}
-              </${DependencyContext.Consumer}>
-              <${Aside} file=${file} />
-              </${DependencyContextProvider}>
-              <${Footer} />
-            `}
+            <${Nav}
+              versions=${state.versions}
+              file=${state.file}
+              dispatch=${dispatch}
+            />
+            <${Article}
+              file=${state.file}
+              dependencyState=${state.dependencyState}
+            />
+            <${Aside} dispatch=${dispatch} file=${state.file} />
+            <${Footer} />
+          `}
     </main>
   `;
 };

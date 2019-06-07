@@ -68,7 +68,7 @@ export default ({ file, versions, dispatch }) => {
       </h1>
       <button
         className="searchButton"
-        onClick=${() => dispatch({ type: 'open' })}
+        onClick=${() => dispatch({ type: 'setIsSearching', payload: true })}
       >
         ${SearchIcon}
       </button>
