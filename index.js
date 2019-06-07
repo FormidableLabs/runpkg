@@ -75,7 +75,6 @@ const Home = () => {
   const [file, setFile] = react.useState({});
   const [fetchError, setFetchError] = react.useState(false);
   const [versions, setVersions] = react.useState([]);
-  const [isSearching, setIsSearching] = react.useState(false);
 
   function reducer(state, action) {
     switch (action.type) {
