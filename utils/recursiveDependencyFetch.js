@@ -48,7 +48,9 @@ const cache = {};
 // returns it, if not it fetches it.
 
 class PkgCache {
-  cache = new Map();
+  constructor() {
+    this.cache = new Map();
+  }
   async fetchPkg(key) {
     if (this.cache.has(key)) {
       return await this.cache.get(key);
@@ -66,7 +68,9 @@ class PkgCache {
 // returns it, if not it fetches it.
 
 class FileCache {
-  cache = new Map();
+  constructor() {
+    this.cache = new Map();
+  }
   async fetchFiles(key) {
     if (this.cache.has(key)) {
       return await this.cache.get(key);
