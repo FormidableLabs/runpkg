@@ -5,8 +5,11 @@ import CloseIcon from './CloseIcon.js';
 
 const pushState = url => history.pushState(null, null, url);
 
+<<<<<<< HEAD
 
 
+=======
+>>>>>>> add-search
 export default ({ isSearching, dispatch }) => {
   const [search, setSearch] = react.useState('');
   const [results, setResults] = react.useState([]);
@@ -18,6 +21,7 @@ export default ({ isSearching, dispatch }) => {
         .then(setResults);
   }, [search]);
   /*eslint-enable no-unused-expressions*/
+<<<<<<< HEAD
   const handleEnter = (v) => {
     if(v === 'Enter' && results.length > 0){
         pushState(
@@ -25,6 +29,9 @@ export default ({ isSearching, dispatch }) => {
           ) }
     }
    
+=======
+
+>>>>>>> add-search
   return !isSearching
     ? null
     : html`
@@ -101,14 +108,18 @@ export default ({ isSearching, dispatch }) => {
           open
         >
           <div>
+<<<<<<< HEAD
             <button
               onClick=${() =>
                 dispatch({ type: 'setIsSearching', payload: false })}
             >
+=======
+            <button onClick=${() => dispatch({ type: 'close' })}>
+>>>>>>> add-search
               ${CloseIcon}
             </button>
             <input
-              autoFocus
+              autofocus
               value=${search}
               onChange=${e => setSearch(e.target.value)}
               onKeyDown=${e => handleEnter(e.key)}

@@ -93,6 +93,32 @@ const Home = () => {
     window.addEventListener('keydown', check);
   }, []);
 
+  function reducer(state, action) {
+    switch (action.type) {
+      case 'toggle':
+        return { isSearching: !state.isSearching };
+      case 'open':
+        return { isSearching: true };
+      case 'close':
+        return { isSearching: false };
+      default:
+        throw new Error();
+    }
+  }
+
+  const [state, dispatch] = react.useReducer(reducer, { isSearching: false });
+
+  react.useEffect(() => {
+    const check = e => {
+      if (e.key === 'p' && e.metaKey) {
+        e.preventDefault();
+        dispatch({ type: 'toggle' });
+      }
+      if (e.key === 'Escape') dispatch({ type: 'close' });
+    };
+    window.addEventListener('keydown', check);
+  }, []);
+
   // Runs once and subscribes to url changes
   react.useEffect(() => {
     // Rerender the app when pushState is called

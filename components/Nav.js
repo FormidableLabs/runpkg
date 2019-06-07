@@ -76,7 +76,16 @@ export default ({ file, versions, dispatch }) => {
       <h1 onClick=${() => pushState(packageMainUrl)} data-test="title">
         ${name}
       </h1>
+<<<<<<< HEAD
 
+=======
+      <button
+        className="searchButton"
+        onClick=${() => dispatch({ type: 'open' })}
+      >
+        ${SearchIcon}
+      </button>
+>>>>>>> add-search
       <span className="info-block">
         <p>v${version}</p>
         <p>${license}</p>
