@@ -151,6 +151,16 @@ const Home = () => {
     }
   }, [request.url]);
 
+  react.useEffect(() => {
+    if (fetchError) {
+      document.title = '404 | runpkg';
+    } else if (request && request.package) {
+      document.title = request.package + ' | runpkg';
+    } else {
+      document.title = 'runpkg | the package explorer';
+    }
+  }, [request.url, fetchError]);
+
   return html`
     <main className=${css`/index.css`}>
       ${fetchError
