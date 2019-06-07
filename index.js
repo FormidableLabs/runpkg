@@ -77,6 +77,32 @@ const Home = () => {
   const [versions, setVersions] = react.useState([]);
   const [isSearching, setIsSearching] = react.useState(false);
 
+  function reducer(state, action) {
+    switch (action.type) {
+      case 'toggle':
+        return { isSearching: !state.isSearching };
+      case 'open':
+        return { isSearching: true };
+      case 'close':
+        return { isSearching: false };
+      default:
+        throw new Error();
+    }
+  }
+
+  const [state, dispatch] = react.useReducer(reducer, { isSearching: false });
+
+  react.useEffect(() => {
+    const check = e => {
+      if (e.key === 'p' && e.metaKey) {
+        e.preventDefault();
+        dispatch({ type: 'toggle' });
+      }
+      if (e.key === 'Escape') dispatch({ type: 'close' });
+    };
+    window.addEventListener('keydown', check);
+  }, []);
+
   // Runs once and subscribes to url changes
   react.useEffect(() => {
     // Rerender the app when pushState is called
@@ -84,7 +110,7 @@ const Home = () => {
       const original = window.history[event];
       window.history[event] = function() {
         original.apply(history, arguments);
-        setIsSearching(false);
+        dispatch({ type: 'close' });
         setRequest(parseUrl());
       };
     });
@@ -154,31 +180,20 @@ const Home = () => {
     }
   }, [request.url]);
 
-  react.useEffect(() => {
-    const check = e => {
-      if (e.key === 'p' && e.metaKey) {
-        e.preventDefault();
-        setIsSearching(true);
-      }
-      if (e.key === 'Escape') setIsSearching(false);
-    };
-    window.addEventListener('keydown', check);
-  }, []);
-
   return html`
     <main className=${css`/index.css`}>
       ${fetchError
         ? NotFound
-        : isSearching
+        : state.isSearching
         ? html`
-            <${Search} isSearching=${isSearching} />
+            <${Search} isSearching=${state.isSearching} dispatch=${dispatch} />
           `
         : !request.url
         ? Dialog
         : isEmpty(file)
         ? null
         : html`
-              <${Nav} versions=${versions} file=${file} />    
+              <${Nav} versions=${versions} file=${file} dispatch=${dispatch}/>    
               <${DependencyContextProvider} file=${file}>
               <${DependencyContext.Consumer}>
                 ${([dependencyState]) =>

@@ -4,11 +4,12 @@ import FolderIcon from './FolderIcon.js';
 import FileIcon from './FileIcon.js';
 import MenuIcon from './MenuIcon.js';
 import CloseIcon from './CloseIcon.js';
+import SearchIcon from './SearchIcon.js';
 import Link from './Link.js';
 
 const pushState = url => history.pushState(null, null, url);
 
-export default ({ file, versions }) => {
+export default ({ file, versions, dispatch }) => {
   const [isNavShowing, showNav] = react.useState(false);
   const { name, version, main, license, description } = file.pkg;
 
@@ -65,6 +66,12 @@ export default ({ file, versions }) => {
       <h1 onClick=${() => pushState(packageMainUrl)} data-test="title">
         ${name}
       </h1>
+      <button
+        className="searchButton"
+        onClick=${() => dispatch({ type: 'open' })}
+      >
+        ${SearchIcon}
+      </button>
       <span className="info-block">
         <p>v${version}</p>
         <p>${license}</p>
