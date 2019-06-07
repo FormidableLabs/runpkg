@@ -36,7 +36,6 @@ const Home = () => {
 
   // Runs once and subscribes to url changes
   react.useEffect(() => {
-    console.log('Setting up URL listener');
     // Rerender the app when pushState is called
     ['pushState'].map(event => {
       const original = window.history[event];
@@ -54,7 +53,7 @@ const Home = () => {
   // 2. Fetch the package.json for the requested package
   // 3. Fetch the /?meta for the requested package
   react.useEffect(() => {
-    console.log('file effect', file);
+    // console.log('file effect', file);
     // Reset any previous state
     if (!request.package) {
       setFile({});

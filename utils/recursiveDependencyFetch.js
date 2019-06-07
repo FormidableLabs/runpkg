@@ -2,6 +2,13 @@ import fileNameRegEx from '../utils/fileNameRegEx.js';
 
 const UNPKG = 'https://unpkg.com/';
 
+// WIPWIP
+const isExternalPath = str => !str.startsWith('.');
+const isMissingFileExt = str => /\/[^.\/]*$/.test(str);
+const isLocalFile = str => !isExternalPath(str) && fileNameRegEx.test(str);
+const stripComments = str =>
+  str.replace(/^[\t ]*\/\*(.|\r|\n)*?\*\/|^[\t ]*\/\/.*/gm, '');
+
 // Handles paths like "../../some-file.js"
 const handleDoubleDot = (pathEnd, base) => {
   const howFarBack = -1 * pathEnd.match(/\.\.\//g).length;
@@ -14,30 +21,56 @@ const handleDoubleDot = (pathEnd, base) => {
 };
 
 const makePath = url => x => {
-  // need to update this! e.g. for svelte index
   let base = url.replace(fileNameRegEx, '');
   // Following line fixes edge case where current file has no extension, e.g. in Svelte
   if (base === url) base = url.replace(/\/[^\/]+$/, '');
+  // WIPWIP
+  console.log('base!', base);
+
+  // if()
+
   if (x.startsWith('./')) return base + x.replace('./', '/');
   if (x.startsWith('../')) return handleDoubleDot(x, base);
   if (x.startsWith('https://')) return x;
   return UNPKG + x;
 };
 
-const isExternalPath = str => !str.startsWith('.');
-const isLocalFile = str => !isExternalPath(str) && fileNameRegEx.test(str);
-const stripComments = str =>
-  str.replace(/^[\t ]*\/\*(.|\r|\n)*?\*\/|^[\t ]*\/\/.*/gm, '');
+// Return array of unique dependencies appending js
+// extension to any relative imports that have no extension
+// Need to update this file resolution, using meta!
+// console.log('input and pkg', input, pkg);
+// WIPWIP
+const localFileResolver = (inputName, pathList) => {
+  console.log('trying to resolve', inputName, 'against', pathList);
+  console.log(
+    'pathlist find',
+    pathList.filter(x => x.includes(inputName.replace(/^\.\//, '')))
+  );
+  return `${inputName}.js`;
+};
+
+const localFileResMap = x => {
+  if (isExternalPath(x) || !isMissingFileExt(x)) return x;
+
+  console.log('yeah', x, isExternalPath(x), isMissingFileExt(x));
+
+  return x;
+};
 
 const extractDependencies = (input, pkg, metaPaths) => {
   const code = stripComments(input);
+  // WIPWIP
 
   const imports = (
     code.match(/^(import|export).*(from)[ \n]+['"](.*?)['"];?$/gm) || []
-  ).map(x => x.match(/^(import|export).*(from)[ \n]+['"](.*?)['"];?$/)[3]);
+  )
+    .map(x => x.match(/^(import|export).*(from)[ \n]+['"](.*?)['"];?$/)[3])
+    .map(localFileResMap);
+  // WIPWIP
 
   const requires = (code.match(/(require\(['"])[^)\n\r]*(['"]\))/gm) || [])
     .map(x => x.match(/['"](.*)['"]/)[1])
+    .map(localFileResMap)
     .filter(
       x =>
         !isExternalPath(x) ||
@@ -46,17 +79,6 @@ const extractDependencies = (input, pkg, metaPaths) => {
           x.startsWith('@') ? x : x.split('/')[0]
         )
     );
-
-  // Return array of unique dependencies appending js
-  // extension to any relative imports that have no extension
-  // Need to update this file resolution, using meta!
-  // console.log('input and pkg', input, pkg);
-
-  const localFileResolver = (inputName, pathList) => {
-    console.log('trying to resolve', inputName, 'against', pathList);
-    console.log('pathlist find', pathList.find(x => x.includes(inputName)));
-    return `${inputName}.js`;
-  };
 
   return [...new Set([...imports, ...requires])].map(x =>
     isExternalPath(x) || isLocalFile(x) ? x : localFileResolver(x, metaPaths)
@@ -135,10 +157,13 @@ const recursiveDependantsFetch = async (path, parent) => {
     }
     return;
   }
+  // WIPWIP
 
-  const dependencies = extractDependencies(code, pkg, metaPaths).map(
-    makePath(url)
-  );
+  const dependencies = extractDependencies(code, pkg, metaPaths)
+    .map(makePath(url))
+    .map(localFileResMap);
+
+  console.log('depen', dependencies);
 
   cache[url] = {
     url,

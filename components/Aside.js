@@ -6,7 +6,7 @@ import Spinner from './Spinner.js';
 import FileIcon from './FileIcon.js';
 
 const FileList = ({ title, files, packageName }) => {
-  console.log(files);
+  // console.log(files);
 
   return html`
     <div key=${title}>
@@ -49,7 +49,7 @@ export default ({ file }) => {
     // Match breaks this ?enhanced-resolve@4.1.0/lib/NodeJsInputFileSystem
     // No match breaks preact@8.4.2/devtools
     if (file.url) {
-      console.log(`Analysing ${file.url}`);
+      // console.log(`Analysing ${file.url}`);
       recursiveDependencyFetch(file.url).then(setCache);
     }
   }, [file.url]);
