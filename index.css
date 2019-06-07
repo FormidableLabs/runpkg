@@ -294,6 +294,7 @@
       > p {
         word-break: break-all;
         white-space: normal;
+        margin: 0;
       }
     }
   }
