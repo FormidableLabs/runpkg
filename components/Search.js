@@ -1,16 +1,21 @@
 import { html, react, css } from 'https://unpkg.com/rplus-production@1.0.0';
 
+import CloseIcon from './CloseIcon.js';
+
 const pushState = url => history.pushState(null, null, url);
 
-export default ({ isSearching }) => {
+export default ({ isSearching, dispatch }) => {
   const [search, setSearch] = react.useState('');
   const [results, setResults] = react.useState([]);
   react.useEffect(() => {
+    /*eslint-disable no-unused-expressions*/
     search &&
       fetch(`https://api.npms.io/v2/search/suggestions?size=10&q=${search}`)
         .then(res => res.json())
         .then(setResults);
   }, [search]);
+  /*eslint-enable no-unused-expressions*/
+
   return !isSearching
     ? null
     : html`
@@ -57,6 +62,28 @@ export default ({ isSearching }) => {
                 padding: 2rem;
               }
 
+              a {
+                cursor: pointer;
+                text-decoration: underline;
+                color: rgba(255, 255, 255, 0.7);
+
+                &:hover {
+                  color: #fff;
+                }
+              }
+
+              button {
+                position: fixed;
+                top: 1em;
+                left: 1em;
+                background-color: transparent;
+                border: none;
+                fill: #fff;
+                &:hover {
+                  fill: rgba(255, 255, 255, 0.62);
+                }
+              }
+
               li + li {
                 border-top: 1px solid rgba(255, 255, 255, 0.1);
               }
@@ -65,8 +92,11 @@ export default ({ isSearching }) => {
           open
         >
           <div>
+            <button onClick=${() => dispatch({ type: 'close' })}>
+              ${CloseIcon}
+            </button>
             <input
-              autoFocus
+              autofocus
               value=${search}
               onChange=${e => setSearch(e.target.value)}
               placeholder="Search for a package..."

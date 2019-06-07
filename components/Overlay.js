@@ -19,6 +19,7 @@ export default html`
         browser.
       </p>
       <button
+        className="openProject"
         data-test="Overlay-Button"
         onClick=${() => pushState('?lodash-es')}
       >

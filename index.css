@@ -83,6 +83,15 @@
     }
   }
 
+  > button.searchButton {
+    background-color: transparent;
+    border: none;
+    fill: #fff;
+    &:hover {
+      fill: rgba(255, 255, 255, 0.62);
+    }
+  }
+
   > p {
     font-size: 0.9rem;
     line-height: 162%;
@@ -380,7 +389,7 @@
     margin-top: 2rem;
   }
 
-  > div {
+  > div.overlay {
     margin: auto;
     padding: 1rem;
     text-align: center;
@@ -414,7 +423,7 @@
       margin: -2rem;
     }
 
-    button {
+    button.openProject {
       border: 1px solid #80eac7;
       margin-top: 2rem;
       font-size: 1rem;
