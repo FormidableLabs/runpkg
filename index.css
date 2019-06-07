@@ -10,7 +10,7 @@
     'article'
     'aside';
   @media screen and (min-width: 1000px) {
-    grid-template-columns: 20rem 1fr 30rem;
+    grid-template-columns: 20rem 1fr 24rem;
     grid-template-rows: 1fr 4rem;
     grid-template-areas:
       'nav article aside'
@@ -46,15 +46,11 @@
   transition: transform 0.25s;
   height: 100vh;
   overflow-y: auto;
-  min-width: 300px;
-  max-width: 360px;
+  overflow-x: hidden;
+  max-width: calc(100% - 60px);
 
   > * + * {
     margin-top: 1rem;
-  }
-
-  @media screen and (min-width: 1000px) {
-    transform: translateX(0%);
   }
 
   &.active {
@@ -69,7 +65,10 @@
     position: inherit;
     z-index: initial;
     width: auto;
+    transform: translateX(0%);
     background: rgba(0, 0, 0, 0.2);
+    min-width: 300px;
+    max-width: 360px;
   }
 
   > button.toggleCloseButton {
@@ -154,6 +153,7 @@
     display: flex;
     flex-direction: column;
     margin-bottom: 1rem;
+    word-break: break-word;
 
     div,
     li {
