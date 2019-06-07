@@ -6,7 +6,7 @@ import GitHubLogo from './GitHubLogo.js';
 export default () => html`
   <footer>
     <a href="https://formidable.com/blog/2019/runpkg/">
-      <p>Read about how we made this at Formidable</p>
+      <p>Read about the making of runpkg</p>
       ${FormidableIcon}
     </a>
     <a href="https://github.com/formidablelabs/runpkg">
