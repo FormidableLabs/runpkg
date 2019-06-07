@@ -110,7 +110,7 @@ const Home = () => {
 
   react.useEffect(() => {
     const check = e => {
-      if (e.key === 'p' && e.metaKey) {
+      if (e.key === 'p' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         dispatch({ type: 'toggle' });
       }
