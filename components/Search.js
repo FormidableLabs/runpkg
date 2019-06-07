@@ -1,3 +1,4 @@
+// NOTE: this file is in `.prettierignore` due to `autoFocus` being changed to `autofocus`
 import { html, react, css } from 'https://unpkg.com/rplus-production@1.0.0';
 
 import CloseIcon from './CloseIcon.js';
@@ -96,7 +97,7 @@ export default ({ isSearching, dispatch }) => {
               ${CloseIcon}
             </button>
             <input
-              autofocus
+              autoFocus
               value=${search}
               onChange=${e => setSearch(e.target.value)}
               placeholder="Search for a package..."
