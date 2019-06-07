@@ -119,7 +119,7 @@ export default ({ isSearching, dispatch }) => {
               ${CloseIcon}
             </button>
             <input
-              autofocus
+              autoFocus
               value=${search}
               onChange=${e => setSearch(e.target.value)}
               onKeyDown=${e => handleEnter(e.key)}
