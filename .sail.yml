@@ -12,7 +12,7 @@ tasks:
     args:
       - lint
   cypress:
-    image: cypress/browsers
+    image: cypress/browsers:chrome69
     command:
       - yarn
     args:

@@ -9,9 +9,8 @@ describe('Runpkg', () => {
 
   it('Visits the 404 page', () => {
     cy.visit(url + '/?loadashhhhhh');
-    console.log(window);
-    cy.get('[data-test=Error-Title]', { timeout: 100000 }).contains('404');
-    cy.get('[data-test=Error-Button]', { timeout: 100000 }).click();
+    cy.get('[data-test="Error-Title"]', { timeout: 10000 }).contains('404');
+    cy.get('[data-test="Error-Button"]', { timeout: 10000 }).click();
     cy.url().should('equal', url + '/');
   });
 });
