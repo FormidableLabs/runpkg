@@ -10,7 +10,11 @@ export default html`
         Oh no, we couldn't find that package! Check the package name was spelt
         correctly or create an issue.
       </p>
-      <button data-test="Error-Button" onClick=${() => pushState('/')}>
+      <button
+        data-test="Error-Button"
+        className="errorButton"
+        onClick=${() => pushState('/')}
+      >
         Return to the home page
       </button>
     </div>

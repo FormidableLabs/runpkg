@@ -389,7 +389,8 @@
     margin-top: 2rem;
   }
 
-  > div.overlay {
+  > div.overlay,
+  > div.error {
     margin: auto;
     padding: 1rem;
     text-align: center;
@@ -423,7 +424,8 @@
       margin: -2rem;
     }
 
-    button.openProject {
+    button.openProject,
+    button.errorButton {
       border: 1px solid #80eac7;
       margin-top: 2rem;
       font-size: 1rem;
