@@ -1,11 +1,6 @@
 describe('Runpkg', () => {
-  let url;
-  before(() => {
-    url =
-      Cypress.env('env') === 'local'
-        ? 'http://localhost:8080'
-        : 'https://runpkg.com';
-  });
+  let url = 'http://localhost:8080';
+
   Cypress.on('uncaught:exception', (err, runnable) => {
     // returning false here prevents Cypress from
     // failing the test
@@ -14,8 +9,9 @@ describe('Runpkg', () => {
 
   it('Visits the 404 page', () => {
     cy.visit(url + '/?loadashhhhhh');
-    cy.get('[data-test=Error-Title]', { timeout: 10000 }).contains('404');
-    cy.get('[data-test=Error-Button]', { timeout: 10000 }).click();
+    console.log(window);
+    cy.get('[data-test=Error-Title]', { timeout: 100000 }).contains('404');
+    cy.get('[data-test=Error-Button]', { timeout: 100000 }).click();
     cy.url().should('equal', url + '/');
   });
 });
