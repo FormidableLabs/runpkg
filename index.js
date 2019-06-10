@@ -54,7 +54,11 @@ const Home = () => {
       case 'setIsSearching':
         return { ...state, isSearching: action.payload };
       case 'setRequest':
-        return { ...state, request: action.payload, isSearching: false };
+        return {
+          ...state,
+          request: action.payload,
+          isSearching: false,
+        };
       case 'setFile':
         return { ...state, file: action.payload };
       case 'setFetchError':
@@ -113,7 +117,7 @@ const Home = () => {
     // Reset any previous state
     if (!state.request.package) {
       dispatch({ type: 'setFile', payload: {} });
-      dispatch({ type: 'setFetchError', payload: true });
+      dispatch({ type: 'setFetchError', payload: false });
     }
     if (state.request.package) {
       const { request } = state;
