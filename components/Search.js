@@ -5,6 +5,8 @@ import CloseIcon from './CloseIcon.js';
 
 const pushState = url => history.pushState(null, null, url);
 
+
+
 export default ({ isSearching, dispatch }) => {
   const [search, setSearch] = react.useState('');
   const [results, setResults] = react.useState([]);
