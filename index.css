@@ -43,6 +43,7 @@
   z-index: 2;
   left: 0;
   padding: 2rem;
+  padding-top: 3rem;
   transition: transform 0.25s;
   height: 100vh;
   overflow-y: auto;
@@ -84,11 +85,29 @@
   }
 
   > button.searchButton {
-    background-color: transparent;
+    width: 100%;
+    top: 0;
+    left: 0;
+    position: fixed;
+    display: flex;
+    align-items: center;
+    background: #2a2c32;
     border: none;
-    fill: #fff;
+    fill: rgba(255, 255, 255, 0.62);
+    color: rgba(255, 255, 255, 0.62);
+    text-align: center;
+    padding: 1rem 0rem 1rem 2rem;
+    font-size: 0.9rem;
+    > svg {
+      width: 1.2rem;
+      height: 1.2rem;
+    }
+    > span {
+      margin-left: 0.3rem;
+    }
     &:hover {
-      fill: rgba(255, 255, 255, 0.62);
+      fill: #fff;
+      color: #fff;
     }
   }
 

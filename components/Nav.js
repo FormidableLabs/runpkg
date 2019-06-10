@@ -69,15 +69,16 @@ export default ({ file, versions, dispatch }) => {
       </span>
     </button>
     <nav className=${isNavShowing ? 'active' : 'hiding'}>
-      <h1 onClick=${() => pushState(packageMainUrl)} data-test="title">
-        ${name}
-      </h1>
       <button
         className="searchButton"
         onClick=${() => dispatch({ type: 'setIsSearching', payload: true })}
       >
-        ${SearchIcon}
+        ${SearchIcon}<span>Find packages...</span>
       </button>
+      <h1 onClick=${() => pushState(packageMainUrl)} data-test="title">
+        ${name}
+      </h1>
+
       <span className="info-block">
         <p>v${version}</p>
         <p>${license}</p>
