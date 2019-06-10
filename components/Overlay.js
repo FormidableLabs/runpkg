@@ -29,6 +29,7 @@ export default html`
         className=${css`
           & {
             text-transform: uppercase;
+            line-height: 162%;
           }
         `}
       >
