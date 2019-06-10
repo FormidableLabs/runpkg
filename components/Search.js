@@ -93,7 +93,10 @@ export default ({ isSearching, dispatch }) => {
           open
         >
           <div>
-            <button onClick=${() => dispatch({ type: 'close' })}>
+            <button
+              onClick=${() =>
+                dispatch({ type: 'setIsSearching', payload: false })}
+            >
               ${CloseIcon}
             </button>
             <input

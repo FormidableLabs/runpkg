@@ -27,12 +27,18 @@ export default ({ file, versions, dispatch }) => {
 
   const [selectedVersion, changeVersion] = react.useState(version);
 
+  // On package change
   react.useEffect(() => {
+    changeVersion(version);
+  }, [name]);
+
+  const handleVersionChange = v => {
+    changeVersion(v);
     const [, path] = file.url.match(
       /https:\/\/unpkg.com\/(?:@?[^@\n]*)@?(?:\d+\.\d+\.\d+)(.*)$/
     );
-    pushState(`?${name}@${selectedVersion}${path}`);
-  }, [selectedVersion]);
+    pushState(`?${name}@${v}${path}`);
+  };
 
   const Directory = ({ rootMeta }) => html`
     <ul>
@@ -68,7 +74,7 @@ export default ({ file, versions, dispatch }) => {
       </h1>
       <button
         className="searchButton"
-        onClick=${() => dispatch({ type: 'open' })}
+        onClick=${() => dispatch({ type: 'setIsSearching', payload: true })}
       >
         ${SearchIcon}
       </button>
@@ -84,7 +90,7 @@ export default ({ file, versions, dispatch }) => {
       <select
         id="version"
         value=${selectedVersion}
-        onChange=${e => changeVersion(e.target.value)}
+        onChange=${e => handleVersionChange(e.target.value)}
       >
         ${versions.length !== 0
           ? versions.map(
