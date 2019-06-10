@@ -95,26 +95,46 @@ const Home = () => {
 
   function reducer(state, action) {
     switch (action.type) {
-      case 'toggle':
-        return { isSearching: !state.isSearching };
-      case 'open':
-        return { isSearching: true };
-      case 'close':
-        return { isSearching: false };
+      case 'toggleIsSearching':
+        return { ...state, isSearching: !state.isSearching };
+      case 'setIsSearching':
+        return { ...state, isSearching: action.payload };
+      case 'setRequest':
+        return {
+          ...state,
+          request: action.payload,
+          isSearching: false,
+        };
+      case 'setFile':
+        return { ...state, file: action.payload };
+      case 'setFetchError':
+        return { ...state, fetchError: action.payload };
+      case 'setVersions':
+        return { ...state, versions: action.payload };
+      case 'setDependencies':
+        return { ...state, dependencyState: action.payload };
       default:
-        throw new Error();
+        return { ...state };
     }
   }
 
-  const [state, dispatch] = react.useReducer(reducer, { isSearching: false });
+  const [state, dispatch] = react.useReducer(reducer, {
+    isSearching: false,
+    request: parseUrl(),
+    file: {},
+    fetchError: false,
+    versions: [],
+    dependencyState: {},
+  });
 
   react.useEffect(() => {
     const check = e => {
       if (e.key === 'p' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
-        dispatch({ type: 'toggle' });
+        dispatch({ type: 'toggleIsSearching' });
       }
-      if (e.key === 'Escape') dispatch({ type: 'close' });
+      if (e.key === 'Escape')
+        dispatch({ type: 'setIsSearching', payload: false });
     };
     window.addEventListener('keydown', check);
   }, []);
