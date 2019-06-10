@@ -1,3 +1,20 @@
+.line-number {
+  color: lightblue;
+  margin-left: -42px;
+  padding-left: 2px;
+  margin-right: 10px;
+  display: inline-block;
+  width: 40px;
+  z-index: 1;
+}
+.selected {
+  background-color: green;
+}
+
+pre {
+  box-shadow: inset 40px 0 rgba(0, 0, 0, 0.541);
+}
+
 & {
   width: 100%;
   min-height: 100vh;

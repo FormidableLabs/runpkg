@@ -25,6 +25,29 @@ const handleCtrlUp = e => {
   }
 };
 
+const getSafeHash = () => Number(window.location.hash.replace(/[^0-9]/g, ''));
+
+const scrollLineIntoView = () => {
+  const hash = getSafeHash();
+
+  if (!hash) return;
+
+  const lineToScrollTo = document.querySelector(`#line-${hash}`);
+
+  if (lineToScrollTo) {
+    lineToScrollTo.scrollIntoView();
+    document.querySelector('article').scrollBy(0, -55);
+  }
+};
+
+// const clicked = this.id.replace('line-', '');
+// this.classList.toggle('selected');
+// if (document.location.hash == clicked) {
+//   document.location.hash = '';
+// } else {
+//   document.location.hash = clicked;
+// }
+
 // this function maps over dependencies and appends
 // anchor tags to imports in the editor
 const anchorAppender = deps => {
@@ -589,6 +612,7 @@ var Editor = (function(_React$Component) {
         this._recordCurrentState();
         window.addEventListener('keydown', handleCtrlDown, true);
         window.addEventListener('keyup', handleCtrlUp, true);
+        scrollLineIntoView();
       },
     },
     {
@@ -975,6 +999,20 @@ var _self =
             (n.tokens = C.tokenize(n.code, n.grammar)),
             C.hooks.run('after-tokenize', n),
             M.stringify(C.util.encode(n.tokens), n.language)
+              .split(/\n/)
+              .map((x, i) => {
+                const line = i + 1;
+                return `<span id="line-${line}" class="line-number ${
+                  line == getSafeHash() ? 'selected' : null
+                }" onclick="const clicked = this.id.replace('line-', '');
+                this.classList.toggle('selected');
+                if (document.location.hash == '#' + clicked) {
+                  document.location.hash = '';
+                } else {
+                  document.location.hash = clicked;
+                }">${line}</span>${x}`;
+              })
+              .join('\n')
           );
         },
         matchGrammar: function(e, a, t, n, r, i, l) {

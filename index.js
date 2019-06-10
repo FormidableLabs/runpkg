@@ -40,7 +40,7 @@ const warnAboutBundler = pkgJSON => {
     )
   ) {
     console.warn(
-      'Bundler (rollup, webpack or parcel) detected in package.json. File path resoltion may not work as expected on runpkg.'
+      'Bundler (rollup, webpack or parcel) detected in package.json. File path resolution may not work as expected on runpkg.'
     );
   }
 };
