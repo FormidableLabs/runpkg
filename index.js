@@ -174,14 +174,14 @@ const Home = () => {
   }, [state.request.url]);
 
   react.useEffect(() => {
-    if (fetchError) {
+    if (state.fetchError) {
       document.title = '404 | runpkg';
-    } else if (request && request.package) {
-      document.title = request.package + ' | runpkg';
+    } else if (state.request && state.request.package) {
+      document.title = state.request.package + ' | runpkg';
     } else {
       document.title = 'runpkg | the package explorer';
     }
-  }, [request.url, fetchError]);
+  }, [state.request.url, state.fetchError]);
 
   react.useEffect(() => {
     const check = e => {
