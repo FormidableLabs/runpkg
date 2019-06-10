@@ -5,6 +5,8 @@ import CloseIcon from './CloseIcon.js';
 
 const pushState = url => history.pushState(null, null, url);
 
+
+
 export default ({ isSearching, dispatch }) => {
   const [search, setSearch] = react.useState('');
   const [results, setResults] = react.useState([]);
@@ -16,7 +18,13 @@ export default ({ isSearching, dispatch }) => {
         .then(setResults);
   }, [search]);
   /*eslint-enable no-unused-expressions*/
-
+  const handleEnter = (v) => {
+    if(v === 'Enter' && results.length > 0){
+        pushState(
+            `?${results[0].package.name}@${results[0].package.version}`
+          ) }
+    }
+   
   return !isSearching
     ? null
     : html`
@@ -103,6 +111,7 @@ export default ({ isSearching, dispatch }) => {
               autoFocus
               value=${search}
               onChange=${e => setSearch(e.target.value)}
+              onKeyDown=${e => handleEnter(e.key)}
               placeholder="Search for a package..."
             />
             <ul key=${search}>
