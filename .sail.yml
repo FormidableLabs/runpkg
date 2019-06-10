@@ -1,25 +1,31 @@
 tasks:
   install:
-    image: cypress/browsers
+    image: node:carbon
     command:
       - yarn
     args:
       - install
   lint:
-    image: cypress/browsers
+    image: node:carbon
     command:
       - yarn
     args:
       - lint
   cypress:
     image: cypress/browsers
-    command: 
+    command:
       - yarn
     args:
       - test
+  deploy:
+    image: sailci/zeit-now:69c42bd
+    env:
+      - NOW_ENV
+    args:
+      - --token $(NOW_ENV)
 
 workflow:
   - install
   - sail:parallel:
       - lint
-      - cypress
+  - deploy
