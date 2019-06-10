@@ -28,4 +28,5 @@ workflow:
   - install
   - sail:parallel:
       - lint
+      - cypress
   - deploy
