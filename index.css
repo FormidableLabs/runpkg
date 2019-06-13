@@ -367,12 +367,14 @@
   height: 100vh;
   width: 100%;
 
-  > svg {
-    position: absolute;
-    top: 1rem;
-    left: 1rem;
-    width: 10vw;
-    fill: rgba(255, 255, 255, 0.1);
+  > a {
+    svg {
+      position: absolute;
+      top: 1rem;
+      left: 1rem;
+      width: 10vw;
+      fill: rgba(255, 255, 255, 0.1);
+    }
   }
 
   > div > * + * {
