@@ -6,7 +6,9 @@ const pushState = url => history.pushState(null, null, url);
 
 export default html`
   <dialog open>
-    ${FormidableLogo}
+    <a href="https://formidable.com">
+      ${FormidableLogo}
+    </a>
     <div className="overlay">
       <${ProjectBadge}
         color="#80EAC7"
