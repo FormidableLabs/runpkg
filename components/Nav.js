@@ -4,11 +4,12 @@ import FolderIcon from './FolderIcon.js';
 import FileIcon from './FileIcon.js';
 import MenuIcon from './MenuIcon.js';
 import CloseIcon from './CloseIcon.js';
+import SearchIcon from './SearchIcon.js';
 import Link from './Link.js';
 
 const pushState = url => history.pushState(null, null, url);
 
-export default ({ file, versions }) => {
+export default ({ file, versions, dispatch }) => {
   const [isNavShowing, showNav] = react.useState(false);
   const { name, version, main, license, description } = file.pkg;
 
@@ -26,12 +27,18 @@ export default ({ file, versions }) => {
 
   const [selectedVersion, changeVersion] = react.useState(version);
 
+  // On package change
   react.useEffect(() => {
+    changeVersion(version);
+  }, [name]);
+
+  const handleVersionChange = v => {
+    changeVersion(v);
     const [, path] = file.url.match(
       /https:\/\/unpkg.com\/(?:@?[^@\n]*)@?(?:\d+\.\d+\.\d+)(.*)$/
     );
-    pushState(`?${name}@${selectedVersion}${path}`);
-  }, [selectedVersion]);
+    pushState(`?${name}@${v}${path}`);
+  };
 
   const Directory = ({ rootMeta }) => html`
     <ul>
@@ -62,9 +69,16 @@ export default ({ file, versions }) => {
       </span>
     </button>
     <nav className=${isNavShowing ? 'active' : 'hiding'}>
+      <button
+        className="searchButton"
+        onClick=${() => dispatch({ type: 'setIsSearching', payload: true })}
+      >
+        ${SearchIcon}<span>Find packages...</span>
+      </button>
       <h1 onClick=${() => pushState(packageMainUrl)} data-test="title">
         ${name}
       </h1>
+
       <span className="info-block">
         <p>v${version}</p>
         <p>${license}</p>
@@ -77,7 +91,7 @@ export default ({ file, versions }) => {
       <select
         id="version"
         value=${selectedVersion}
-        onChange=${e => changeVersion(e.target.value)}
+        onChange=${e => handleVersionChange(e.target.value)}
       >
         ${versions.length !== 0
           ? versions.map(

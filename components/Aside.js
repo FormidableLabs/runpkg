@@ -4,7 +4,6 @@ import Link from './Link.js';
 import formatBytes from '../utils/formatBytes.js';
 import Spinner from './Spinner.js';
 import FileIcon from './FileIcon.js';
-import { DependencyContext } from '../index.js';
 
 const FileList = ({ title, files, packageName }) => html`
   <div key=${title}>
@@ -40,13 +39,8 @@ const FileList = ({ title, files, packageName }) => html`
 //     {}
 //   );
 
-export default ({ file }) => {
+export default ({ file, dispatch }) => {
   const [cache, setCache] = react.useState({});
-
-  //eslint-disable-next-line no-unused-vars
-  const [dependencyState, setDependencyState] = react.useContext(
-    DependencyContext
-  );
 
   react.useEffect(() => {
     setCache({});
@@ -58,7 +52,7 @@ export default ({ file }) => {
         // Side effects for setting various caches
         //eslint-disable-next-line no-unused-expressions
         setCache(x);
-        setDependencyState(x);
+        dispatch({ type: 'setDependencies', payload: x });
       });
     }
   }, [file.url]);
