@@ -34,9 +34,7 @@ export default ({ file, versions, dispatch }) => {
 
   const handleVersionChange = v => {
     changeVersion(v);
-    const [, path] = file.url.match(
-      /https:\/\/unpkg.com\/(?:@?[^@\n]*)@?(?:\d+\.\d+\.\d+)(.*)$/
-    );
+    const [, path] = file.url.match(/https:\/\/unpkg.com\/[^\/]*(\/?.*)$/);
     pushState(`?${name}@${v}${path}`);
   };
 
@@ -92,6 +90,7 @@ export default ({ file, versions, dispatch }) => {
         id="version"
         value=${selectedVersion}
         onChange=${e => handleVersionChange(e.target.value)}
+        data-test="version-selector"
       >
         ${versions.length !== 0
           ? versions.map(
