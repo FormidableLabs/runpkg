@@ -61,4 +61,9 @@ describe('Runpkg', () => {
     //     .trigger('keyup', 91)
     //     .should('not.have.css', 'text-decoration');
   });
+  it('Changes versions from version with suffix', () => {
+    cy.visit(url + '/?lodash@1.0.0-rc.1');
+    cy.get('[data-test=version-selector]', { timeout: 10000 }).select('4.11.2');
+    cy.url().should('include', '/?lodash@4.11.2/');
+  });
 });
