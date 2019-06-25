@@ -1,8 +1,6 @@
 {
   "name": "runpkg",
-  "alias": "runpkg.com",
-  "version": 2,
-  "alias": ["runpkg.com", "production"],
+  "alias": ["runpkg.com", "www.runpkg.com", "production"],
   "version": 2,
   "routes": [
     {
