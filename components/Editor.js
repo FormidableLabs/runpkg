@@ -781,7 +781,6 @@ Editor.defaultProps = {
   tabSize: 2,
   insertSpaces: true,
   ignoreTabKey: true,
-  padding: 0,
 };
 
 var styles = {
@@ -789,7 +788,6 @@ var styles = {
     position: 'relative',
     textAlign: 'left',
     boxSizing: 'border-box',
-    padding: 0,
     overflow: 'hidden',
   },
   textarea: {
@@ -809,7 +807,7 @@ var styles = {
     position: 'relative',
   },
   editor: {
-    margin: 0,
+    margin: '8px 4px 4px 42px',
     border: 0,
     background: 'none',
     boxSizing: 'inherit',
@@ -1002,8 +1000,8 @@ var _self =
               .split(/\n/)
               .map((x, i) => {
                 const line = i + 1;
-                return `<span id="line-${line}" class="line-number ${
-                  line == getSafeHash() ? 'selected' : null
+                return `<span id="line-${line}" class="line-number${
+                  line == getSafeHash() ? ' selected' : ''
                 }" onclick="const clicked = this.id.replace('line-', '');
                 this.classList.toggle('selected');
                 if (document.location.hash == '#' + clicked) {

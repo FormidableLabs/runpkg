@@ -11,10 +11,6 @@
   background-color: green;
 }
 
-pre {
-  box-shadow: inset 40px 0 rgba(0, 0, 0, 0.541);
-}
-
 & {
   width: 100%;
   min-height: 100vh;
@@ -266,6 +262,7 @@ pre {
 
   pre {
     color: #fff;
+    padding-left: 2px;
   }
 }
 
