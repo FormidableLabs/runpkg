@@ -40,14 +40,6 @@ const scrollLineIntoView = () => {
   }
 };
 
-// const clicked = this.id.replace('line-', '');
-// this.classList.toggle('selected');
-// if (document.location.hash == clicked) {
-//   document.location.hash = '';
-// } else {
-//   document.location.hash = clicked;
-// }
-
 // this function maps over dependencies and appends
 // anchor tags to imports in the editor
 const anchorAppender = deps => {
