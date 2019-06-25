@@ -3,6 +3,8 @@ import { html } from 'https://unpkg.com/rplus-production@1.0.0';
 import Editor from './Editor.js';
 import FileIcon from './FileIcon.js';
 
+const maxHighlightedCodeLength = 100000;
+
 export default ({ file, dependencyState }) => html`
   <article>
     <h1>
@@ -16,14 +18,18 @@ export default ({ file, dependencyState }) => html`
       dependencyState=${dependencyState}
       url=${file.url}
       key="editor"
-      value=${file.code.slice(0, 100000)}
+      value=${file.code.slice(0, maxHighlightedCodeLength)}
       style=${{
         lineHeight: '138%',
         fontFamily: '"Inconsolata", monospace',
+        boxShadow: 'inset 42px 0 rgba(0, 0, 0, 0.541)',
       }}
-      padding=${42}
       readOnly
     />
-    <pre key="pre">${file.code.slice(100000)}</pre>
+    ${file.code.length > maxHighlightedCodeLength
+      ? html`
+          <pre key="pre">${file.code.slice(maxHighlightedCodeLength)}</pre>
+        `
+      : null}
   </article>
 `;
