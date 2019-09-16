@@ -8,13 +8,13 @@ Runpkg turns a static file into an interactive and informative browsing experien
 
 ![ezgif com-video-to-gif](https://user-images.githubusercontent.com/1457604/57516159-1a539d80-730c-11e9-9735-3b34a3ebafde.gif)
 
-# Features
+## Features
 
 - 🔭 Navigable project directory listing
 - 🎨 Syntax highlighted file contents
 - 📝 Insights through static analysis
 
-# Usage
+## Usage
 
 To view a package or module in the browser with runpkg, prepend any unpkg url with: `r`. For example:
 
@@ -27,7 +27,7 @@ You will be redirect you to runpkg which will display the relevant package and f
 
 > Note if browsing a directory then runpkg will ignore the trailing `/` and take you to the entry point.
 
-# Development
+## Development
 
 If you would like to develop the project, first clone this repo then run the following command in your terminal (from the project root directory) which will open the app in your preferred browser.
 
@@ -46,7 +46,7 @@ As we're not using Zeit to resolve queries locally, you have to pass in the pack
 | unpkg     | `https://unpkg.com/es-react@16.8.30/index.js`      |
 | localhost | `http://localhost:8080/?es-react@16.8.30/index.js` |
 
-# Browsers Supported
+## Browsers Supported
 
 | Browser           | Supported | Versions    |
 | ----------------- | --------- | ----------- |
@@ -61,7 +61,7 @@ As we're not using Zeit to resolve queries locally, you have to pass in the pack
 | Edge (EdgeHTML)   | No        |             |
 | IE 11             | No        |             |
 
-# Testing
+## Testing
 
 We're currently doing end to end tests via Cypress, you can run them using the following:
 
@@ -69,6 +69,11 @@ We're currently doing end to end tests via Cypress, you can run them using the f
 npm test
 ```
 
-# Licence
+## Maintenance Status
+
+**Active:** Formidable is actively working on this project, and we expect to continue for work for the foreseeable future. Bug reports, feature requests and pull requests are welcome.
+
+
+## Licence
 
 MIT
