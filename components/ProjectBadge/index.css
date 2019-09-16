@@ -2,17 +2,8 @@
   0% {
     opacity: 0.4;
   }
-  60% {
-    opacity: 0.1;
-  }
-  75% {
-    opacity: 0.1;
-  }
-  85% {
-    opacity: 0.5;
-  }
   100% {
-    opacity: 0.4;
+    opacity: 0.1;
   }
 }
 
@@ -20,17 +11,8 @@
   0% {
     opacity: 0.7;
   }
-  60% {
-    opacity: 0.4;
-  }
-  75% {
-    opacity: 0.4;
-  }
-  85% {
-    opacity: 0.8;
-  }
   100% {
-    opacity: 0.7;
+    opacity: 0.4;
   }
 }
 
@@ -40,12 +22,18 @@ svg {
 
 .Svg:hover .InnerRing {
   animation-name: innerKf;
-  animation-duration: 1s;
+  animation-duration: 0.66s;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
 }
 
 .Svg:hover .MiddleRing {
   animation-name: middleKf;
-  animation-duration: 1s;
+  animation-duration: 0.66s;
+  animation-direction: alternate;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
 }
 
 text {
