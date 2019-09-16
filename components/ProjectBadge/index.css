@@ -1,39 +1,35 @@
 @keyframes innerKf {
-  0% {
-    opacity: 0.4;
-  }
-  100% {
+  25% {
     opacity: 0.1;
+  }
+  50%,
+  100% {
+    opacity: 0.4;
   }
 }
 
 @keyframes middleKf {
-  0% {
-    opacity: 0.7;
-  }
-  100% {
+  25% {
     opacity: 0.4;
+  }
+  50%,
+  100% {
+    opacity: 0.7;
   }
 }
 
 svg {
   width: 30vw;
+  user-select: none;
+  cursor: auto;
 }
 
 .Svg:hover .InnerRing {
-  animation-name: innerKf;
-  animation-duration: 0.66s;
-  animation-direction: alternate;
-  animation-iteration-count: infinite;
-  animation-timing-function: ease-in-out;
+  animation: innerKf 2.4s infinite ease-in-out;
 }
 
 .Svg:hover .MiddleRing {
-  animation-name: middleKf;
-  animation-duration: 0.66s;
-  animation-direction: alternate;
-  animation-iteration-count: infinite;
-  animation-timing-function: ease-in-out;
+  animation: middleKf 2.4s infinite ease-in-out;
 }
 
 text {
