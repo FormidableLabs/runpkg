@@ -1,7 +1,11 @@
 import { react, html } from 'https://unpkg.com/rplus-production@1.0.0';
+
 import recursiveDependencyFetch from '../utils/recursiveDependencyFetch.js';
-import Link from './Link.js';
 import formatBytes from '../utils/formatBytes.js';
+
+import FileContext from '../context/FileContext.js';
+
+import Link from './Link.js';
 import Spinner from './Spinner.js';
 import FileIcon from './FileIcon.js';
 
@@ -39,7 +43,9 @@ const FileList = ({ title, files, packageName }) => html`
 //     {}
 //   );
 
-export default ({ file, dispatch }) => {
+export default ({ dispatch }) => {
+  const { file } = react.useContext(FileContext);
+
   const [cache, setCache] = react.useState({});
 
   react.useEffect(() => {

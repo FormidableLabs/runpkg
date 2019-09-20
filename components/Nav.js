@@ -7,9 +7,16 @@ import CloseIcon from './CloseIcon.js';
 import SearchIcon from './SearchIcon.js';
 import Link from './Link.js';
 
+import FileContext from '../context/FileContext.js';
+
 const pushState = url => history.pushState(null, null, url);
 
-export default ({ file, versions, dispatch }) => {
+export default ({ dispatch }) => {
+  const { file } = react.useContext(FileContext);
+  const versions = [];
+
+  console.log(file);
+
   const [isNavShowing, showNav] = react.useState(false);
   const { name, version, main, license, description } = file.pkg;
 
@@ -102,7 +109,10 @@ export default ({ file, versions, dispatch }) => {
           : null}</select
       >
       <h2>Package Contents</h2>
-      <${Directory} rootMeta=${file.meta} />
+      ${file.meta &&
+        html`
+          <${Directory} rootMeta=${file.meta} />
+        `}
     </nav>
   `;
 };
