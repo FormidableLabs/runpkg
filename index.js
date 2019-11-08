@@ -146,27 +146,18 @@ const Home = () => {
         dispatch({ type: 'setFile', payload: { url, meta, pkg, code } });
         replaceState(`?${url.replace('https://unpkg.com/', '')}`);
         try {
-          var parser = new DOMParser();
-          const unpkgPage = await fetch(
-            `https://unpkg.com/${request.package}/`
-          ).then(async res =>
-            parser.parseFromString(await res.text(), 'text/html')
-          );
-
-          const scriptElements = unpkgPage.getElementsByTagName('script');
+          const versions = await fetch(
+            `https://registry.npmjs.cf/${request.package.split('@')[0]}/`
+          )
+            .then(res => res.json())
+            .then(json => Object.keys(json.versions));
 
           dispatch({
             type: 'setVersions',
-            payload: JSON.parse(
-              `${
-                Object.values(scriptElements)
-                  .filter(x => x.innerHTML.includes('window.__DATA__'))[0]
-                  .innerHTML.split('window.__DATA__ = ')[1]
-              }`
-            ).availableVersions,
+            payload: versions,
           });
         } catch (err) {
-          console.log('error in version parser');
+          console.log('error in version fetching');
           console.log(err);
         }
       })();
