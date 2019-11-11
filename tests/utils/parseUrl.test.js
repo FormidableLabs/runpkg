@@ -61,21 +61,21 @@ describe('parseUrl', () => {
       version: '1.0.0-beta.1',
     });
   });
-  it('keys are returned undefined if not available', () => {
+  it('keys are returned null if not available', () => {
     expect(parseUrl('https://unpkg.com/')).toEqual({
-      file: undefined,
-      name: undefined,
-      path: undefined,
-      version: undefined,
+      file: null,
+      name: null,
+      path: null,
+      version: null,
     });
     expect(parseUrl('https://unpkg.com/@scope/pkg')).toEqual({
-      file: '',
+      file: null,
       name: '@scope/pkg',
       path: '/@scope/pkg',
-      version: undefined,
+      version: null,
     });
     expect(parseUrl('https://unpkg.com/@scope/pkg@1.0.0-beta.1')).toEqual({
-      file: '',
+      file: null,
       name: '@scope/pkg',
       path: '/@scope/pkg@1.0.0-beta.1',
       version: '1.0.0-beta.1',
