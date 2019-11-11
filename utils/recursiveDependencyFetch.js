@@ -35,9 +35,13 @@ const extractDependencies = (input, pkg) => {
 };
 
 const packageJsonUrl = path => {
-  const { name, version } = parseUrl(path);
-  console.log(`${UNPKG}${name}@${version}/package.json`);
-  return `${UNPKG}${name}@${version}/package.json`;
+  const { name, version } = parseUrl(path) || {};
+  if (!name) {
+    console.error(`Unable to parse path: ${path}`);
+    return undefined;
+  } else {
+    return `${UNPKG}${name}@${version}/package.json`;
+  }
 };
 
 // cache keeps memory of what was run last
