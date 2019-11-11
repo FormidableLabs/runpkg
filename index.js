@@ -3,10 +3,8 @@ import { react, html, css } from 'https://unpkg.com/rplus-production@1.0.0';
 import Dialog from './components/Overlay.js';
 import Nav from './components/Nav.js';
 import Article from './components/Article.js';
-import Aside from './components/Aside.js';
-import Footer from './components/Footer.js';
 import NotFound from './components/NotFound.js';
-import Search from './components/Search.js';
+import Spinner from './components/Spinner.js';
 
 import fileNameRegEx from './utils/fileNameRegEx.js';
 
@@ -49,16 +47,8 @@ const warnAboutBundler = pkgJSON => {
 const Home = () => {
   function reducer(state, action) {
     switch (action.type) {
-      case 'toggleIsSearching':
-        return { ...state, isSearching: !state.isSearching };
-      case 'setIsSearching':
-        return { ...state, isSearching: action.payload };
       case 'setRequest':
-        return {
-          ...state,
-          request: action.payload,
-          isSearching: false,
-        };
+        return { ...state, request: action.payload };
       case 'setFile':
         return { ...state, file: action.payload };
       case 'setFetchError':
@@ -80,64 +70,6 @@ const Home = () => {
     versions: [],
     dependencyState: {},
   });
-
-  react.useEffect(() => {
-    const check = e => {
-      if (e.key === 'p' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        dispatch({ type: 'toggleIsSearching' });
-      }
-      if (e.key === 'Escape')
-        dispatch({ type: 'setIsSearching', payload: false });
-    };
-    window.addEventListener('keydown', check);
-  }, []);
-
-  function reducer(state, action) {
-    switch (action.type) {
-      case 'toggleIsSearching':
-        return { ...state, isSearching: !state.isSearching };
-      case 'setIsSearching':
-        return { ...state, isSearching: action.payload };
-      case 'setRequest':
-        return {
-          ...state,
-          request: action.payload,
-          isSearching: false,
-        };
-      case 'setFile':
-        return { ...state, file: action.payload };
-      case 'setFetchError':
-        return { ...state, fetchError: action.payload };
-      case 'setVersions':
-        return { ...state, versions: action.payload };
-      case 'setDependencies':
-        return { ...state, dependencyState: action.payload };
-      default:
-        return { ...state };
-    }
-  }
-
-  const [state, dispatch] = react.useReducer(reducer, {
-    isSearching: false,
-    request: parseUrl(),
-    file: {},
-    fetchError: false,
-    versions: [],
-    dependencyState: {},
-  });
-
-  react.useEffect(() => {
-    const check = e => {
-      if (e.key === 'p' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        dispatch({ type: 'toggleIsSearching' });
-      }
-      if (e.key === 'Escape')
-        dispatch({ type: 'setIsSearching', payload: false });
-    };
-    window.addEventListener('keydown', check);
-  }, []);
 
   // Runs once and subscribes to url changes
   react.useEffect(() => {
@@ -220,18 +152,17 @@ const Home = () => {
     }
   }, [state.request.url, state.fetchError]);
 
+  // <${Aside} dispatch=${dispatch} file=${state.file} />
+  // <${Footer} />
+
   return html`
     <main className=${css`/index.css`}>
       ${state.fetchError
         ? NotFound
-        : state.isSearching
-        ? html`
-            <${Search} isSearching=${state.isSearching} dispatch=${dispatch} />
-          `
         : !state.request.url
         ? Dialog
         : isEmpty(state.file)
-        ? null
+        ? Spinner
         : html`
             <${Nav}
               versions=${state.versions}
@@ -242,8 +173,6 @@ const Home = () => {
               file=${state.file}
               dependencyState=${state.dependencyState}
             />
-            <${Aside} dispatch=${dispatch} file=${state.file} />
-            <${Footer} />
           `}
     </main>
   `;

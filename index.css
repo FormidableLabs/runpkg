@@ -10,11 +10,11 @@
     'article'
     'aside';
   @media screen and (min-width: 1000px) {
-    grid-template-columns: 20rem 1fr 24rem;
+    grid-template-columns: 30rem 1fr;
     grid-template-rows: 1fr 4rem;
     grid-template-areas:
-      'nav article aside'
-      'nav article footer';
+      'nav article'
+      'nav article';
     overflow: hidden;
     height: 100vh;
   }
@@ -30,187 +30,6 @@
   fill: #fff;
   @media screen and (min-width: 1000px) {
     display: none;
-  }
-}
-
-& nav {
-  transform: translateX(-100%);
-  width: 90%;
-  grid-area: nav;
-  background: #26272c;
-  color: #fff;
-  position: absolute;
-  z-index: 2;
-  left: 0;
-  padding: 2rem;
-  padding-top: 3rem;
-  transition: transform 0.25s;
-  height: 100vh;
-  overflow-y: auto;
-  overflow-x: hidden;
-  max-width: calc(100% - 60px);
-
-  > * + * {
-    margin-top: 1rem;
-  }
-
-  &.active {
-    box-shadow: 1rem 1rem 1rem rgba(0, 0, 0, 0.1);
-    transform: translateX(0%);
-    @media screen and (min-width: 1000px) {
-      box-shadow: none;
-    }
-  }
-
-  @media screen and (min-width: 1000px) {
-    position: inherit;
-    z-index: initial;
-    width: auto;
-    transform: translateX(0%);
-    background: rgba(0, 0, 0, 0.2);
-    min-width: 300px;
-    max-width: 360px;
-  }
-
-  > button.toggleCloseButton {
-    position: fixed;
-    right: 1em;
-    top: 1em;
-    background-color: transparent;
-    border: none;
-    fill: #fff;
-    @media screen and (min-width: 1000px) {
-      display: none;
-    }
-  }
-
-  > button.searchButton {
-    width: 100%;
-    top: 0;
-    left: 0;
-    position: fixed;
-    display: flex;
-    align-items: center;
-    background: #2a2c32;
-    border: none;
-    fill: rgba(255, 255, 255, 0.62);
-    color: rgba(255, 255, 255, 0.62);
-    text-align: center;
-    padding: 1rem 0rem 1rem 2rem;
-    font-size: 0.9rem;
-    > svg {
-      width: 1.2rem;
-      height: 1.2rem;
-    }
-    > span {
-      margin-left: 0.3rem;
-    }
-    &:hover {
-      fill: #fff;
-      color: #fff;
-    }
-  }
-
-  > p {
-    font-size: 0.9rem;
-    line-height: 162%;
-    color: rgba(255, 255, 255, 0.6);
-    margin-top: 2rem;
-  }
-
-  a {
-    cursor: pointer;
-    text-decoration: underline;
-    color: rgba(255, 255, 255, 0.7);
-
-    &:hover {
-      color: #fff;
-    }
-  }
-
-  h1 {
-    display: inline-block;
-    font-weight: bold;
-    font-size: 2rem;
-    margin: 0;
-    margin-top: 1rem;
-    line-height: 138%;
-    cursor: pointer;
-  }
-
-  h1:hover {
-    color: rgba(255, 255, 255, 0.62);
-  }
-
-  > h2 {
-    margin-top: 2rem;
-    font-size: 1.38rem;
-    font-weight: bold;
-    padding-bottom: 1rem;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-  }
-
-  .info-block {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-start;
-    align-items: center;
-    > a {
-      color: #fff;
-      display: inline-block;
-      text-decoration: none;
-      > svg {
-        display: inline-block;
-        width: 2em;
-        vertical-align: middle;
-      }
-    }
-    > a:hover {
-      > svg {
-        > path {
-          fill: #b03b3a;
-        }
-      }
-    }
-    > * + *:before {
-      content: '|';
-      margin: 0 0.3em;
-    }
-  }
-
-  ul {
-    display: flex;
-    flex-direction: column;
-    margin-bottom: 1rem;
-    word-break: break-word;
-
-    div,
-    li {
-      display: flex;
-      align-items: center;
-      margin-top: 1rem;
-      svg {
-        flex: none;
-        width: 1rem;
-        height: 1rem;
-        fill: rgba(255, 255, 255, 0.5);
-        margin-right: 0.62rem;
-      }
-    }
-
-    > div ~ * {
-      margin-left: 0.5rem;
-    }
-
-    div > svg {
-      width: 1.5rem;
-      height: 1.5rem;
-    }
-
-    h2 {
-      font-size: 1rem;
-      font-weight: bold;
-    }
   }
 }
 
@@ -249,7 +68,7 @@
 & article {
   grid-area: article;
   overflow: auto;
-  padding: 0rem;
+  padding: 2rem;
   flex: 1 0 62%;
 
   @media screen and (min-width: 1000px) {

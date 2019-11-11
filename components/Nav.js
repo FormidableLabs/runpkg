@@ -1,107 +1,127 @@
-import { html, react } from 'https://unpkg.com/rplus-production@1.0.0';
-import NpmLogo from './NpmLogo.js';
-import FolderIcon from './FolderIcon.js';
-import FileIcon from './FileIcon.js';
-import MenuIcon from './MenuIcon.js';
-import CloseIcon from './CloseIcon.js';
-import SearchIcon from './SearchIcon.js';
-import Link from './Link.js';
+import { html, react, css } from 'https://unpkg.com/rplus-production@1.0.0';
 
-const pushState = url => history.pushState(null, null, url);
+import { RadioGroup } from './RadioGroup.js';
+import { PackageOverview } from './PackageOverview.js';
+import { RegistryOverview } from './RegistryOverview.js';
 
-export default ({ file, versions, dispatch }) => {
-  const [isNavShowing, showNav] = react.useState(false);
-  const { name, version, main, license, description } = file.pkg;
-
-  const packageMainUrl = `?${name}@${version}/${main}`;
-  const npmUrl = 'https://npmjs.com/' + name;
-
-  const File = ({ meta, parent }) => html`
-    <li key=${meta.path}>
-      ${FileIcon}
-      <${Link} href=${`/?${name}@${version}${meta.path}`}>
-        ${meta.path.replace(parent.path, '')}
-      <//>
-    </li>
-  `;
-
-  const [selectedVersion, changeVersion] = react.useState(version);
-
-  // On package change
-  react.useEffect(() => {
-    changeVersion(version);
-  }, [name]);
-
-  const handleVersionChange = v => {
-    changeVersion(v);
-    const [, path] = file.url.match(/https:\/\/unpkg\.com\/[^\/]*(\/?.*)$/);
-    pushState(`?${name}@${v}${path}`);
+export default ({ file, versions }) => {
+  const [mode, setMode] = react.useState('package');
+  const modeOptions = {
+    registry: mode === 'registry',
+    package: mode === 'package',
+    file: mode === 'file',
   };
 
-  const Directory = ({ rootMeta }) => html`
-    <ul>
-      ${rootMeta.path &&
-        rootMeta.path !== '/' &&
-        html`
-          <div>
-            ${FolderIcon}
-            <h2>${rootMeta.path.slice(1)}</h2>
-          </div>
-        `}
-      ${rootMeta.files.map(meta =>
-        meta.type === 'file'
-          ? File({ meta, parent: rootMeta })
-          : Directory({ rootMeta: meta })
-      )}
-    </ul>
-  `;
-
   return html`
-    <button
-      className="toggleOpenButton"
-      onClick=${() => showNav(!isNavShowing)}
-    >
-      ${isNavShowing ? CloseIcon : MenuIcon}
-      <span class="visually-hidden">
-        ${isNavShowing ? 'Hide navigation menu' : 'Show navigation menu'}
-      </span>
-    </button>
-    <nav className=${isNavShowing ? 'active' : 'hiding'}>
-      <button
-        className="searchButton"
-        onClick=${() => dispatch({ type: 'setIsSearching', payload: true })}
-      >
-        ${SearchIcon}<span>Find packages...</span>
-      </button>
-      <h1 onClick=${() => pushState(packageMainUrl)} data-test="title">
-        ${name}
-      </h1>
-      <span className="info-block">
-        <p>v${version}</p>
-        <p>${license}</p>
-        <a href=${npmUrl}>${NpmLogo}</a>
-      </span>
-      <p>
-        ${description || 'There is no description for this package.'}
-      </p>
-      <h2>Versions</h2>
-      <select
-        id="version"
-        value=${selectedVersion}
-        onChange=${e => handleVersionChange(e.target.value)}
-        data-test="version-selector"
-      >
-        ${versions.length !== 0
-          ? versions.map(
-              x =>
-                html`
-                  <option value=${x}>${x}</option>
-                `
-            )
-          : null}</select
-      >
-      <h2>Package Contents</h2>
-      <${Directory} rootMeta=${file.meta} />
+    <nav className=${styles}>
+      <${RadioGroup} options=${modeOptions} onClick=${setMode} />
+      ${mode === 'package'
+        ? PackageOverview({
+            file,
+            versions,
+          })
+        : mode === 'registry'
+        ? html`
+            <${RegistryOverview} />
+          `
+        : mode === 'file'
+        ? html`
+            <h1>Registry Search</h1>
+          `
+        : null}
     </nav>
   `;
 };
+
+const styles = css`
+  transform: translateX(-100%);
+  width: 100%;
+  grid-area: nav;
+  background: #26272c;
+  color: #fff;
+  position: absolute;
+  z-index: 2;
+  left: 0;
+  padding: 2rem;
+  transition: transform 0.25s;
+  height: 100vh;
+  overflow-y: auto;
+  overflow-x: hidden;
+
+  > * + * {
+    margin-top: 1.38rem;
+  }
+
+  > .row[justify='space-between'] {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+    padding-bottom: 1rem;
+  }
+
+  &.active {
+    box-shadow: 1rem 1rem 1rem rgba(0, 0, 0, 0.1);
+    transform: translateX(0%);
+    @media screen and (min-width: 1000px) {
+      box-shadow: none;
+    }
+  }
+
+  h2 {
+    font-size: 1.38rem;
+    font-weight: bold;
+  }
+
+  span {
+    font-size: 1.38rem;
+  }
+
+  @media screen and (min-width: 1000px) {
+    position: inherit;
+    z-index: initial;
+    width: auto;
+    transform: translateX(0%);
+    background: rgba(0, 0, 0, 0.2);
+  }
+
+  > button.toggleCloseButton {
+    position: fixed;
+    right: 1em;
+    top: 1em;
+    background-color: transparent;
+    border: none;
+    fill: #fff;
+    @media screen and (min-width: 1000px) {
+      display: none;
+    }
+  }
+
+  > button.searchButton {
+    width: 100%;
+    top: 0;
+    left: 0;
+    position: fixed;
+    display: flex;
+    align-items: center;
+    background: #2a2c32;
+    border: none;
+    fill: rgba(255, 255, 255, 0.62);
+    color: rgba(255, 255, 255, 0.62);
+    text-align: center;
+    padding: 1rem 0rem 1rem 2rem;
+    font-size: 0.9rem;
+    > svg {
+      width: 1.2rem;
+      height: 1.2rem;
+    }
+    > span {
+      margin-left: 0.3rem;
+    }
+    &:hover {
+      fill: #fff;
+      color: #fff;
+    }
+  }
+`;
