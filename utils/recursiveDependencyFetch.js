@@ -35,7 +35,7 @@ const extractDependencies = (input, pkg) => {
 };
 
 const packageJsonUrl = path => {
-  const { name, version } = parseUrl(path) || {};
+  const { name, version } = parseUrl(path);
   if (!name) {
     console.error(`Unable to parse path: ${path}`);
     return undefined;

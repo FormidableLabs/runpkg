@@ -7,13 +7,15 @@ const parseUrl = url => {
     .map(part => part.trim())
     .filter(Boolean);
   if (parts[0]) {
+    // checks if scoped packaged
     if (parts[0].startsWith('@')) {
       const nameVersion = parts[1].split('@');
       return {
         name: `${parts[0]}/${nameVersion[0]}` || null,
         version: nameVersion[1] || null,
         path: `/${parts.join('/')}` || null,
-        file: parts.slice(2).join('/') || null,
+        file: (parts.length > 2 && parts.slice(parts.length - 1)[0]) || null,
+        directory: parts.slice(2, parts.length - 1).join('/') || null,
       };
     } else {
       const nameVersion = parts[0].split('@');
@@ -21,7 +23,8 @@ const parseUrl = url => {
         name: nameVersion[0] || null,
         version: nameVersion[1] || null,
         path: `/${parts.join('/')}` || null,
-        file: parts.slice(1).join('/') || null,
+        file: (parts.length > 1 && parts.slice(parts.length - 1)[0]) || null,
+        directory: parts.slice(1, parts.length - 1).join('/') || null,
       };
     }
   } else {
@@ -30,6 +33,7 @@ const parseUrl = url => {
       version: null,
       path: null,
       file: null,
+      directory: null,
     };
   }
 };
