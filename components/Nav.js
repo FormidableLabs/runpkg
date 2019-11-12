@@ -3,9 +3,10 @@ import { html, react, css } from 'https://unpkg.com/rplus-production@1.0.0';
 import { RadioGroup } from './RadioGroup.js';
 import { PackageOverview } from './PackageOverview.js';
 import { RegistryOverview } from './RegistryOverview.js';
+import { FileOverview } from './FileOverview.js';
 const isEmpty = obj => Object.keys(obj).length === 0;
 
-export default ({ file, versions }) => {
+export default ({ file, versions, dispatch }) => {
   const [mode, setMode] = react.useState('package');
   const modeOptions = {
     registry: mode === 'registry',
@@ -27,7 +28,7 @@ export default ({ file, versions }) => {
             `
           : mode === 'file'
           ? html`
-              <h1>Registry Search</h1>
+              <${FileOverview} file=${file} dispatch=${dispatch} />
             `
           : null)}
     </nav>
@@ -73,6 +74,7 @@ const styles = css`
   h2 {
     font-size: 1.38rem;
     font-weight: bold;
+    color: rgba(255, 255, 255, 0.62);
   }
 
   span {

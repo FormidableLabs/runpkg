@@ -78,20 +78,11 @@ export const PackageOverview = ({ file, versions = [] }) => {
   `;
 };
 
-const styles = {
+export const styles = {
   directory: css`
     display: flex;
     flex-direction: column;
     word-break: break-word;
-    a {
-      cursor: pointer;
-      text-decoration: underline;
-      color: rgba(255, 255, 255, 0.7);
-      font-size: 1.38rem;
-      &:hover {
-        color: #fff;
-      }
-    }
     > * + * {
       border-top: 1px solid rgba(0, 0, 0, 0.2);
     }
@@ -111,6 +102,13 @@ const styles = {
         flex: 1 1 100%;
         padding-right: 1rem;
         text-decoration: none;
+        cursor: pointer;
+        text-decoration: underline;
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 1.38rem;
+        &:hover {
+          color: #fff;
+        }
       }
       small {
         white-space: nowrap;
