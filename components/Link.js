@@ -3,7 +3,7 @@ import shouldPreventDefault from '../utils/shouldPreventDefault.js';
 
 const pushState = url => history.pushState(null, null, url);
 
-export default ({ href, children }) => {
+export default ({ href, children, ...rest }) => {
   return html`
     <a
       href=${href}
@@ -13,8 +13,11 @@ export default ({ href, children }) => {
           if (href.startsWith('/')) {
             pushState(`?${href.replace(/^\/\?/, '')}`);
           }
+        } else {
+          window.location = href;
         }
       }}
+      ...${rest}
     >
       ${children}
     </a>
