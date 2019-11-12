@@ -17,12 +17,6 @@ export default ({ file, dependencyState }) => html`
       url=${file.url}
       key="editor"
       value=${file.code.slice(0, 100000)}
-      style=${{
-        lineHeight: '138%',
-        fontFamily: '"Inconsolata", monospace',
-      }}
-      padding=${42}
-      readOnly
     />
     <pre key="pre">${file.code.slice(100000)}</pre>
   </article>
