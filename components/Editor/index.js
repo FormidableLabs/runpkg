@@ -8,15 +8,16 @@ import Link from '../Link.js';
 export default ({ value, dependencyState, url, ...rest }) => {
   const dependencies = react.useMemo(
     () => dependencyState[url] && dependencyState[url].dependencies,
-    [dependencyState, url]
+    [dependencyState[url]]
   );
 
   const findTokenDependency = react.useCallback(
     token => {
       if (!dependencies) return null;
       const strippedDependency = token.replace(/['"]+/g, '');
-      const dependency = dependencies.find(
-        dep => dep[0] === strippedDependency
+      const dependency = dependencies.find(dep =>
+        // dependency import statements may or may not end with .js
+        dep[0].match(new RegExp(`${strippedDependency}(\.js)?`))
       );
       return dependency;
     },
@@ -51,6 +52,8 @@ export default ({ value, dependencyState, url, ...rest }) => {
                     isImportExportLine &&
                     token.types.includes('string') &&
                     findTokenDependency(token.content);
+
+                  console.log(dependency);
 
                   return dependency
                     ? html`
