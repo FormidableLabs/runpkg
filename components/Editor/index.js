@@ -46,7 +46,22 @@ export default ({ value, dependencyState, url, ...rest }) => {
             );
 
             return html`
-              <div ...${getLineProps({ line, key: i })}>
+              <div
+                ...${getLineProps({ line, key: i })}
+                className=${css`
+                  display: flex;
+                  
+                  &:before {
+                    display: block;
+                    content: '${i}';
+                    flex: none;
+                    text-align: right;
+                    width: 2rem;
+                    margin-right: 2rem;
+                    opacity: 0.6;
+                  }
+                `}
+              >
                 ${line.map((token, key) => {
                   const dependency =
                     isImportExportLine &&
@@ -85,7 +100,7 @@ const styles = {
   container: css`
     line-height: 138%;
     font-family: 'Inconsolata', monospace;
-    padding: 42px;
+    padding: 2rem 1rem;
   `,
   link: css`
     text-decoration: underline;
