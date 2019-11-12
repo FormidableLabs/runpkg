@@ -7,11 +7,13 @@ export const RegistryOverview = (props = {}) => {
   const [searchTerm, setSearchTerm] = react.useState('');
   const [results, setResults] = react.useState([]);
   react.useEffect(() => {
-    if (searchTerm)
-      fetch(`https://api.npms.io/v2/search/suggestions?size=10&q=${searchTerm}`)
-        .then(res => res.json())
-        .then(res => res.map(x => x.package))
-        .then(setResults);
+    fetch(
+      `https://api.npms.io/v2/search/suggestions?size=10&q=${searchTerm ||
+        'urql'}`
+    )
+      .then(res => res.json())
+      .then(res => res.map(x => x.package))
+      .then(setResults);
   }, [searchTerm]);
   return html`
     <div className=${styles.container}>
@@ -27,16 +29,14 @@ export const RegistryOverview = (props = {}) => {
   `;
 };
 
-const Package = ({ name, version, description }) => html`
+export const Package = ({ name, version, description }) => html`
   <li>
     <a
       className=${styles.item}
       href=${`?${name}@${version}`}
       onClick=${e => e.preventDefault() || pushState(`?${name}@${version}`)}
     >
-      <h2>
-        ${name}@${version}
-      </h2>
+      <h2>${name}</h2>
       <p>${description}</p>
     </a>
   </li>
@@ -45,7 +45,7 @@ const Package = ({ name, version, description }) => html`
 const styles = {
   container: css`
     > * + * {
-      margin-top: 1.62rem;
+      margin-top: 1.38rem;
     }
   `,
   list: css`
@@ -61,12 +61,15 @@ const styles = {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding: 1rem 1.62rem;
+    padding: 1.38rem 1.62rem;
     > * + * {
       margin-top: 1rem;
     }
     &:hover {
       color: #fff;
+    }
+    > p {
+      line-height: 150%;
     }
   `,
 };

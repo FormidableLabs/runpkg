@@ -8,7 +8,6 @@ import Spinner from './components/Spinner.js';
 
 import fileNameRegEx from './utils/fileNameRegEx.js';
 
-const isEmpty = obj => Object.keys(obj).length === 0;
 const replaceState = url => history.replaceState(null, null, url);
 const parseUrl = (
   search = window.location.search.slice(1).replace(/\/$/, '')
@@ -143,36 +142,24 @@ const Home = () => {
   }, [state.request.url]);
 
   react.useEffect(() => {
-    if (state.fetchError) {
-      document.title = '404 | runpkg';
-    } else if (state.request && state.request.package) {
-      document.title = state.request.package + ' | runpkg';
-    } else {
-      document.title = 'runpkg | the package explorer';
-    }
+    const setTitle = title => (document.title = title);
+    const { fetchError, request = {} } = state;
+    if (fetchError) setTitle('404 | runpkg');
+    else if (request.package) setTitle(request.package + ' | runpkg');
+    else setTitle('runpkg | the package explorer');
   }, [state.request.url, state.fetchError]);
 
-  // <${Aside} dispatch=${dispatch} file=${state.file} />
-  // <${Footer} />
+  const { versions, file, dependencyState, request } = state;
 
   return html`
     <main className=${css`/index.css`}>
       ${state.fetchError
         ? NotFound
-        : !state.request.url
+        : !request.url
         ? Dialog
-        : isEmpty(state.file)
-        ? Spinner
         : html`
-            <${Nav}
-              versions=${state.versions}
-              file=${state.file}
-              dispatch=${dispatch}
-            />
-            <${Article}
-              file=${state.file}
-              dependencyState=${state.dependencyState}
-            />
+            <${Nav} versions=${versions} file=${file} dispatch=${dispatch} />
+            <${Article} file=${file} dependencyState=${dependencyState} />
           `}
     </main>
   `;

@@ -1,20 +1,27 @@
 import { html, css, react } from 'https://unpkg.com/rplus-production@1.0.0';
+import { SearchInput } from './SearchInput.js';
 import FolderIcon from './FolderIcon.js';
 import FileIcon from './FileIcon.js';
 import Link from './Link.js';
 
-const File = ({ meta, parent, version }) => {
+import { Package } from './RegistryOverview.js';
+
+import formatBytes from '../utils/formatBytes.js';
+import pushState from '../utils/pushState.js';
+
+const File = ({ packageName, meta, parent, version }) => {
   return html`
     <li key=${meta.path}>
       ${FileIcon}
-      <${Link} href=${`/?${name}@${version}${meta.path}`}>
+      <${Link} href=${`/?${packageName}@${version}${meta.path}`}>
         ${meta.path.replace(parent.path, '')}
       <//>
+      <small>${formatBytes(meta.size)}</small>
     </li>
   `;
 };
 
-const Directory = ({ rootMeta, version }) => html`
+const Directory = ({ packageName, rootMeta, version, filter }) => html`
   <ul className=${styles.directory}>
     ${rootMeta.path &&
       rootMeta.path !== '/' &&
@@ -22,70 +29,52 @@ const Directory = ({ rootMeta, version }) => html`
         <div>
           ${FolderIcon}
           <h2>${rootMeta.path.slice(1)}</h2>
+          <small>${rootMeta.files.length} Files</small>
         </div>
       `}
-    ${rootMeta.files.map(meta =>
-      meta.type === 'file'
-        ? File({ meta, parent: rootMeta, version })
-        : Directory({ rootMeta: meta, version })
-    )}
+    ${rootMeta.files
+      .filter(meta => meta.path.toLowerCase().match(filter))
+      .map(meta =>
+        meta.type === 'file'
+          ? File({ meta, parent: rootMeta, version, packageName, filter })
+          : Directory({ rootMeta: meta, version, packageName, filter })
+      )}
   </ul>
 `;
 
 export const PackageOverview = ({ file, versions = [] }) => {
+  const [searchTerm, setSearchTerm] = react.useState('');
   const {
-    pkg: { name, license, version, main },
+    pkg: { name, version, description },
     meta,
   } = file;
 
-  //   // On package change
-  //   react.useEffect(() => {
-  //     changeVersion(version);
-  //   }, [name]);
-
-  //   const handleVersionChange = v => {
-  //     changeVersion(v);
-  //     const [, path] = file.url.match(
-  //       /https:\/\/unpkg.com\/(?:@?[^@\n]*)@?(?:\d+\.\d+\.\d+)(.*)$/
-  //     );
-  //     pushState(`?${name}@${v}${path}`);
-  //   };
-
-  console.log(versions);
-
+  const handleVersionChange = v => pushState(`?${name}@${v}`);
   const VersionOption = x =>
     html`
       <option value=${x}>${x}</option>
     `;
 
   return html`
-    <div className="row" justify="space-between">
-      <h2>
-        Name
-      </h2>
-      <span onClick=${() => pushState(`?${name}@${version}/${main}`)}>
-        ${name}
-      </span>
-    </div>
-    <div className="row" justify="space-between">
-      <h2>
-        Licence
-      </h2>
-      <span>${license}</span>
-    </div>
-    <div className="row" justify="space-between">
-      <h2>
-        Version
-      </h2>
-      <select
-        id="version"
-        value=${version}
-        onChange=${e => handleVersionChange(e.target.value)}
-      >
-        ${versions.map(VersionOption)}</select
-      >
-    </div>
-    <${Directory} rootMeta=${meta} version=${version} />
+    <${SearchInput}
+      placeholder="Search for files.."
+      value=${searchTerm}
+      onChange=${setSearchTerm}
+    />
+    <${Package} name=${name} version=${version} description=${description} />
+    <select
+      id="version"
+      value=${version}
+      onChange=${e => handleVersionChange(e.target.value)}
+    >
+      ${versions.map(VersionOption)}</select
+    >
+    <${Directory}
+      packageName=${name}
+      rootMeta=${meta}
+      version=${version}
+      filter=${searchTerm}
+    />
   `;
 };
 
@@ -93,40 +82,45 @@ const styles = {
   directory: css`
     display: flex;
     flex-direction: column;
-    margin-bottom: 1rem;
     word-break: break-word;
-
     a {
       cursor: pointer;
       text-decoration: underline;
       color: rgba(255, 255, 255, 0.7);
-
+      font-size: 1.38rem;
       &:hover {
         color: #fff;
       }
     }
-
+    > * + * {
+      border-top: 1px solid rgba(0, 0, 0, 0.2);
+    }
     div,
     li {
       display: flex;
       align-items: center;
-      margin-top: 1rem;
+      padding: 1.38rem 1rem;
       svg {
         flex: none;
-        width: 1rem;
-        height: 1rem;
-        fill: rgba(255, 255, 255, 0.5);
-        margin-right: 0.62rem;
+        width: 1.62rem;
+        height: 1.62rem;
+        fill: rgba(255, 255, 255, 0.38);
+        margin-right: 1rem;
+      }
+      a {
+        flex: 1 1 100%;
+        padding-right: 1rem;
+        text-decoration: none;
+      }
+      small {
+        white-space: nowrap;
+        margin-left: auto;
       }
     }
 
-    > div ~ * {
-      margin-left: 0.5rem;
-    }
-
     div > svg {
-      width: 1.5rem;
-      height: 1.5rem;
+      width: 2rem;
+      height: 2rem;
     }
 
     h2 {

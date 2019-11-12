@@ -3,6 +3,7 @@ import { html, react, css } from 'https://unpkg.com/rplus-production@1.0.0';
 import { RadioGroup } from './RadioGroup.js';
 import { PackageOverview } from './PackageOverview.js';
 import { RegistryOverview } from './RegistryOverview.js';
+const isEmpty = obj => Object.keys(obj).length === 0;
 
 export default ({ file, versions }) => {
   const [mode, setMode] = react.useState('package');
@@ -15,20 +16,20 @@ export default ({ file, versions }) => {
   return html`
     <nav className=${styles}>
       <${RadioGroup} options=${modeOptions} onClick=${setMode} />
-      ${mode === 'package'
-        ? PackageOverview({
-            file,
-            versions,
-          })
-        : mode === 'registry'
-        ? html`
-            <${RegistryOverview} />
-          `
-        : mode === 'file'
-        ? html`
-            <h1>Registry Search</h1>
-          `
-        : null}
+      ${!isEmpty(file) &&
+        (mode === 'package'
+          ? html`
+              <${PackageOverview} file=${file} versions=${versions} />
+            `
+          : mode === 'registry'
+          ? html`
+              <${RegistryOverview} />
+            `
+          : mode === 'file'
+          ? html`
+              <h1>Registry Search</h1>
+            `
+          : null)}
     </nav>
   `;
 };

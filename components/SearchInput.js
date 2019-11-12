@@ -22,13 +22,13 @@ const styles = css`
     width: 100%;
     padding: 1.38rem;
     border: 0;
-    font-size: 1rem;
+    font-size: 1.38rem;
     background: transparent;
     color: rgba(255, 255, 255, 0.62);
   }
   > svg {
-    width: 2rem;
-    height: 2rem;
+    width: 2.4rem;
+    height: 2.4rem;
     fill: rgba(255, 255, 255, 0.2);
     margin: 0 1rem;
   }
