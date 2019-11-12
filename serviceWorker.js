@@ -1,45 +1,28 @@
+/* eslint-disable max-nested-callbacks */
 const cacheName = 'www.runpkg.com';
 
-self.addEventListener('activate', e => {
-  console.log('activated');
-  e.waitUntil(
-    caches.keys().then(function(cacheNames) {
-      return Promise.all(
-        cacheNames.map(function(thisCacheName) {
-          if (thisCacheName !== cacheName) {
-            return caches.delete(thisCacheName);
-          }
-        })
-      );
-    })
-  );
+self.addEventListener('activate', () => {
+  console.log('service worker activated');
 });
 
-self.addEventListener('fetch', function(event) {
-  event.respondWith(
-    event.request.url.includes('https://unpkg')
-      ? caches.open(cacheName).then(function(cache) {
-          return cache.match(event.request).then(function(response) {
-            var fetchPromise = fetch(event.request).then(function(
-              networkResponse
-            ) {
-              if (networkResponse.status === 302) {
-                fetch(`https://unpkg.com${networkResponse.location}`).then(
-                  networkResponse => {
-                    cache.put(event.request, networkResponse.clone());
-                    return networkResponse;
-                  }
-                );
-              } else {
-                cache.put(event.request, networkResponse.clone());
-                return networkResponse;
-              }
-            });
-
-            // response contains cached data, if available
-            return response || fetchPromise;
+self.addEventListener('fetch', event => {
+  if (
+    event.request.url.includes('https://unpkg') &&
+    // so we don't intercept es imports
+    !event.request.referrer.includes('https://unpkg.com/')
+  ) {
+    event.respondWith(
+      caches.open(cacheName).then(cache => {
+        return cache.match(event.request).then(response => {
+          const fetchPromise = fetch(event.request).then(networkResponse => {
+            cache.put(event.request, networkResponse.clone());
+            return networkResponse;
           });
-        })
-      : fetch(event.request).then(res => res)
-  );
+          // response contains cached data, if available
+          return response || fetchPromise;
+        });
+      })
+    );
+  }
+  return;
 });
