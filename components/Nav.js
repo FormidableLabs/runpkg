@@ -74,7 +74,7 @@ const styles = css`
   h2 {
     font-size: 1.38rem;
     font-weight: bold;
-    color: rgba(255, 255, 255, 0.62);
+    color: rgba(255, 255, 255, 0.8);
   }
 
   span {
