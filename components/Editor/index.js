@@ -60,9 +60,12 @@ const styles = css`
   padding: 42px;
 `;
 
+// eslint-disable-next-line no-unused-vars
+const theme = css`/theme.css`;
+
 export default ({ value, ...rest }) => {
   return html`
-  <${Highlight} ...${defaultProps} code=${value} language="javascript">
+  <${Highlight} ...${defaultProps} code=${value} language="javascript" theme=${undefined}>
     ${({ className, style, tokens, getLineProps, getTokenProps }) => html`
       <pre className=${`${styles} ${className}`} style=${style} ...${rest}>
         ${tokens.map(

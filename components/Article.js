@@ -1,6 +1,6 @@
 import { html } from 'https://unpkg.com/rplus-production@1.0.0';
 
-import Editor from './Editor.js';
+import Editor from './Editor/index.js';
 import FileIcon from './FileIcon.js';
 
 export default ({ file, dependencyState }) => html`
