@@ -8,18 +8,20 @@ self.addEventListener('activate', () => {
 self.addEventListener('fetch', event => {
   if (
     event.request.url.includes('https://unpkg') &&
-    // so we don't intercept es imports
     !event.request.referrer.includes('https://unpkg.com/')
   ) {
     event.respondWith(
       caches.open(cacheName).then(cache => {
         return cache.match(event.request).then(response => {
-          const fetchPromise = fetch(event.request).then(networkResponse => {
-            cache.put(event.request, networkResponse.clone());
-            return networkResponse;
-          });
-          // response contains cached data, if available
-          return response || fetchPromise;
+          // if not in cache then fetch it and add to cache
+          if (!response) {
+            return fetch(event.request).then(networkResponse => {
+              cache.put(event.request, networkResponse.clone());
+              return networkResponse;
+            });
+          }
+          // if in cache then return it
+          return response;
         });
       })
     );
