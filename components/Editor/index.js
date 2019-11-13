@@ -5,7 +5,23 @@ import Highlight, {
 
 import Link from '../Link.js';
 
+const getSelectedLineNumberFromUrl = () =>
+  location.hash && parseInt(location.hash.substr(1), 10);
+
 export default ({ value, dependencyState, url, ...rest }) => {
+  const [selectedLine, setSelectedLine] = react.useState(
+    getSelectedLineNumberFromUrl()
+  );
+
+  react.useEffect(() => {
+    setSelectedLine(getSelectedLineNumberFromUrl());
+  }, [url]);
+
+  const handleLineNumberClick = lineNo => {
+    setSelectedLine(lineNo);
+    window.location.hash = lineNo;
+  };
+
   const dependencies = react.useMemo(
     () => dependencyState[url] && dependencyState[url].dependencies,
     [dependencyState[url]]
@@ -48,27 +64,18 @@ export default ({ value, dependencyState, url, ...rest }) => {
             return html`
               <div
                 ...${getLineProps({ line, key: i })}
-                className=${css`
-                  display: flex;
-                  
-                  &:before {
-                    display: block;
-                    content: '${i}';
-                    flex: none;
-                    text-align: right;
-                    width: 2rem;
-                    margin-right: 2rem;
-                    opacity: 0.6;
-                  }
-                `}
+                className=${styles.line(selectedLine - 1 === i)}
               >
+                <span
+                  className=${styles.lineNo}
+                  onClick=${handleLineNumberClick.bind(null, i + 1)}
+                  >${i + 1}</span
+                >
                 ${line.map((token, key) => {
                   const dependency =
                     isImportExportLine &&
                     token.types.includes('string') &&
                     findTokenDependency(token.content);
-
-                  console.log(dependency);
 
                   return dependency
                     ? html`
@@ -105,5 +112,20 @@ const styles = {
   link: css`
     text-decoration: underline;
     text-decoration-color: #f8b1f1;
+  `,
+  line: active =>
+    active &&
+    css`
+      background: #ffff000f;
+      outline: 1px solid #ffff001c;
+    `,
+  lineNo: css`
+    display: inline-block;
+    text-align: right;
+    width: 2rem;
+    margin-right: 2rem;
+    opacity: 0.6;
+    cursor: pointer;
+    user-select: none;
   `,
 };
