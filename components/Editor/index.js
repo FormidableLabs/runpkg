@@ -15,16 +15,10 @@ export default ({ value, dependencyState, url, ...rest }) => {
 
   react.useEffect(() => {
     setSelectedLine(getSelectedLineNumberFromUrl());
-  }, [url]);
+  }, [window.location.hash]);
 
   react.useEffect(() => {
-    if (!selectedLine) {
-      // if not selected line, remove the hash from the url
-      history.pushState(null, null, ' ');
-    } else {
-      // else update the hash with the selectd line number
-      window.location.hash = selectedLine;
-    }
+    history.pushState(null, null, selectedLine ? `#${selectedLine}` : ' ');
   }, [selectedLine]);
 
   const handleLineNumberClick = lineNo => {
