@@ -120,9 +120,14 @@ const Home = () => {
         // Set the new state
         dispatch({ type: 'setFile', payload: { url, meta, pkg, code } });
         replaceState(`?${url.replace('https://unpkg.com/', '')}`);
+
         try {
           const versions = await fetch(
-            `https://registry.npmjs.cf/${request.package.split('@')[0]}/`
+            `https://registry.npmjs.cf/${
+              request.package.startsWith('@')
+                ? '@' + request.package.slice(1).split('@')[0]
+                : request.package.split('@')[0]
+            }/`
           )
             .then(res => res.json())
             .then(json => Object.keys(json.versions));
