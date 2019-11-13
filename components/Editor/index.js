@@ -17,9 +17,18 @@ export default ({ value, dependencyState, url, ...rest }) => {
     setSelectedLine(getSelectedLineNumberFromUrl());
   }, [url]);
 
+  react.useEffect(() => {
+    if (!selectedLine) {
+      // if not selected line, remove the hash from the url
+      history.pushState(null, null, ' ');
+    } else {
+      // else update the hash with the selectd line number
+      window.location.hash = selectedLine;
+    }
+  }, [selectedLine]);
+
   const handleLineNumberClick = lineNo => {
-    setSelectedLine(lineNo);
-    window.location.hash = lineNo;
+    setSelectedLine(lineNo === selectedLine ? null : lineNo);
   };
 
   const dependencies = react.useMemo(
