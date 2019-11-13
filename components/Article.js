@@ -26,7 +26,7 @@ export default ({ file, dependencyState }) => {
             lineHeight: '138%',
             fontFamily: '"Inconsolata", monospace',
           }}
-          padding=${56}
+          padding=${36}
           readOnly
         />
         <pre key="pre">${file.code.slice(100000)}</pre>
@@ -40,8 +40,8 @@ const styles = css`
   overflow: auto;
   flex: 1 0 62%;
 
-  @media screen and (min-width: 1000px) {
-    height: 100vh;
+  @media screen and (max-width: 800px) {
+    height: 62vh;
   }
 
   h1 {
@@ -60,7 +60,7 @@ const styles = css`
       width: 1.62rem;
       height: 1.62rem;
       margin-right: 0.62rem;
-      fill: rgba(255, 255, 255, 0.5);
+      fill: rgba(255, 255, 255, 0.2);
     }
   }
 

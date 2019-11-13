@@ -95,8 +95,7 @@ const styles = css`
     }
   }
   > * + * {
-    margin-top: 0.62rem;
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(0, 0, 0, 0.2);
   }
   > *:empty {
     display: none;

@@ -36,37 +36,26 @@ export default ({ file, versions, dispatch }) => {
 };
 
 const styles = css`
-  transform: translateX(-100%);
   width: 100%;
   grid-area: nav;
   background: #26272c;
   color: #fff;
-  position: absolute;
-  z-index: 2;
-  left: 0;
   padding: 2rem;
-  transition: transform 0.25s;
-  height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
+
+  @media screen and (min-width: 800px) {
+    height: 100vh;
+  }
 
   > * + * {
     margin-top: 1.38rem;
   }
 
-  > .row[justify='space-between'] {
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-    padding-bottom: 1rem;
-  }
-
   &.active {
     box-shadow: 1rem 1rem 1rem rgba(0, 0, 0, 0.1);
     transform: translateX(0%);
-    @media screen and (min-width: 1000px) {
+    @media screen and (min-width: 800px) {
       box-shadow: none;
     }
   }
@@ -81,7 +70,7 @@ const styles = css`
     font-size: 1.38rem;
   }
 
-  @media screen and (min-width: 1000px) {
+  @media screen and (min-width: 800px) {
     position: inherit;
     z-index: initial;
     width: auto;
@@ -96,7 +85,7 @@ const styles = css`
     background-color: transparent;
     border: none;
     fill: #fff;
-    @media screen and (min-width: 1000px) {
+    @media screen and (min-width: 800px) {
       display: none;
     }
   }

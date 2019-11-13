@@ -90,12 +90,12 @@ export const styles = {
     li {
       display: flex;
       align-items: center;
-      padding: 1.38rem 1rem;
+      padding: 1rem;
       svg {
         flex: none;
         width: 1.62rem;
         height: 1.62rem;
-        fill: rgba(255, 255, 255, 0.38);
+        fill: rgba(255, 255, 255, 0.2);
         margin-right: 1rem;
       }
       a {
@@ -105,7 +105,7 @@ export const styles = {
         cursor: pointer;
         text-decoration: underline;
         color: rgba(255, 255, 255, 0.7);
-        font-size: 1.38rem;
+        font-size: 1rem;
         &:hover {
           color: #fff;
         }

@@ -4,8 +4,6 @@ import Dialog from './components/Overlay.js';
 import Nav from './components/Nav.js';
 import Article from './components/Article.js';
 import NotFound from './components/NotFound.js';
-import Spinner from './components/Spinner.js';
-
 import fileNameRegEx from './utils/fileNameRegEx.js';
 
 const replaceState = url => history.replaceState(null, null, url);
@@ -158,8 +156,8 @@ const Home = () => {
         : !request.url
         ? Dialog
         : html`
-            <${Nav} versions=${versions} file=${file} dispatch=${dispatch} />
             <${Article} file=${file} dependencyState=${dependencyState} />
+            <${Nav} versions=${versions} file=${file} dispatch=${dispatch} />
           `}
     </main>
   `;

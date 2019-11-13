@@ -3,31 +3,19 @@
   min-height: 100vh;
   overflow: auto;
   background: #2f3138;
-  display: grid;
-  grid-template-columns: 1fr;
-  grid-template-rows: 62vh 38vh;
-  grid-template-areas:
-    'article'
-    'aside';
-  @media screen and (min-width: 1000px) {
-    grid-template-columns: 1fr 30rem;
-    grid-template-rows: 1fr 4rem;
+  @media screen and (min-width: 800px) {
+    display: grid;
+    grid-template-columns: 1fr 25rem;
     grid-template-areas: 'article nav';
     overflow: hidden;
     height: 100vh;
   }
-}
-
-& button.toggleOpenButton {
-  position: fixed;
-  z-index: 3;
-  right: 1rem;
-  top: 0.7rem;
-  background-color: transparent;
-  border: none;
-  fill: #fff;
   @media screen and (min-width: 1000px) {
-    display: none;
+    display: grid;
+    grid-template-areas: 'article nav';
+    grid-template-columns: 1fr 30rem;
+    overflow: hidden;
+    height: 100vh;
   }
 }
 

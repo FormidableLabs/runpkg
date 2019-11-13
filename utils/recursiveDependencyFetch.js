@@ -24,6 +24,9 @@ const extractDependencies = (input, pkg) => {
         // Allows both @babel/core and proptypes/something
         Object.keys(pkg.dependencies || {}).includes(
           x.startsWith('@') ? x : x.split('/')[0]
+        ) ||
+        Object.keys(pkg.peerDependencies || {}).includes(
+          x.startsWith('@') ? x : x.split('/')[0]
         )
     );
 
