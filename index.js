@@ -80,7 +80,6 @@ const Home = () => {
     versions: [],
     dependencyState: {},
   });
-
   react.useEffect(() => {
     const check = e => {
       if (e.key === 'p' && (e.metaKey || e.ctrlKey)) {
@@ -107,6 +106,19 @@ const Home = () => {
     addEventListener('popstate', () =>
       dispatch({ type: 'setRequest', payload: parseUrl() })
     );
+  }, []);
+
+  react.useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register('./serviceWorker.js')
+        .then(() => {
+          console.log('service worker registered');
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
   }, []);
 
   // Whenever the URL changes then:
