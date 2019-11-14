@@ -82,6 +82,11 @@ const Home = () => {
     addEventListener('popstate', () =>
       dispatch({ type: 'setRequest', payload: parseUrl() })
     );
+
+    if (!state.request.url) {
+      replaceState('?lodash-es');
+      dispatch({ type: 'setRequest', payload: parseUrl() });
+    }
   }, []);
 
   // Whenever the URL changes then:
@@ -152,14 +157,12 @@ const Home = () => {
     else setTitle('runpkg | the package explorer');
   }, [state.request.url, state.fetchError]);
 
-  const { versions, file, dependencyState, request } = state;
+  const { versions, file, dependencyState } = state;
 
   return html`
     <main className=${css`/index.css`}>
       ${state.fetchError
         ? NotFound
-        : !request.url
-        ? Dialog
         : html`
             <${Article} file=${file} dependencyState=${dependencyState} />
             <${Nav} versions=${versions} file=${file} dispatch=${dispatch} />
