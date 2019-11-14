@@ -3,7 +3,7 @@ import Highlight, {
   Prism,
 } from 'https://unpkg.com/prism-react-renderer?module';
 
-import Link from '../Link.js';
+import Link from './Link.js';
 
 const getSelectedLineNumberFromUrl = () =>
   location.hash && parseInt(location.hash.substr(1), 10);
@@ -14,10 +14,13 @@ export default ({ value, dependencyState, url, ...rest }) => {
   );
 
   react.useEffect(() => {
+    // when the url updates with a selected line number,
+    // reflect that back to the state value
     setSelectedLine(getSelectedLineNumberFromUrl());
   }, [window.location.hash]);
 
   react.useEffect(() => {
+    // when the selected line is updated, reflect it in the url
     history.pushState(null, null, selectedLine ? `#${selectedLine}` : ' ');
   }, [selectedLine]);
 
@@ -57,6 +60,7 @@ export default ({ value, dependencyState, url, ...rest }) => {
           ...${rest}
         >
         ${tokens.map((line, i) => {
+            // find whether this line contains and import/export statement
             const isImportExportLine = line.some(
               token =>
                 token.types.includes('module') ||
@@ -75,11 +79,16 @@ export default ({ value, dependencyState, url, ...rest }) => {
                   >${i + 1}</span
                 >
                 ${line.map((token, key) => {
+                  // if this line contains an import/export statement
+                  // then match the module name against the list of
+                  // found dependencies
                   const dependency =
                     isImportExportLine &&
                     token.types.includes('string') &&
                     findTokenDependency(token.content);
 
+                  // if a matched dependency is found, render a link to
+                  // that file, else display it normally
                   return dependency
                     ? html`
                         <${Link}
