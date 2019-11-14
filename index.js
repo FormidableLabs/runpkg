@@ -112,10 +112,10 @@ const Home = () => {
     if ('serviceWorker' in navigator) {
       navigator.serviceWorker
         .register('./serviceWorker.js')
-        .then(function(registration) {
+        .then(() => {
           console.log('service worker registered');
         })
-        .catch(function(err) {
+        .catch(err => {
           console.log(err);
         });
     }
