@@ -215,5 +215,7 @@ const recursiveDependencyFetch = async entry => {
 
 self.onmessage = event => {
   const { data } = event;
-  recursiveDependencyFetch(data).then(x => self.postMessage(x));
+  recursiveDependencyFetch(data)
+    .then(x => self.postMessage(x))
+    .then(() => self.close());
 };
