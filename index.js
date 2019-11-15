@@ -3,14 +3,9 @@ import { react, html, css } from 'https://unpkg.com/rplus-production@1.0.0';
 import Dialog from './components/Overlay.js';
 import Nav from './components/Nav.js';
 import Article from './components/Article.js';
-import Aside from './components/Aside.js';
-import Footer from './components/Footer.js';
 import NotFound from './components/NotFound.js';
-import Search from './components/Search.js';
-
 import fileNameRegEx from './utils/fileNameRegEx.js';
 
-const isEmpty = obj => Object.keys(obj).length === 0;
 const replaceState = url => history.replaceState(null, null, url);
 const parseUrl = (
   search = window.location.search.slice(1).replace(/\/$/, '')
@@ -49,16 +44,8 @@ const warnAboutBundler = pkgJSON => {
 const Home = () => {
   function reducer(state, action) {
     switch (action.type) {
-      case 'toggleIsSearching':
-        return { ...state, isSearching: !state.isSearching };
-      case 'setIsSearching':
-        return { ...state, isSearching: action.payload };
       case 'setRequest':
-        return {
-          ...state,
-          request: action.payload,
-          isSearching: false,
-        };
+        return { ...state, request: action.payload };
       case 'setFile':
         return { ...state, file: action.payload };
       case 'setFetchError':
@@ -80,17 +67,6 @@ const Home = () => {
     versions: [],
     dependencyState: {},
   });
-  react.useEffect(() => {
-    const check = e => {
-      if (e.key === 'p' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        dispatch({ type: 'toggleIsSearching' });
-      }
-      if (e.key === 'Escape')
-        dispatch({ type: 'setIsSearching', payload: false });
-    };
-    window.addEventListener('keydown', check);
-  }, []);
 
   // Runs once and subscribes to url changes
   react.useEffect(() => {
@@ -106,6 +82,11 @@ const Home = () => {
     addEventListener('popstate', () =>
       dispatch({ type: 'setRequest', payload: parseUrl() })
     );
+
+    if (!state.request.url) {
+      replaceState('?lodash-es');
+      dispatch({ type: 'setRequest', payload: parseUrl() });
+    }
   }, []);
 
   react.useEffect(() => {
@@ -157,9 +138,14 @@ const Home = () => {
         // Set the new state
         dispatch({ type: 'setFile', payload: { url, meta, pkg, code } });
         replaceState(`?${url.replace('https://unpkg.com/', '')}`);
+
         try {
           const versions = await fetch(
-            `https://registry.npmjs.cf/${request.package.split('@')[0]}/`
+            `https://registry.npmjs.cf/${
+              request.package.startsWith('@')
+                ? '@' + request.package.slice(1).split('@')[0]
+                : request.package.split('@')[0]
+            }/`
           )
             .then(res => res.json())
             .then(json => Object.keys(json.versions));
@@ -177,39 +163,22 @@ const Home = () => {
   }, [state.request.url]);
 
   react.useEffect(() => {
-    if (state.fetchError) {
-      document.title = '404 | runpkg';
-    } else if (state.request && state.request.package) {
-      document.title = state.request.package + ' | runpkg';
-    } else {
-      document.title = 'runpkg | the package explorer';
-    }
+    const setTitle = title => (document.title = title);
+    const { fetchError, request = {} } = state;
+    if (fetchError) setTitle('404 | runpkg');
+    else if (request.package) setTitle(request.package + ' | runpkg');
+    else setTitle('runpkg | the package explorer');
   }, [state.request.url, state.fetchError]);
+
+  const { versions, file, dependencyState } = state;
 
   return html`
     <main className=${css`/index.css`}>
       ${state.fetchError
         ? NotFound
-        : state.isSearching
-        ? html`
-            <${Search} isSearching=${state.isSearching} dispatch=${dispatch} />
-          `
-        : !state.request.url
-        ? Dialog
-        : isEmpty(state.file)
-        ? null
         : html`
-            <${Nav}
-              versions=${state.versions}
-              file=${state.file}
-              dispatch=${dispatch}
-            />
-            <${Article}
-              file=${state.file}
-              dependencyState=${state.dependencyState}
-            />
-            <${Aside} dispatch=${dispatch} file=${state.file} />
-            <${Footer} />
+            <${Article} file=${file} dependencyState=${dependencyState} />
+            <${Nav} versions=${versions} file=${file} dispatch=${dispatch} />
           `}
     </main>
   `;

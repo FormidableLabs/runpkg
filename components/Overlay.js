@@ -27,16 +27,6 @@ export default html`
       >
         Explore An Example Package
       </button>
-      <h6
-        className=${css`
-          & {
-            text-transform: uppercase;
-            line-height: 162%;
-          }
-        `}
-      >
-        To search packages: press cmd + p (Mac) or ctrl + p (Windows & Linux)
-      </h6>
     </div>
   </dialog>
 `;
