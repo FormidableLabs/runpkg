@@ -89,6 +89,19 @@ const Home = () => {
     }
   }, []);
 
+  react.useEffect(() => {
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker
+        .register('./serviceWorker.js')
+        .then(() => {
+          console.log('service worker registered');
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
+  }, []);
+
   // Whenever the URL changes then:
   // 1. Resolve the unpkg url and file contents for the request url
   // 2. Fetch the package.json for the requested package

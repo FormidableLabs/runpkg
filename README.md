@@ -39,7 +39,7 @@ npx servor
 
 ## Local URLs
 
-As we're not using Zeit to resolve queries locally, you have to pass in the package or file part of the request in as a search param. Notice the `?` in the local URL. For example:
+As we're not using Netlify to redirect URLs locally, you have to pass in the package or file part of the request in as a search param. Notice the `?` in the local URL. For example:
 
 | Source    | URL                                                |
 | --------- | -------------------------------------------------- |
