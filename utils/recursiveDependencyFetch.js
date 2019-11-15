@@ -1,5 +1,6 @@
 import fileNameRegEx from '../utils/fileNameRegEx.js';
 import makePath from '../utils/makePath.js';
+import { parseUrl } from './parseUrl.js';
 
 const UNPKG = 'https://unpkg.com/';
 
@@ -23,6 +24,9 @@ const extractDependencies = (input, pkg) => {
         // Allows both @babel/core and proptypes/something
         Object.keys(pkg.dependencies || {}).includes(
           x.startsWith('@') ? x : x.split('/')[0]
+        ) ||
+        Object.keys(pkg.peerDependencies || {}).includes(
+          x.startsWith('@') ? x : x.split('/')[0]
         )
     );
 
@@ -34,10 +38,13 @@ const extractDependencies = (input, pkg) => {
 };
 
 const packageJsonUrl = path => {
-  const [_full, name, version] = path.match(
-    /https:\/\/unpkg.com\/(@?[^@\n]*)@?(\d+\.\d+\.\d+)?/
-  );
-  return `${UNPKG}${name}@${version}/package.json`;
+  const { name, version } = parseUrl(path);
+  if (!name) {
+    console.error(`Unable to parse path: ${path}`);
+    return undefined;
+  } else {
+    return `${UNPKG}${name}@${version}/package.json`;
+  }
 };
 
 // cache keeps memory of what was run last

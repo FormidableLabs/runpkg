@@ -6,7 +6,8 @@
   "scripts": {
     "prettier": "prettier --config .prettierrc --write \"./**/*.{css,html,json,md,yml}\"",
     "lint": "eslint --config .eslintrc \"./**/*.js\"",
-    "test": "cypress install && concurrently --kill-others \"node_modules/servor/servor.js --no-browser --no-reload\" \"wait-on http-get://localhost:8080 && npx cypress run --browser chrome --env env=local\" --success first "
+    "jest": "jest",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -21,7 +22,6 @@
   "devDependencies": {
     "babel-eslint": "^10.0.1",
     "concurrently": "^4.1.0",
-    "cypress": "^3.2.0",
     "eslint": "^5.16.0",
     "eslint-config-formidable": "^3.0.0",
     "eslint-config-prettier": "^2.9.0",
@@ -29,10 +29,12 @@
     "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-react": "^7.7.0",
     "husky": "^2.3.0",
+    "jest": "20.0.4",
     "lint-staged": "^8.1.6",
     "prettier": "^1.17.0",
     "servor": "^2.2.1",
-    "wait-on": "^3.2.0"
+    "wait-on": "^3.2.0",
+    "esm": "^3.2.25"
   },
   "husky": {
     "hooks": {
