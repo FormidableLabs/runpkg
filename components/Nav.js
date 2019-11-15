@@ -4,33 +4,30 @@ import { RadioGroup } from './RadioGroup.js';
 import { PackageOverview } from './PackageOverview.js';
 import { RegistryOverview } from './RegistryOverview.js';
 import { FileOverview } from './FileOverview.js';
-const isEmpty = obj => Object.keys(obj).length === 0;
 
-export default ({ file, versions, dispatch }) => {
+export default () => {
   const [mode, setMode] = react.useState('package');
   const modeOptions = {
     registry: mode === 'registry',
     package: mode === 'package',
     file: mode === 'file',
   };
-
   return html`
     <nav className=${styles}>
       <${RadioGroup} options=${modeOptions} onClick=${setMode} />
-      ${!isEmpty(file) &&
-        (mode === 'package'
-          ? html`
-              <${PackageOverview} file=${file} versions=${versions} />
-            `
-          : mode === 'registry'
-          ? html`
-              <${RegistryOverview} />
-            `
-          : mode === 'file'
-          ? html`
-              <${FileOverview} file=${file} dispatch=${dispatch} />
-            `
-          : null)}
+      ${mode === 'package'
+        ? html`
+            <${PackageOverview} />
+          `
+        : mode === 'registry'
+        ? html`
+            <${RegistryOverview} />
+          `
+        : mode === 'file'
+        ? html`
+            <${FileOverview} />
+          `
+        : null}
     </nav>
   `;
 };

@@ -3,7 +3,7 @@ import { react, html, css } from 'https://unpkg.com/rplus-production@1.0.0';
 import { SearchInput } from './SearchInput.js';
 import pushState from '../utils/pushState.js';
 
-export const RegistryOverview = (props = {}) => {
+export const RegistryOverview = () => {
   const [searchTerm, setSearchTerm] = react.useState('');
   const [results, setResults] = react.useState([]);
   react.useEffect(() => {

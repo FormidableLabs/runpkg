@@ -2,10 +2,12 @@ import { css, react, html } from 'https://unpkg.com/rplus-production@1.0.0';
 import recursiveDependencyFetch from '../utils/recursiveDependencyFetch.js';
 import Link from './Link.js';
 import formatBytes from '../utils/formatBytes.js';
+import { useStateValue } from '../utils/globalState.js';
 import FileIcon from './FileIcon.js';
 import { SearchInput } from './SearchInput.js';
-
 import { styles as fileStyles } from './PackageOverview.js';
+
+const isEmpty = obj => Object.keys(obj).length === 0;
 
 const FileList = ({ title, files, packageName, filter }) => html`
   <div key=${title}>
@@ -31,7 +33,9 @@ const FileList = ({ title, files, packageName, filter }) => html`
   </ul>
 `;
 
-export const FileOverview = ({ file, dispatch }) => {
+export const FileOverview = () => {
+  const [{ file }, dispatch] = useStateValue();
+  if (isEmpty(file)) return null;
   const [cache, setCache] = react.useState({});
   const [searchTerm, setSearchTerm] = react.useState('');
 

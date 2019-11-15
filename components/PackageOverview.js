@@ -3,11 +3,12 @@ import { SearchInput } from './SearchInput.js';
 import FolderIcon from './FolderIcon.js';
 import FileIcon from './FileIcon.js';
 import Link from './Link.js';
-
+import { useStateValue } from '../utils/globalState.js';
 import { Package } from './RegistryOverview.js';
-
 import formatBytes from '../utils/formatBytes.js';
 import pushState from '../utils/pushState.js';
+
+const isEmpty = obj => Object.keys(obj).length === 0;
 
 const File = ({ packageName, meta, parent, version }) => {
   return html`
@@ -42,8 +43,12 @@ const Directory = ({ packageName, rootMeta, version, filter }) => html`
   </ul>
 `;
 
-export const PackageOverview = ({ file, versions = [] }) => {
+export const PackageOverview = () => {
   const [searchTerm, setSearchTerm] = react.useState('');
+  const [{ file, versions }] = useStateValue();
+
+  if (isEmpty(file)) return null;
+
   const {
     pkg: { name, version, description },
     meta,
