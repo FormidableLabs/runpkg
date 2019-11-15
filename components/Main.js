@@ -147,14 +147,12 @@ export default () => {
     else setTitle('runpkg | the package explorer');
   }, [state.request.url, state.fetchError]);
 
-  const { versions, file, dependencyState } = state;
-
   return html`
     <main className=${css`/index.css`}>
       ${state.fetchError
         ? NotFound
         : html`
-            <${Article} file=${file} dependencyState=${dependencyState} />
+            <${Article} />
             <${Nav} />
           `}
     </main>

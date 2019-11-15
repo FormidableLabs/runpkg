@@ -2,10 +2,12 @@ import { html, css } from 'https://unpkg.com/rplus-production@1.0.0';
 
 import Editor from './Editor.js';
 import FileIcon from './FileIcon.js';
+import { useStateValue } from '../utils/globalState.js';
 
 const isEmpty = obj => Object.keys(obj).length === 0;
 
-export default ({ file, dependencyState }) => {
+export default () => {
+  const [{ file, dependencyState }] = useStateValue();
   return (
     !isEmpty(file) &&
     html`
