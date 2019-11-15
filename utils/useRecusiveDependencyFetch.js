@@ -18,20 +18,28 @@ export const useRecusiveDependencyFetch = (
       inputRef.current = input;
       lastWorker.current.postMessage(input);
     }
-    return () => (lastworker.current ? lastWorker.current.terminate() : null);
+    return () => lastWorker.current.terminate();
   }, [lastWorker]);
   react.useEffect(() => {
     if (lastWorker.current) {
-      lastWorker.current.addEventListener('message', e => {
-        callbackToSetState(e.data);
-        callBackToDispatch(e.data);
-      });
+      lastWorker.current.addEventListener(
+        'message',
+        e => {
+          callbackToSetState(e.data);
+          callBackToDispatch(e.data);
+        },
+        { passive: true }
+      );
     }
     return () => {
-      lastWorker.current.removeEventListener('message', e => {
-        callbackToSetState(e.data);
-        callBackToDispatch(e.data);
-      });
+      lastWorker.current.removeEventListener(
+        'message',
+        e => {
+          callbackToSetState(e.data);
+          callBackToDispatch(e.data);
+        },
+        { passive: true }
+      );
     };
   }, [callBackToDispatch, callbackToSetState, lastWorker]);
   return null;
