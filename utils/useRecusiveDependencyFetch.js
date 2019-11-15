@@ -6,11 +6,12 @@ export const useRecusiveDependencyFetch = (
   callBackToDispatch
   // eslint-disable-next-line max-params
 ) => {
-  console.log(`Analysing ${input}`);
   const inputRef = react.useRef(null);
   const lastWorker = react.useRef(null);
   react.useEffect(() => {
     if (input !== inputRef.current) {
+      console.log(`Analysing ${input}`);
+
       lastWorker.current = new Worker(
         './utils/recursiveDependencyFetchWorker.js'
       );
