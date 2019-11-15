@@ -6,7 +6,7 @@ import { RegistryOverview } from './RegistryOverview.js';
 import { FileOverview } from './FileOverview.js';
 
 export default () => {
-  const [mode, setMode] = react.useState('package');
+  const [mode, setMode] = react.useState('registry');
   const modeOptions = {
     registry: mode === 'registry',
     package: mode === 'package',

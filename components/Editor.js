@@ -8,7 +8,7 @@ import Link from './Link.js';
 const getSelectedLineNumberFromUrl = () =>
   location.hash && parseInt(location.hash.substr(1), 10);
 
-export default ({ value, dependencyState, url, ...rest }) => {
+export default ({ value, dependencyState = {}, url, ...rest }) => {
   const [selectedLine, setSelectedLine] = react.useState(
     getSelectedLineNumberFromUrl()
   );
@@ -120,6 +120,7 @@ const styles = {
     line-height: 138%;
     font-family: 'Inconsolata', monospace;
     padding: 2rem 1rem;
+    overflow: scroll;
   `,
   link: css`
     text-decoration: underline;

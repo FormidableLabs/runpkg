@@ -7,8 +7,6 @@ import FileIcon from './FileIcon.js';
 import { SearchInput } from './SearchInput.js';
 import { styles as fileStyles } from './PackageOverview.js';
 
-const isEmpty = obj => Object.keys(obj).length === 0;
-
 const FileList = ({ title, files, packageName, filter }) => html`
   <div key=${title}>
     <h2>${title}</h2>
@@ -34,28 +32,27 @@ const FileList = ({ title, files, packageName, filter }) => html`
 `;
 
 export const FileOverview = () => {
-  const [{ file }, dispatch] = useStateValue();
-  if (isEmpty(file)) return null;
+  const [{ request, code }, dispatch] = useStateValue();
   const [cache, setCache] = react.useState({});
   const [searchTerm, setSearchTerm] = react.useState('');
 
+  if (!request.file) return null;
+
   react.useEffect(() => {
-    if (file.url) {
-      console.log(`Analysing ${file.url}`);
-      recursiveDependencyFetch(file.url).then(x => {
+    if (request.path) {
+      console.log(`Analysing ${request.path}`);
+      recursiveDependencyFetch('https://unpkg.com/' + request.path).then(x => {
         setCache(x);
         dispatch({ type: 'setDependencies', payload: x });
       });
     }
-  }, [file.url]);
+  }, [request.path]);
 
-  const target = cache[file.url] || {
+  const target = cache['https://unpkg.com/' + request.path] || {
     dependencies: [],
     dependants: [],
-    size: 0,
   };
 
-  const { name, version } = file.pkg;
   const dependencies = target.dependencies.map(x => cache[x[1]]);
   const knownDependants = target.dependants.map(x => cache[x]);
 
@@ -68,20 +65,20 @@ export const FileOverview = () => {
     <div className=${styles}>
       <div key="filesize">
         <h2>File Size</h2>
-        <small>${target.size ? formatBytes(target.size) : 'calculating'}</small>
+        <small>${formatBytes(code.length)}</small>
       </div>
       <${FileList}
         title="Dependencies"
         files=${dependencies}
         key="dependencies"
-        packageName=${`${name}@${version}`}
+        packageName=${`${request.name}@${request.version}`}
         filter=${searchTerm}
       />
       <${FileList}
         title="Known Dependants"
         files=${knownDependants}
         key="dependants"
-        packageName=${`${name}@${version}`}
+        packageName=${`${request.name}@${request.version}`}
         filter=${searchTerm}
       />
     </div>

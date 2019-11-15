@@ -1,37 +1,34 @@
 import { react, html } from 'https://unpkg.com/rplus-production@1.0.0';
 import { StateProvider } from './utils/globalState.js';
-import fileNameRegEx from './utils/fileNameRegEx.js';
+import { parseUrl } from './utils/parseUrl.js';
+
 import Main from './components/Main.js';
 
-const parseUrl = (
-  search = window.location.search.slice(1).replace(/\/$/, '')
-) => ({
-  url: search,
-  package: search.startsWith('@')
-    ? search
-        .split('/')
-        .slice(0, 2)
-        .join('/')
-    : search.split('/')[0],
-  folder: search.replace(fileNameRegEx, ''),
-  file: search
-    .split('/')
-    .slice(1)
-    .join('/'),
-});
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker
+    .register('./serviceWorker.js')
+    .then(() => console.log('[runpkg] service worker registered'))
+    .catch(err => console.log(err));
+}
 
 const App = () => {
   const initialState = {
     request: parseUrl(),
+    code: '',
     file: {},
+    directory: {},
     fetchError: false,
-    versions: [],
+    versions: {},
     dependencyState: {},
   };
   function reducer(state, action) {
     switch (action.type) {
       case 'setRequest':
         return { ...state, request: action.payload };
+      case 'setDirectory':
+        return { ...state, directory: action.payload };
+      case 'setCode':
+        return { ...state, code: action.payload };
       case 'setFile':
         return { ...state, file: action.payload };
       case 'setFetchError':

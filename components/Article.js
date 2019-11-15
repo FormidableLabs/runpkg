@@ -4,31 +4,21 @@ import Editor from './Editor.js';
 import FileIcon from './FileIcon.js';
 import { useStateValue } from '../utils/globalState.js';
 
-const isEmpty = obj => Object.keys(obj).length === 0;
-
 export default () => {
-  const [{ file, dependencyState }] = useStateValue();
-  return (
-    !isEmpty(file) &&
-    html`
-      <article className=${styles}>
-        <h1>
-          ${FileIcon}
-          ${file.url.replace(
-            `https://unpkg.com/${file.pkg.name}@${file.pkg.version}`,
-            ''
-          )}
-        </h1>
-        <${Editor}
-          dependencyState=${dependencyState}
-          url=${file.url}
-          key="editor"
-          value=${file.code.slice(0, 100000)}
-        />
-        <pre key="pre">${file.code.slice(100000)}</pre>
-      </article>
-    `
-  );
+  const [{ code = '', request }] = useStateValue();
+  return html`
+    <article className=${styles}>
+      <h1>
+        ${FileIcon} ${request.path}
+      </h1>
+      <${Editor}
+        url=${request.path}
+        key="editor"
+        value=${code.slice(0, 100000)}
+      />
+      <pre key="pre">${code.slice(100000)}</pre>
+    </article>
+  `;
 };
 
 const styles = css`

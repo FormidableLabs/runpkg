@@ -8,8 +8,6 @@ import { Package } from './RegistryOverview.js';
 import formatBytes from '../utils/formatBytes.js';
 import pushState from '../utils/pushState.js';
 
-const isEmpty = obj => Object.keys(obj).length === 0;
-
 const File = ({ packageName, meta, parent, version }) => {
   return html`
     <li key=${meta.path}>
@@ -45,14 +43,11 @@ const Directory = ({ packageName, rootMeta, version, filter }) => html`
 
 export const PackageOverview = () => {
   const [searchTerm, setSearchTerm] = react.useState('');
-  const [{ file, versions }] = useStateValue();
+  const [{ versions, request, directory }] = useStateValue();
 
-  if (isEmpty(file)) return null;
+  if (!versions[request.version]) return null;
 
-  const {
-    pkg: { name, version, description },
-    meta,
-  } = file;
+  const { name, version, description } = versions[request.version];
 
   const handleVersionChange = v => pushState(`?${name}@${v}`);
   const VersionOption = x =>
@@ -72,11 +67,11 @@ export const PackageOverview = () => {
       value=${version}
       onChange=${e => handleVersionChange(e.target.value)}
     >
-      ${versions.map(VersionOption)}</select
+      ${Object.keys(versions).map(VersionOption)}</select
     >
     <${Directory}
       packageName=${name}
-      rootMeta=${meta}
+      rootMeta=${directory}
       version=${version}
       filter=${searchTerm}
     />
