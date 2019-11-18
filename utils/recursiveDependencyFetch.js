@@ -28,8 +28,7 @@ const directoriesUrl = url => {
 
 const flatten = arr =>
   arr.reduce(
-    (acc, cur) =>
-      cur.files ? [...acc, ...flatten(cur.files)] : [...acc, cur.path],
+    (acc, cur) => [...acc, ...(cur.files ? flatten(cur.files) : [cur.path])],
     []
   );
 
@@ -46,6 +45,12 @@ const extractDependencies = (input, packageJson) => {
   );
 };
 
+const needsExtension = entry =>
+  !entry
+    .split('/')
+    .pop()
+    .includes('.');
+
 export const parseDependencies = async path => {
   const { url, code } = await fetch(path).then(async res => ({
     url: res.url,
@@ -53,22 +58,15 @@ export const parseDependencies = async path => {
   }));
   const dir = await fetch(directoriesUrl(url)).then(res => res.json());
   const pkg = await fetch(packageJsonUrl(url)).then(res => res.json());
-
-  const flatDir = flatten(dir.files);
-
+  const files = flatten(dir.files);
   const dependencies = extractDependencies(code, pkg).reduce((all, entry) => {
     const packageUrl = `${UNPKG}${pkg.name}@${pkg.version}`;
     let match = makePath(url)(entry);
-    const needsExtension = !entry
-      .split('/')
-      .pop()
-      .includes('.');
-    if (needsExtension) {
-      match = flatDir.find(x => x.match(match.replace(packageUrl, '')));
+    if (isLocalFile(entry) && needsExtension(entry)) {
+      match = files.find(x => x.match(match.replace(packageUrl, '')));
       match = packageUrl + match;
     }
     return { ...all, [entry]: match };
   }, {});
-
   return { url, size: code.length, dependencies };
 };
