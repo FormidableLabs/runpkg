@@ -6,7 +6,7 @@ const UNPKG = 'https://unpkg.com/';
 const isExternalPath = str => !str.startsWith('.');
 const isLocalFile = str => !isExternalPath(str);
 const isListedInDependencies = (pkgName, pkgJson) =>
-  ['dependencies', 'devDependencies', 'peerDependencies'].some(depType =>
+  ['dependencies', 'devDependencies', 'peerDependencies'].find(depType =>
     Object.keys(pkgJson[depType] || {}).includes(parseUrl(pkgName).name)
   );
 
@@ -62,9 +62,16 @@ export const parseDependencies = async path => {
   const dependencies = extractDependencies(code, pkg).reduce((all, entry) => {
     const packageUrl = `${UNPKG}${pkg.name}@${pkg.version}`;
     let match = makePath(url)(entry);
+    if (isExternalPath(entry)) {
+      const version = pkg[isListedInDependencies(entry, pkg)][entry];
+      match = `${match}@${version}`;
+    }
     if (isLocalFile(entry) && needsExtension(entry)) {
-      match = files.find(x => x.match(match.replace(packageUrl, '')));
-      match = packageUrl + match;
+      match =
+        packageUrl +
+        files.find(x =>
+          x.match(new RegExp(`${match.replace(packageUrl, '')}(/index)?\\..*`))
+        );
     }
     return { ...all, [entry]: match };
   }, {});

@@ -46,7 +46,7 @@ export const PackageOverview = () => {
   const [searchTerm, setSearchTerm] = react.useState('');
   const [{ versions, request, directory }] = useStateValue();
 
-  if (!versions[request.version]) return null;
+  if (!versions[request.version] || !directory.files) return null;
 
   const { name, version, description } = versions[request.version];
 
