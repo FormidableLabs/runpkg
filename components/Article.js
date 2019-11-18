@@ -5,18 +5,13 @@ import FileIcon from './FileIcon.js';
 import { useStateValue } from '../utils/globalState.js';
 
 export default () => {
-  const [{ code = '', request }] = useStateValue();
+  const [{ request }] = useStateValue();
   return html`
     <article className=${styles}>
       <h1>
         ${FileIcon} ${request.path}
       </h1>
-      <${Editor}
-        url=${request.path}
-        key="editor"
-        value=${code.slice(0, 100000)}
-      />
-      <pre key="pre">${code.slice(100000)}</pre>
+      <${Editor} key="editor" />
     </article>
   `;
 };

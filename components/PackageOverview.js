@@ -8,16 +8,19 @@ import { Package } from './RegistryOverview.js';
 import formatBytes from '../utils/formatBytes.js';
 import pushState from '../utils/pushState.js';
 
-const File = ({ packageName, meta, parent, version }) => {
-  return html`
-    <li key=${meta.path}>
-      ${FileIcon}
-      <${Link} href=${`/?${packageName}@${version}${meta.path}`}>
-        ${meta.path.replace(parent.path, '')}
-      <//>
-      <small>${formatBytes(meta.size)}</small>
-    </li>
-  `;
+const File = ({ packageName, meta, parent, version, filter }) => {
+  return (
+    meta.path.match(filter) &&
+    html`
+      <li key=${meta.path}>
+        ${FileIcon}
+        <${Link} href=${`/?${packageName}@${version}${meta.path}`}>
+          ${meta.path.replace(parent.path, '')}
+        <//>
+        <small>${formatBytes(meta.size)}</small>
+      </li>
+    `
+  );
 };
 
 const Directory = ({ packageName, rootMeta, version, filter }) => html`
@@ -31,13 +34,11 @@ const Directory = ({ packageName, rootMeta, version, filter }) => html`
           <small>${rootMeta.files.length} Files</small>
         </div>
       `}
-    ${rootMeta.files
-      .filter(meta => meta.path.toLowerCase().match(filter))
-      .map(meta =>
-        meta.type === 'file'
-          ? File({ meta, parent: rootMeta, version, packageName, filter })
-          : Directory({ rootMeta: meta, version, packageName, filter })
-      )}
+    ${rootMeta.files.map(meta =>
+      meta.type === 'file'
+        ? File({ meta, parent: rootMeta, version, packageName, filter })
+        : Directory({ rootMeta: meta, version, packageName, filter })
+    )}
   </ul>
 `;
 

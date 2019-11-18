@@ -11,42 +11,41 @@ if ('serviceWorker' in navigator) {
     .catch(err => console.log(err));
 }
 
-const App = () => {
-  const initialState = {
-    request: parseUrl(),
-    code: '',
-    file: {},
-    directory: {},
-    fetchError: false,
-    versions: {},
-    dependencyState: {},
-  };
-  function reducer(state, action) {
-    switch (action.type) {
-      case 'setRequest':
-        return { ...state, request: action.payload };
-      case 'setDirectory':
-        return { ...state, directory: action.payload };
-      case 'setCode':
-        return { ...state, code: action.payload };
-      case 'setFile':
-        return { ...state, file: action.payload };
-      case 'setFetchError':
-        return { ...state, fetchError: action.payload };
-      case 'setVersions':
-        return { ...state, versions: action.payload };
-      case 'setDependencies':
-        return { ...state, dependencyState: action.payload };
-      default:
-        return { ...state };
-    }
-  }
-  return html`
-    <${StateProvider} initialState=${initialState} reducer=${reducer}>
-      <${Main} />
-    <//>
-  `;
+const initialState = {
+  request: parseUrl(),
+  directory: {},
+  code: '',
+  versions: {},
+  cache: {},
 };
+
+function reducer(state, action) {
+  switch (action.type) {
+    case 'setRequest':
+      return { ...state, request: action.payload };
+    case 'setDirectory':
+      return { ...state, directory: action.payload };
+    case 'setCode':
+      return { ...state, code: action.payload };
+    case 'setFile':
+      return { ...state, file: action.payload };
+    case 'setVersions':
+      return { ...state, versions: action.payload };
+    case 'setCache':
+      return {
+        ...state,
+        cache: { ...state.cache, [action.payload.url]: action.payload },
+      };
+    default:
+      return { ...state };
+  }
+}
+
+const App = () => html`
+  <${StateProvider} initialState=${initialState} reducer=${reducer}>
+    <${Main} />
+  <//>
+`;
 
 react.render(
   html`

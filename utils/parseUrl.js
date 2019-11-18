@@ -5,6 +5,7 @@ const parseUrl = (url = window.location.search.slice(1).replace(/\/$/, '')) => {
     .split('/')
     .map(part => part.trim())
     .filter(Boolean);
+
   if (parts[0]) {
     // checks if scoped packaged
     if (parts[0].startsWith('@')) {
