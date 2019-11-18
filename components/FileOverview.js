@@ -6,18 +6,18 @@ import FileIcon from './FileIcon.js';
 import { SearchInput } from './SearchInput.js';
 import { styles as fileStyles } from './PackageOverview.js';
 
-const FileList = ({ title, files }) => html`
+const FileList = ({ title, files, packageName }) => html`
   <div key=${title}>
     <h2>${title}</h2>
-    <small>${files.length} Files</small>
+    <small>${Object.entries(files).length} Files</small>
   </div>
   <ul className=${fileStyles.directory}>
     ${Object.entries(files).map(
       ([key, url]) => html`
-        <li key=${url} data-test="Item">
+        <li key=${key} data-test="Item">
           ${FileIcon}
           <${Link} href=${url.replace('https://unpkg.com/', '/?')}>
-            ${key}
+            ${url.replace(`https://unpkg.com/`, '').replace(packageName, '')}
           <//>
         </li>
       `
@@ -29,13 +29,8 @@ export const FileOverview = () => {
   const [{ request, cache }] = useStateValue();
   const [searchTerm, setSearchTerm] = react.useState('');
   const file = cache['https://unpkg.com/' + request.path];
-
-  console.log(file);
-
-  if (!file) return null;
-
   return (
-    file &&
+    !!file &&
     html`
       <${SearchInput}
         placeholder="Search for dependencies.."

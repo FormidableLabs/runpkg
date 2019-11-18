@@ -1,6 +1,7 @@
 import { react, html, css } from 'https://unpkg.com/rplus-production@1.0.0';
 
 import { SearchInput } from './SearchInput.js';
+import PackageIcon from './PackageIcon.js';
 import pushState from '../utils/pushState.js';
 
 export const RegistryOverview = () => {
@@ -36,7 +37,10 @@ export const Package = ({ name, version, description }) => html`
       href=${`?${name}@${version}`}
       onClick=${e => e.preventDefault() || pushState(`?${name}@${version}`)}
     >
-      <h2>${name}</h2>
+      <h2>
+        <${PackageIcon} />
+        <span>${name}</span>
+      </h2>
       <p>${description}</p>
     </a>
   </li>
@@ -56,20 +60,30 @@ const styles = {
   item: css`
     cursor: pointer;
     text-decoration: none;
-    color: rgba(255, 255, 255, 0.7);
+    color: rgba(255, 255, 255, 0.62);
     border: 1px solid rgba(0, 0, 0, 0.2);
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     padding: 1.38rem 1.62rem;
+    h2 {
+      display: flex;
+      align-items: center;
+    }
+    svg {
+      width: 1.62rem;
+      height: 1.62rem;
+      margin-right: 1rem;
+      fill: rgba(255, 255, 255, 0.62);
+    }
     > * + * {
       margin-top: 1rem;
     }
     &:hover {
-      color: #fff;
+      color: rgba(255, 255, 255, 0.8);
     }
     > p {
-      line-height: 150%;
+      line-height: 162%;
     }
   `,
 };

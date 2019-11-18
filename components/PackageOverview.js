@@ -27,12 +27,13 @@ const Directory = ({ packageName, rootMeta, version, filter }) => html`
   <ul className=${styles.directory}>
     ${rootMeta.path &&
       rootMeta.path !== '/' &&
+      rootMeta.path.match(filter) &&
       html`
-        <div>
+        <li>
           ${FolderIcon}
           <h2>${rootMeta.path.slice(1)}</h2>
           <small>${rootMeta.files.length} Files</small>
-        </div>
+        </li>
       `}
     ${rootMeta.files.map(meta =>
       meta.type === 'file'
@@ -84,7 +85,7 @@ export const styles = {
     display: flex;
     flex-direction: column;
     word-break: break-word;
-    > * + * {
+    > * + *:not(:empty) {
       border-top: 1px solid rgba(0, 0, 0, 0.2);
     }
     div,
@@ -92,6 +93,7 @@ export const styles = {
       display: flex;
       align-items: center;
       padding: 1rem;
+      order: 0;
       svg {
         flex: none;
         width: 1.62rem;
@@ -117,13 +119,17 @@ export const styles = {
       }
     }
 
+    ul {
+      order: 1;
+    }
+
     div > svg {
       width: 2rem;
       height: 2rem;
     }
 
     h2 {
-      font-size: 1rem;
+      font-size: 0.62rem;
       font-weight: bold;
     }
   `,

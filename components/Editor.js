@@ -23,8 +23,8 @@ const removeQuotes = packageName => packageName.replace(/['"]+/g, '');
 export default () => {
   const [{ code, cache, request }] = useStateValue();
   const selectedLine = getSelectedLineNumberFromUrl();
-  const { dependencies = {} } =
-    cache['https://unpkg.com/' + request.path] || {};
+  const { dependencies } = cache['https://unpkg.com/' + request.path] || {};
+  if (!dependencies) return null;
   return html`
     <${Highlight}
       Prism=${Prism}
@@ -39,7 +39,7 @@ export default () => {
             return html`
               <div
                 ...${getLineProps({ line, key: i })}
-                className=${styles.line(selectedLine - 1 === i)}
+                className=${selectedLine - 1 === i ? styles.lineActive : ''}
               >
                 <span
                   className=${styles.lineNo}
@@ -85,12 +85,10 @@ const styles = {
     text-decoration: underline;
     text-decoration-color: #f8b1f1;
   `,
-  line: active =>
-    active &&
-    css`
-      background: #ffff000f;
-      outline: 1px solid #ffff001c;
-    `,
+  lineActive: css`
+    background: #ffff000f;
+    outline: 1px solid #ffff001c;
+  `,
   lineNo: css`
     display: inline-block;
     text-align: right;
