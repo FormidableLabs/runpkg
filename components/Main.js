@@ -90,8 +90,6 @@ export default () => {
       );
   }, [code]);
 
-  console.log(state);
-
   return html`
     <main className=${css`/index.css`}>
       ${state.fetchError

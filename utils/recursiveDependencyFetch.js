@@ -1,11 +1,10 @@
-import fileNameRegEx from '../utils/fileNameRegEx.js';
 import makePath from '../utils/makePath.js';
 import { parseUrl } from './parseUrl.js';
 
 const UNPKG = 'https://unpkg.com/';
 
 const isExternalPath = str => !str.startsWith('.');
-const isLocalFile = str => !isExternalPath(str) && fileNameRegEx.test(str);
+const isLocalFile = str => !isExternalPath(str);
 const isListedInDependencies = (pkgName, pkgJson) =>
   ['dependencies', 'devDependencies', 'peerDependencies'].some(depType =>
     Object.keys(pkgJson[depType] || {}).includes(parseUrl(pkgName).name)
@@ -22,6 +21,18 @@ const packageJsonUrl = url => {
   return `${UNPKG}${name}@${version}/package.json`;
 };
 
+const directoriesUrl = url => {
+  const { name, version } = parseUrl(url);
+  return `${UNPKG}${name}@${version}/?meta`;
+};
+
+const flatten = arr =>
+  arr.reduce(
+    (acc, cur) =>
+      cur.files ? [...acc, ...flatten(cur.files)] : [...acc, cur.path],
+    []
+  );
+
 const extractDependencies = (input, packageJson) => {
   const code = stripComments(input).slice(0, 100000);
   const imports = (code.match(new RegExp(importExportRegex, 'gm')) || []).map(
@@ -30,33 +41,34 @@ const extractDependencies = (input, packageJson) => {
   const requires = (code.match(new RegExp(requireRegex, 'gm')) || []).map(
     x => x.match(new RegExp(requireRegex))[2]
   );
-  return [...new Set([...imports, ...requires])]
-    .filter(x => isLocalFile(x) || isListedInDependencies(x, packageJson))
-    .map(x => (isExternalPath(x) || x.endsWith('.js') ? x : `${x}.js`));
+  return [...new Set([...imports, ...requires])].filter(
+    x => isLocalFile(x) || isListedInDependencies(x, packageJson)
+  );
 };
 
-// cache keeps memory of what was run last
-// const cache = {};
-
-/* eslint-disable max-statements, max-params */
 export const parseDependencies = async path => {
   const { url, code } = await fetch(path).then(async res => ({
     url: res.url,
     code: await res.text(),
   }));
+  const dir = await fetch(directoriesUrl(url)).then(res => res.json());
   const pkg = await fetch(packageJsonUrl(url)).then(res => res.json());
-  const dependencies = extractDependencies(code, pkg).reduce(
-    (all, entry) => ({ ...all, [entry]: makePath(url)(entry) }),
-    {}
-  );
+
+  const flatDir = flatten(dir.files);
+
+  const dependencies = extractDependencies(code, pkg).reduce((all, entry) => {
+    const packageUrl = `${UNPKG}${pkg.name}@${pkg.version}`;
+    let match = makePath(url)(entry);
+    const needsExtension = !entry
+      .split('/')
+      .pop()
+      .includes('.');
+    if (needsExtension) {
+      match = flatDir.find(x => x.match(match.replace(packageUrl, '')));
+      match = packageUrl + match;
+    }
+    return { ...all, [entry]: match };
+  }, {});
+
   return { url, size: code.length, dependencies };
 };
-/* eslint-enable max-statements*/
-
-// export default async (entry, shallow) => {
-//   // Start tree walking dependencies from the given entry point
-//   // otherwise start from the projects main entry point
-//   await recursiveDependencyFetch(entry, null, shallow);
-//   // Returns new cache.
-//   return cache;
-// };
