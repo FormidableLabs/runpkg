@@ -50,36 +50,30 @@ export default () => {
 
   // Fetch the code for requested file
   react.useEffect(() => {
-    if (request.file) {
-      dispatch({ type: 'setCode', payload: '' });
+    if (request.file)
       fetch(`https://unpkg.com/${request.path}`)
         .then(async res =>
           dispatch({ type: 'setCode', payload: await res.text() })
         )
         .catch(console.error);
-    }
   }, [request.file, request.path]);
 
   // Fetch directory listings for requested package
   react.useEffect(() => {
-    if (request.name && request.version) {
-      dispatch({ type: 'setDirectory', payload: {} });
+    if (request.name && request.version)
       fetch(`https://unpkg.com/${request.name}@${request.version}/?meta`)
         .then(res => res.json())
         .then(res => dispatch({ type: 'setDirectory', payload: res }))
         .catch(console.error);
-    }
   }, [request.name, request.version]);
 
   // Fetch package meta data for all versions
   react.useEffect(() => {
-    if (request.name) {
-      dispatch({ type: 'setVersions', payload: {} });
+    if (request.name)
       fetch(`https://registry.npmjs.cf/${request.name}/`)
         .then(res => res.json())
         .then(json => dispatch({ type: 'setVersions', payload: json.versions }))
         .catch(console.error);
-    }
   }, [request.name]);
 
   // Fetch package meta data for all versions
@@ -93,7 +87,7 @@ export default () => {
   react.useEffect(() => {
     fetch(
       `https://api.npms.io/v2/search/suggestions?size=10&q=${packagesSearchTerm ||
-        'urql'}`
+        'lodash-es'}`
     )
       .then(res => res.json())
       .then(res => res.map(x => x.package))
