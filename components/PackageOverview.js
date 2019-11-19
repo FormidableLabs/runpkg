@@ -1,4 +1,4 @@
-import { html, css, react } from 'https://unpkg.com/rplus-production@1.0.0';
+import { html, css } from 'https://unpkg.com/rplus-production@1.0.0';
 import { SearchInput } from './SearchInput.js';
 import FolderIcon from './FolderIcon.js';
 import FileIcon from './FileIcon.js';
@@ -44,13 +44,12 @@ const Directory = ({ packageName, rootMeta, version, filter }) => html`
 `;
 
 export const PackageOverview = () => {
-  const [searchTerm, setSearchTerm] = react.useState('');
-  const [{ versions, request, directory }] = useStateValue();
-
+  const [
+    { versions, request, directory, fileSearchTerm },
+    dispatch,
+  ] = useStateValue();
   if (!versions[request.version] || !directory.files) return null;
-
   const { name, version, description } = versions[request.version];
-
   const handleVersionChange = v => pushState(`?${name}@${v}`);
   const VersionOption = x =>
     html`
@@ -60,8 +59,8 @@ export const PackageOverview = () => {
   return html`
     <${SearchInput}
       placeholder="Search for files.."
-      value=${searchTerm}
-      onChange=${setSearchTerm}
+      value=${fileSearchTerm}
+      onChange=${val => dispatch({ type: 'setFileSearchTerm', payload: val })}
     />
     <${Package} name=${name} version=${version} description=${description} />
     <select
@@ -75,7 +74,7 @@ export const PackageOverview = () => {
       packageName=${name}
       rootMeta=${directory}
       version=${version}
-      filter=${searchTerm}
+      filter=${fileSearchTerm}
     />
   `;
 };
