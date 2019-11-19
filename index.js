@@ -19,10 +19,13 @@ const initialState = {
   code: '',
   versions: {},
   cache: {},
+  mode: 'registry',
 };
 
 function reducer(state, action) {
   switch (action.type) {
+    case 'setMode':
+      return { ...state, mode: action.payload };
     case 'setPackages':
       return { ...state, packages: action.payload };
     case 'setPackagesSearchTerm':

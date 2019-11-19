@@ -1,12 +1,13 @@
-import { html, react, css } from 'https://unpkg.com/rplus-production@1.0.0';
+import { html, css } from 'https://unpkg.com/rplus-production@1.0.0';
 
 import { RadioGroup } from './RadioGroup.js';
 import { PackageOverview } from './PackageOverview.js';
 import { RegistryOverview } from './RegistryOverview.js';
 import { FileOverview } from './FileOverview.js';
+import { useStateValue } from '../utils/globalState.js';
 
 export default () => {
-  const [mode, setMode] = react.useState('registry');
+  const [{ mode }, dispatch] = useStateValue();
   const modeOptions = {
     registry: mode === 'registry',
     package: mode === 'package',
@@ -14,7 +15,10 @@ export default () => {
   };
   return html`
     <nav className=${styles}>
-      <${RadioGroup} options=${modeOptions} onClick=${setMode} />
+      <${RadioGroup}
+        options=${modeOptions}
+        onClick=${val => dispatch({ type: 'setMode', payload: val })}
+      />
       ${mode === 'package'
         ? html`
             <${PackageOverview} />
