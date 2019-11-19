@@ -1,11 +1,10 @@
 import { react, html, css } from 'https://unpkg.com/rplus-production@1.0.0';
 import { useStateValue } from '../utils/globalState.js';
 import { parseUrl } from '../utils/parseUrl.js';
+import { parseDependencies } from '../utils/recursiveDependencyFetch.js';
 
 import Nav from './Nav.js';
 import Article from './Article.js';
-import NotFound from './NotFound.js';
-import { parseDependencies } from '../utils/recursiveDependencyFetch.js';
 
 const replaceState = url => history.replaceState(null, null, url);
 
@@ -96,12 +95,8 @@ export default () => {
 
   return html`
     <main className=${css`/index.css`}>
-      ${state.fetchError
-        ? NotFound
-        : html`
-            <${Article} />
-            <${Nav} />
-          `}
+      <${Article} />
+      <${Nav} />
     </main>
   `;
 };
