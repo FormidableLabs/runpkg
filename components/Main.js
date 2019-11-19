@@ -75,7 +75,7 @@ export default () => {
         .catch(console.error);
   }, [request.name]);
 
-  // Fetch package meta data for all versions
+  // Parse dependencies for the current code
   react.useEffect(() => {
     if (code)
       parseDependencies('https://unpkg.com/' + request.path).then(cache =>
@@ -83,6 +83,7 @@ export default () => {
       );
   }, [code]);
 
+  // Fetch packages by search term
   react.useEffect(() => {
     fetch(
       `https://api.npms.io/v2/search/suggestions?size=10&q=${packagesSearchTerm ||
