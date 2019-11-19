@@ -120,5 +120,15 @@ const styles = {
       color: #f8b1f1;
       margin-top: 0;
     }
+    table {
+      border-collapse: collapse;
+      color: inherit;
+      td,
+      th,
+      tr {
+        border: 1px solid rgba(255, 255, 255, 0.38);
+        padding: 0.62rem;
+      }
+    }
   `,
 };
