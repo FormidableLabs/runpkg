@@ -11,17 +11,16 @@ self.addEventListener('fetch', event => {
     !event.request.referrer.includes('https://unpkg.com/')
   ) {
     event.respondWith(
-      caches.open(cacheName).then(cache => {
-        return cache.match(event.request).then(response => {
-          // if not in cache then fetch it and add to cache
-          return response
-            ? response
-            : fetch(event.request).then(networkResponse => {
-                cache.put(event.request, networkResponse.clone());
-                return networkResponse;
-              });
-        });
-      })
+      caches.open(cacheName).then(cache =>
+        cache.match(event.request).then(
+          response =>
+            response ||
+            fetch(event.request).then(networkResponse => {
+              cache.put(event.request, networkResponse.clone());
+              return networkResponse;
+            })
+        )
+      )
     );
   }
   return;

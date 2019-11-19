@@ -1,54 +1,55 @@
-import { html, css, react } from 'https://unpkg.com/rplus-production@1.0.0';
+import { html, css } from 'https://unpkg.com/rplus-production@1.0.0';
 import { SearchInput } from './SearchInput.js';
 import FolderIcon from './FolderIcon.js';
 import FileIcon from './FileIcon.js';
 import Link from './Link.js';
-
+import { useStateValue } from '../utils/globalState.js';
 import { Package } from './RegistryOverview.js';
-
 import formatBytes from '../utils/formatBytes.js';
 import pushState from '../utils/pushState.js';
 
-const File = ({ packageName, meta, parent, version }) => {
-  return html`
-    <li key=${meta.path}>
-      ${FileIcon}
-      <${Link} href=${`/?${packageName}@${version}${meta.path}`}>
-        ${meta.path.replace(parent.path, '')}
-      <//>
-      <small>${formatBytes(meta.size)}</small>
-    </li>
-  `;
+const File = ({ packageName, meta, parent, version, filter }) => {
+  return (
+    meta.path.match(filter) &&
+    html`
+      <li key=${meta.path}>
+        ${FileIcon}
+        <${Link} href=${`/?${packageName}@${version}${meta.path}`}>
+          ${meta.path.replace(parent.path, '')}
+        <//>
+        <small>${formatBytes(meta.size)}</small>
+      </li>
+    `
+  );
 };
 
 const Directory = ({ packageName, rootMeta, version, filter }) => html`
   <ul className=${styles.directory}>
     ${rootMeta.path &&
       rootMeta.path !== '/' &&
+      rootMeta.path.match(filter) &&
       html`
-        <div>
+        <li>
           ${FolderIcon}
           <h2>${rootMeta.path.slice(1)}</h2>
           <small>${rootMeta.files.length} Files</small>
-        </div>
+        </li>
       `}
-    ${rootMeta.files
-      .filter(meta => meta.path.toLowerCase().match(filter))
-      .map(meta =>
-        meta.type === 'file'
-          ? File({ meta, parent: rootMeta, version, packageName, filter })
-          : Directory({ rootMeta: meta, version, packageName, filter })
-      )}
+    ${rootMeta.files.map(meta =>
+      meta.type === 'file'
+        ? File({ meta, parent: rootMeta, version, packageName, filter })
+        : Directory({ rootMeta: meta, version, packageName, filter })
+    )}
   </ul>
 `;
 
-export const PackageOverview = ({ file, versions = [] }) => {
-  const [searchTerm, setSearchTerm] = react.useState('');
-  const {
-    pkg: { name, version, description },
-    meta,
-  } = file;
-
+export const PackageOverview = () => {
+  const [
+    { versions, request, directory, fileSearchTerm },
+    dispatch,
+  ] = useStateValue();
+  if (!versions[request.version] || !directory.files) return null;
+  const { name, version, description } = versions[request.version];
   const handleVersionChange = v => pushState(`?${name}@${v}`);
   const VersionOption = x =>
     html`
@@ -58,8 +59,8 @@ export const PackageOverview = ({ file, versions = [] }) => {
   return html`
     <${SearchInput}
       placeholder="Search for files.."
-      value=${searchTerm}
-      onChange=${setSearchTerm}
+      value=${fileSearchTerm}
+      onChange=${val => dispatch({ type: 'setFileSearchTerm', payload: val })}
     />
     <${Package} name=${name} version=${version} description=${description} />
     <select
@@ -67,13 +68,13 @@ export const PackageOverview = ({ file, versions = [] }) => {
       value=${version}
       onChange=${e => handleVersionChange(e.target.value)}
     >
-      ${versions.map(VersionOption)}</select
+      ${Object.keys(versions).map(VersionOption)}</select
     >
     <${Directory}
       packageName=${name}
-      rootMeta=${meta}
+      rootMeta=${directory}
       version=${version}
-      filter=${searchTerm}
+      filter=${fileSearchTerm}
     />
   `;
 };
@@ -83,7 +84,7 @@ export const styles = {
     display: flex;
     flex-direction: column;
     word-break: break-word;
-    > * + * {
+    > * + *:not(:empty) {
       border-top: 1px solid rgba(0, 0, 0, 0.2);
     }
     div,
@@ -91,11 +92,12 @@ export const styles = {
       display: flex;
       align-items: center;
       padding: 1rem;
+      order: 0;
       svg {
         flex: none;
         width: 1.62rem;
         height: 1.62rem;
-        fill: rgba(255, 255, 255, 0.2);
+        fill: rgba(255, 255, 255, 0.38);
         margin-right: 1rem;
       }
       a {
@@ -116,13 +118,17 @@ export const styles = {
       }
     }
 
+    ul {
+      order: 1;
+    }
+
     div > svg {
       width: 2rem;
       height: 2rem;
     }
 
     h2 {
-      font-size: 1rem;
+      font-size: 0.62rem;
       font-weight: bold;
     }
   `,

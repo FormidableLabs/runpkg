@@ -4,6 +4,7 @@
   "description": "> the online package explorer",
   "main": "index.js",
   "scripts": {
+    "start": "servor --reload --browse",
     "prettier": "prettier --config .prettierrc --write \"./**/*.{css,html,json,md,yml}\"",
     "lint": "eslint --config .eslintrc \"./**/*.js\"",
     "jest": "jest",
@@ -32,7 +33,7 @@
     "jest": "20.0.4",
     "lint-staged": "^8.1.6",
     "prettier": "^1.17.0",
-    "servor": "^2.2.1",
+    "servor": "^3.0.0",
     "wait-on": "^3.2.0",
     "esm": "^3.2.25"
   },

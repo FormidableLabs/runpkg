@@ -9,7 +9,7 @@ describe('parseUrl', () => {
     expect(parseUrl('https://unpkg.com/pkg-dash@1.0.0/extra.js')).toEqual({
       name: 'pkg-dash',
       version: '1.0.0',
-      path: '/pkg-dash@1.0.0/extra.js',
+      path: 'pkg-dash@1.0.0/extra.js',
       file: 'extra.js',
       directory: null,
     });
@@ -20,7 +20,7 @@ describe('parseUrl', () => {
     ).toEqual({
       name: 'pkg-dash',
       version: '1.0.0-beta.1',
-      path: '/pkg-dash@1.0.0-beta.1/extra.js',
+      path: 'pkg-dash@1.0.0-beta.1/extra.js',
       file: 'extra.js',
       directory: null,
     });
@@ -31,7 +31,7 @@ describe('parseUrl', () => {
     ).toEqual({
       file: 'index.js',
       name: 'fast-deep-equal',
-      path: '/fast-deep-equal@3.0.0-beta.1/es6/index.js',
+      path: 'fast-deep-equal@3.0.0-beta.1/es6/index.js',
       version: '3.0.0-beta.1',
       directory: 'es6',
     });
@@ -40,7 +40,7 @@ describe('parseUrl', () => {
     expect(parseUrl('https://unpkg.com/@scope/pkg@1.0.0/index.js')).toEqual({
       file: 'index.js',
       name: '@scope/pkg',
-      path: '/@scope/pkg@1.0.0/index.js',
+      path: '@scope/pkg@1.0.0/index.js',
       directory: null,
       version: '1.0.0',
     });
@@ -50,7 +50,7 @@ describe('parseUrl', () => {
       {
         file: 'index.js',
         name: '@scope/pkg',
-        path: '/@scope/pkg@1.0.0/es6/index.js',
+        path: '@scope/pkg@1.0.0/es6/index.js',
         directory: 'es6',
         version: '1.0.0',
       }
@@ -62,7 +62,7 @@ describe('parseUrl', () => {
     ).toEqual({
       file: 'index.js',
       name: '@scope/pkg',
-      path: '/@scope/pkg@1.0.0-beta.1/index.js',
+      path: '@scope/pkg@1.0.0-beta.1/index.js',
       directory: null,
       version: '1.0.0-beta.1',
     });
@@ -78,14 +78,14 @@ describe('parseUrl', () => {
     expect(parseUrl('https://unpkg.com/@scope/pkg')).toEqual({
       file: null,
       name: '@scope/pkg',
-      path: '/@scope/pkg',
+      path: '@scope/pkg',
       directory: null,
       version: null,
     });
     expect(parseUrl('https://unpkg.com/@scope/pkg@1.0.0-beta.1')).toEqual({
       file: null,
       name: '@scope/pkg',
-      path: '/@scope/pkg@1.0.0-beta.1',
+      path: '@scope/pkg@1.0.0-beta.1',
       directory: null,
       version: '1.0.0-beta.1',
     });

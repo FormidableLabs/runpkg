@@ -1,87 +1,60 @@
-import { css, react, html } from 'https://unpkg.com/rplus-production@1.0.0';
-import recursiveDependencyFetch from '../utils/recursiveDependencyFetch.js';
+import { css, html } from 'https://unpkg.com/rplus-production@1.0.0';
 import Link from './Link.js';
 import formatBytes from '../utils/formatBytes.js';
+import { useStateValue } from '../utils/globalState.js';
 import FileIcon from './FileIcon.js';
+import PackageIcon from './PackageIcon.js';
 import { SearchInput } from './SearchInput.js';
-
 import { styles as fileStyles } from './PackageOverview.js';
 
 const FileList = ({ title, files, packageName, filter }) => html`
   <div key=${title}>
     <h2>${title}</h2>
-    <small>${files.length} Files</small>
+    <small>${Object.entries(files).length} Files</small>
   </div>
-  <ul className=${fileStyles.directory} key=${files.join('-')}>
-    ${files
-      .filter(x => x.url.match(filter))
-      .map(
-        x => html`
-          <li key=${x.url} data-test="Item">
-            ${FileIcon}
-            <${Link} href=${x.url.replace('https://unpkg.com/', '/?')}>
-              ${x.url
-                .replace(`https://unpkg.com/`, '')
-                .replace(packageName, '')}
+  <ul className=${fileStyles.directory}>
+    ${Object.entries(files).map(
+      ([key, url]) =>
+        url.match(filter) &&
+        html`
+          <li key=${key} data-test="Item">
+            ${url.includes(packageName) ? FileIcon : PackageIcon}
+            <${Link} href=${url.replace('https://unpkg.com/', '/?')}>
+              ${url.replace(`https://unpkg.com/`, '').replace(packageName, '')}
             <//>
-            <small>${formatBytes(x.size)}</small>
           </li>
         `
-      )}
+    )}
   </ul>
 `;
 
-export const FileOverview = ({ file, dispatch }) => {
-  const [cache, setCache] = react.useState({});
-  const [searchTerm, setSearchTerm] = react.useState('');
-
-  react.useEffect(() => {
-    if (file.url) {
-      console.log(`Analysing ${file.url}`);
-      recursiveDependencyFetch(file.url).then(x => {
-        setCache(x);
-        dispatch({ type: 'setDependencies', payload: x });
-      });
-    }
-  }, [file.url]);
-
-  const target = cache[file.url] || {
-    dependencies: [],
-    dependants: [],
-    size: 0,
-  };
-
-  const { name, version } = file.pkg;
-  const dependencies = target.dependencies.map(x => cache[x[1]]);
-  const knownDependants = target.dependants.map(x => cache[x]);
-
-  return html`
-    <${SearchInput}
-      placeholder="Search for dependencies.."
-      value=${searchTerm}
-      onChange=${setSearchTerm}
-    />
-    <div className=${styles}>
-      <div key="filesize">
-        <h2>File Size</h2>
-        <small>${target.size ? formatBytes(target.size) : 'calculating'}</small>
+export const FileOverview = () => {
+  const [{ request, cache, dependencySearchTerm }, dispatch] = useStateValue();
+  const file = cache['https://unpkg.com/' + request.path];
+  return (
+    !!file &&
+    html`
+      <${SearchInput}
+        placeholder="Search for dependencies.."
+        value=${dependencySearchTerm}
+        onChange=${val =>
+          dispatch({ type: 'setDependencySearchTerm', payload: val })}
+      />
+      <div className=${styles}>
+        <div key="filesize">
+          <h2>File Size</h2>
+          <small>${formatBytes(file.size)}</small>
+        </div>
+        <${FileList}
+          title="Dependencies"
+          files=${file.dependencies}
+          key="dependencies"
+          packageName=${`${request.name}@${request.version}`}
+          filter=${dependencySearchTerm}
+        />
       </div>
-      <${FileList}
-        title="Dependencies"
-        files=${dependencies}
-        key="dependencies"
-        packageName=${`${name}@${version}`}
-        filter=${searchTerm}
-      />
-      <${FileList}
-        title="Known Dependants"
-        files=${knownDependants}
-        key="dependants"
-        packageName=${`${name}@${version}`}
-        filter=${searchTerm}
-      />
-    </div>
-  `;
+    `
+  );
 };
 
 const styles = css`

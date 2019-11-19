@@ -1,108 +1,67 @@
-import { react, html, css } from 'https://unpkg.com/rplus-production@1.0.0';
+import { html, css } from 'https://unpkg.com/rplus-production@1.0.0';
 import Highlight, {
   Prism,
 } from 'https://unpkg.com/prism-react-renderer?module';
-
+import { useStateValue } from '../utils/globalState.js';
 import Link from './Link.js';
 
 const getSelectedLineNumberFromUrl = () =>
   location.hash && parseInt(location.hash.substr(1), 10);
 
-export default ({ value, dependencyState, url, ...rest }) => {
-  const [selectedLine, setSelectedLine] = react.useState(
-    getSelectedLineNumberFromUrl()
+const handleLineNumberClick = lineNo =>
+  history.pushState(null, null, `#${lineNo}`);
+
+const hasImport = line =>
+  line.some(
+    token =>
+      token.types.includes('module') ||
+      (token.types.includes('function') && token.content === 'require')
   );
 
-  react.useEffect(() => {
-    // when the url updates with a selected line number,
-    // reflect that back to the state value
-    setSelectedLine(getSelectedLineNumberFromUrl());
-  }, [window.location.hash]);
+const removeQuotes = packageName => packageName.replace(/['"]+/g, '');
 
-  react.useEffect(() => {
-    // when the selected line is updated, reflect it in the url
-    history.pushState(null, null, selectedLine ? `#${selectedLine}` : ' ');
-  }, [selectedLine]);
-
-  const handleLineNumberClick = lineNo => {
-    setSelectedLine(lineNo === selectedLine ? null : lineNo);
-  };
-
-  const dependencies = react.useMemo(
-    () => dependencyState[url] && dependencyState[url].dependencies,
-    [dependencyState[url]]
-  );
-
-  const findTokenDependency = react.useCallback(
-    token => {
-      if (!dependencies) return null;
-      const strippedDependency = token.replace(/['"]+/g, '');
-      const dependency = dependencies.find(dep =>
-        // dependency import statements may or may not end with .js
-        dep[0].match(new RegExp(`${strippedDependency}(\.js)?`))
-      );
-      return dependency;
-    },
-    [dependencies]
-  );
-
+export default () => {
+  const [{ code, cache, request }] = useStateValue();
+  const selectedLine = getSelectedLineNumberFromUrl();
+  const { dependencies } = cache['https://unpkg.com/' + request.path] || {};
+  if (!dependencies) return null;
   return html`
     <${Highlight}
       Prism=${Prism}
-      code=${value}
+      code=${code.slice(0, 100000)}
       language="javascript"
       theme=${undefined}
     >
       ${({ className, style, tokens, getLineProps, getTokenProps }) => html`
-        <pre
-          className=${`${styles.container} ${className}`}
-          style=${style}
-          ...${rest}
-        >
+        <pre className=${`${styles.container} ${className}`} style=${style}>
         ${tokens.map((line, i) => {
-            // find whether this line contains and import/export statement
-            const isImportExportLine = line.some(
-              token =>
-                token.types.includes('module') ||
-                (token.types.includes('function') &&
-                  token.content === 'require')
-            );
-
+            const isImportLine = hasImport(line);
             return html`
               <div
                 ...${getLineProps({ line, key: i })}
-                className=${styles.line(selectedLine - 1 === i)}
+                className=${selectedLine - 1 === i ? styles.lineActive : ''}
               >
                 <span
                   className=${styles.lineNo}
                   onClick=${handleLineNumberClick.bind(null, i + 1)}
                   >${i + 1}</span
                 >
-                ${line.map((token, key) => {
-                  // if this line contains an import/export statement
-                  // then match the module name against the list of
-                  // found dependencies
-                  const dependency =
-                    isImportExportLine &&
+                ${line.map(token => {
+                  const dep =
+                    isImportLine &&
                     token.types.includes('string') &&
-                    findTokenDependency(token.content);
-
-                  // if a matched dependency is found, render a link to
-                  // that file, else display it normally
-                  return dependency
+                    dependencies[removeQuotes(token.content)];
+                  return dep
                     ? html`
                         <${Link}
-                          href=${`/${dependency[1].replace(
-                            'https://unpkg.com/',
-                            '?'
-                          )}`}
+                          href=${`/?${dep.replace('https://unpkg.com/', '')}`}
                           className=${styles.link}
                         >
-                          <span ...${getTokenProps({ token, key })}
-                        /><//>
+                          <span ...${getTokenProps({ token })} />
+                        <//>
                       `
                     : html`
-                        <span ...${getTokenProps({ token, key })} />
+                        <span ...${getTokenProps({ token })} />
                       `;
                 })}
               </div>
@@ -120,17 +79,16 @@ const styles = {
     line-height: 138%;
     font-family: 'Inconsolata', monospace;
     padding: 2rem 1rem;
+    overflow: scroll;
   `,
   link: css`
     text-decoration: underline;
     text-decoration-color: #f8b1f1;
   `,
-  line: active =>
-    active &&
-    css`
-      background: #ffff000f;
-      outline: 1px solid #ffff001c;
-    `,
+  lineActive: css`
+    background: #ffff000f;
+    outline: 1px solid #ffff001c;
+  `,
   lineNo: css`
     display: inline-block;
     text-align: right;
