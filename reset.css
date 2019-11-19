@@ -242,25 +242,27 @@ select {
 }
 
 ::-webkit-scrollbar {
-  width: 9px;
+  width: 16px;
 }
 
 ::-webkit-scrollbar-track {
-  -webkit-border-radius: 1rem;
-  border-radius: 1rem;
+  border-radius: 0;
   background: rgba(0, 0, 0, 0.1);
 }
 
 ::-webkit-scrollbar-thumb {
-  -webkit-border-radius: 1rem;
-  border-radius: 1rem;
+  border-radius: 0;
   background: rgba(0, 0, 0, 0.2);
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.4);
+  background: rgba(0, 0, 0, 0.38);
 }
 
 ::-webkit-scrollbar-thumb:window-inactive {
   background: rgba(0, 0, 0, 0.05);
+}
+
+::-webkit-scrollbar-corner {
+  background: rgba(0, 0, 0, 0.38);
 }

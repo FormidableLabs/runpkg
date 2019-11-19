@@ -29,6 +29,8 @@ const styles = {
     grid-area: article;
     overflow: hidden;
     flex: 1 0 62%;
+    display: flex;
+    flex-direction: column;
 
     @media screen and (max-width: 800px) {
       height: 62vh;
