@@ -27,8 +27,8 @@ const styles = css`
     color: rgba(255, 255, 255, 0.62);
   }
   > svg {
-    width: 2.4rem;
-    height: 2.4rem;
+    width: 2.8rem;
+    height: 2.8rem;
     fill: rgba(255, 255, 255, 0.2);
     margin: 0 1rem;
   }

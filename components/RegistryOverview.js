@@ -27,7 +27,10 @@ export const Package = ({ name, version, description }) => html`
     <a
       className=${styles.item}
       href=${`?${name}@${version}`}
-      onClick=${e => e.preventDefault() || pushState(`?${name}@${version}`)}
+      onClick=${e => {
+        e.preventDefault();
+        pushState(`?${name}@${version}`);
+      }}
     >
       <h2>
         ${PackageIcon}
