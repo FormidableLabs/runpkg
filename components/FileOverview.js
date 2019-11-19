@@ -1,4 +1,4 @@
-import { css, react, html } from 'https://unpkg.com/rplus-production@1.0.0';
+import { css, html } from 'https://unpkg.com/rplus-production@1.0.0';
 import Link from './Link.js';
 import formatBytes from '../utils/formatBytes.js';
 import { useStateValue } from '../utils/globalState.js';
@@ -7,36 +7,38 @@ import PackageIcon from './PackageIcon.js';
 import { SearchInput } from './SearchInput.js';
 import { styles as fileStyles } from './PackageOverview.js';
 
-const FileList = ({ title, files, packageName }) => html`
+const FileList = ({ title, files, packageName, filter }) => html`
   <div key=${title}>
     <h2>${title}</h2>
     <small>${Object.entries(files).length} Files</small>
   </div>
   <ul className=${fileStyles.directory}>
     ${Object.entries(files).map(
-      ([key, url]) => html`
-        <li key=${key} data-test="Item">
-          ${url.includes(packageName) ? FileIcon : PackageIcon}
-          <${Link} href=${url.replace('https://unpkg.com/', '/?')}>
-            ${url.replace(`https://unpkg.com/`, '').replace(packageName, '')}
-          <//>
-        </li>
-      `
+      ([key, url]) =>
+        url.match(filter) &&
+        html`
+          <li key=${key} data-test="Item">
+            ${url.includes(packageName) ? FileIcon : PackageIcon}
+            <${Link} href=${url.replace('https://unpkg.com/', '/?')}>
+              ${url.replace(`https://unpkg.com/`, '').replace(packageName, '')}
+            <//>
+          </li>
+        `
     )}
   </ul>
 `;
 
 export const FileOverview = () => {
-  const [{ request, cache }] = useStateValue();
-  const [searchTerm, setSearchTerm] = react.useState('');
+  const [{ request, cache, dependencySearchTerm }, dispatch] = useStateValue();
   const file = cache['https://unpkg.com/' + request.path];
   return (
     !!file &&
     html`
       <${SearchInput}
         placeholder="Search for dependencies.."
-        value=${searchTerm}
-        onChange=${setSearchTerm}
+        value=${dependencySearchTerm}
+        onChange=${val =>
+          dispatch({ type: 'setDependencySearchTerm', payload: val })}
       />
       <div className=${styles}>
         <div key="filesize">
@@ -48,7 +50,7 @@ export const FileOverview = () => {
           files=${file.dependencies}
           key="dependencies"
           packageName=${`${request.name}@${request.version}`}
-          filter=${searchTerm}
+          filter=${dependencySearchTerm}
         />
       </div>
     `

@@ -15,6 +15,7 @@ const initialState = {
   packages: [],
   packagesSearchTerm: '',
   fileSearchTerm: '',
+  dependencySearchTerm: '',
   request: parseUrl(),
   directory: {},
   code: '',
@@ -33,6 +34,8 @@ function reducer(state, action) {
       return { ...state, packagesSearchTerm: action.payload };
     case 'setFileSearchTerm':
       return { ...state, fileSearchTerm: action.payload };
+    case 'setDependencySearchTerm':
+      return { ...state, dependencySearchTerm: action.payload };
     case 'setRequest':
       return { ...state, request: action.payload };
     case 'setDirectory':
