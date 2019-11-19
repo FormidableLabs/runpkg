@@ -27,7 +27,7 @@ export default () => {
 const styles = {
   container: css`
     grid-area: article;
-    overflow: auto;
+    overflow: hidden;
     flex: 1 0 62%;
 
     @media screen and (max-width: 800px) {
