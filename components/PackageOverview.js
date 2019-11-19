@@ -98,7 +98,7 @@ export const styles = {
         flex: none;
         width: 1.62rem;
         height: 1.62rem;
-        fill: rgba(255, 255, 255, 0.2);
+        fill: rgba(255, 255, 255, 0.38);
         margin-right: 1rem;
       }
       a {

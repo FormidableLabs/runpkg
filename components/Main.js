@@ -11,7 +11,7 @@ const replaceState = url => history.replaceState(null, null, url);
 
 export default () => {
   const [state, dispatch] = useStateValue();
-  const { request, code } = state;
+  const { request, code, packagesSearchTerm } = state;
 
   // Update the request on user navigation
   react.useEffect(() => {
@@ -89,6 +89,16 @@ export default () => {
         dispatch({ type: 'setCache', payload: cache })
       );
   }, [code]);
+
+  react.useEffect(() => {
+    fetch(
+      `https://api.npms.io/v2/search/suggestions?size=10&q=${packagesSearchTerm ||
+        'urql'}`
+    )
+      .then(res => res.json())
+      .then(res => res.map(x => x.package))
+      .then(res => dispatch({ type: 'setPackages', payload: res }));
+  }, [packagesSearchTerm]);
 
   return html`
     <main className=${css`/index.css`}>

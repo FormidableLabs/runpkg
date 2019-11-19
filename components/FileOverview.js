@@ -3,6 +3,7 @@ import Link from './Link.js';
 import formatBytes from '../utils/formatBytes.js';
 import { useStateValue } from '../utils/globalState.js';
 import FileIcon from './FileIcon.js';
+import PackageIcon from './PackageIcon.js';
 import { SearchInput } from './SearchInput.js';
 import { styles as fileStyles } from './PackageOverview.js';
 
@@ -15,7 +16,7 @@ const FileList = ({ title, files, packageName }) => html`
     ${Object.entries(files).map(
       ([key, url]) => html`
         <li key=${key} data-test="Item">
-          ${FileIcon}
+          ${url.includes(packageName) ? FileIcon : PackageIcon}
           <${Link} href=${url.replace('https://unpkg.com/', '/?')}>
             ${url.replace(`https://unpkg.com/`, '').replace(packageName, '')}
           <//>

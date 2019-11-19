@@ -12,6 +12,8 @@ if ('serviceWorker' in navigator) {
 }
 
 const initialState = {
+  packages: [],
+  packagesSearchTerm: '',
   request: parseUrl(),
   directory: {},
   code: '',
@@ -21,6 +23,10 @@ const initialState = {
 
 function reducer(state, action) {
   switch (action.type) {
+    case 'setPackages':
+      return { ...state, packages: action.payload };
+    case 'setPackagesSearchTerm':
+      return { ...state, packagesSearchTerm: action.payload };
     case 'setRequest':
       return { ...state, request: action.payload };
     case 'setDirectory':
