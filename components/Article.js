@@ -70,7 +70,7 @@ const styles = {
     width: 100%;
     max-width: 960px;
     margin: 0 auto;
-    overflow-y: auto;
+    overflow-y: scroll;
     color: rgba(255, 255, 255, 0.8);
     > * + * {
       margin-top: 1rem;
