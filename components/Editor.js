@@ -92,8 +92,9 @@ export default () => {
     >
       ${({ className, style, tokens, getLineProps, getTokenProps }) => html`
         <pre
-          className=${`${styles.container} ${className} ${loading &&
-            styles.loading} `}
+          className=${`${styles.container} ${className} ${
+            loading ? styles.loading : ''
+          } `}
           style=${style}
           ref=${container}
         >
