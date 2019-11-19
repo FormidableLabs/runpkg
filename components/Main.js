@@ -95,9 +95,30 @@ export default () => {
   }, [packagesSearchTerm]);
 
   return html`
-    <main className=${css`/index.css`}>
+    <main className=${styles}>
       <${Article} />
       <${Nav} />
     </main>
   `;
 };
+
+const styles = css`
+  width: 100%;
+  min-height: 100vh;
+  overflow: auto;
+  background: #2f3138;
+  @media screen and (min-width: 800px) {
+    display: grid;
+    grid-template-columns: 1fr 25rem;
+    grid-template-areas: 'article nav';
+    overflow: hidden;
+    height: 100vh;
+  }
+  @media screen and (min-width: 1000px) {
+    display: grid;
+    grid-template-areas: 'article nav';
+    grid-template-columns: 1fr 30rem;
+    overflow: hidden;
+    height: 100vh;
+  }
+`;

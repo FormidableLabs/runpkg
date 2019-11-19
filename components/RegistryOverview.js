@@ -32,10 +32,13 @@ export const Package = ({ name, version, description }) => html`
         pushState(`?${name}@${version}`);
       }}
     >
-      <h2>
+      <div>
         ${PackageIcon}
-        <span>${name}</span>
-      </h2>
+        <div>
+          <h2>${name}</h2>
+          <small>v${version}</small>
+        </div>
+      </div>
       <p>${description}</p>
     </a>
   </li>
@@ -61,13 +64,18 @@ const styles = {
     flex-direction: column;
     align-items: flex-start;
     padding: 1.38rem 1.62rem;
-    h2 {
+    > div {
       display: flex;
       align-items: center;
     }
+    small {
+      display: block;
+      font-size: 0.8rem;
+      padding-top: 0.38rem;
+    }
     svg {
-      width: 1.8rem;
-      height: 1.8rem;
+      width: 2.4rem;
+      height: 2.4rem;
       margin-right: 1rem;
       fill: rgba(255, 255, 255, 0.62);
     }

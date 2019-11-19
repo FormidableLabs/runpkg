@@ -6,6 +6,8 @@ import { RegistryOverview } from './RegistryOverview.js';
 import { FileOverview } from './FileOverview.js';
 import { useStateValue } from '../utils/globalState.js';
 
+import Footer from './Footer.js';
+
 export default () => {
   const [{ mode }, dispatch] = useStateValue();
   const modeOptions = {
@@ -32,6 +34,8 @@ export default () => {
             <${FileOverview} />
           `
         : null}
+
+      <${Footer} />
     </nav>
   `;
 };
