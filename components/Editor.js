@@ -32,28 +32,55 @@ export default () => {
   const [{ code, cache, request }] = useStateValue();
   const selectedLine = getSelectedLineNumberFromUrl();
   const fileData = cache['https://unpkg.com/' + request.path];
+  const container = react.useRef();
 
   const prevCode = usePrevious(code);
   const prevReq = usePrevious(request);
   const prevFileData = react.useRef();
+
+  const [codeToRender, setCodeToRender] = react.useState(code);
+  const [depsToRender, setDepsToRender] = react.useState(
+    fileData && fileData.dependencies
+  );
+  const [loading, setLoading] = react.useState(true);
+
+  const scrollToLine = () => {
+    const selectedLineEl = document.getElementById(selectedLine);
+    if (selectedLineEl) {
+      selectedLineEl.scrollIntoView();
+      // offset for the selected line height
+      container.current.scrollBy(0, -38);
+    }
+  };
+
   react.useEffect(() => {
+    // only update prevFileData if new fileData is not null
     prevFileData.current = fileData || prevFileData.current;
   }, [fileData]);
 
-  let loading = false;
+  react.useEffect(() => {
+    // use old values if the request path has changed or
+    // the new file's dependencies have not been parsed
+    const useOldValues =
+      (prevReq && prevReq.path !== request.path) ||
+      !(fileData && fileData.dependencies);
 
-  let codeToRender = code;
-  let deps = fileData && fileData.dependencies;
-  if (
-    (prevReq && prevReq.path !== request.path) ||
-    !(fileData && fileData.dependencies)
-  ) {
-    codeToRender = prevCode;
-    deps = prevFileData.current && prevFileData.current.dependencies;
-    loading = true;
-  }
+    setLoading(useOldValues);
+    setCodeToRender(useOldValues ? prevCode : code);
+    setDepsToRender(
+      useOldValues
+        ? prevFileData.current && prevFileData.current.dependencies
+        : fileData.dependencies
+    );
+  }, [code, fileData, request, prevReq, prevFileData]);
 
-  if (!deps) {
+  react.useEffect(() => {
+    if (!loading) {
+      scrollToLine();
+    }
+  }, [loading]);
+
+  if (!depsToRender) {
     return null;
   }
   return html`
@@ -66,14 +93,16 @@ export default () => {
       ${({ className, style, tokens, getLineProps, getTokenProps }) => html`
         <pre
           className=${`${styles.container} ${className} ${loading &&
-            styles.loading}`}
+            styles.loading} `}
           style=${style}
+          ref=${container}
         >
         ${tokens.map((line, i) => {
             const isImportLine = hasImport(line);
             return html`
               <div
                 ...${getLineProps({ line, key: i })}
+                id=${i}
                 className=${selectedLine - 1 === i ? styles.lineActive : ''}
               >
                 <span
@@ -85,7 +114,7 @@ export default () => {
                   const dep =
                     isImportLine &&
                     token.types.includes('string') &&
-                    deps[removeQuotes(token.content)];
+                    depsToRender[removeQuotes(token.content)];
                   return dep
                     ? html`
                         <${Link}
@@ -111,15 +140,15 @@ export default () => {
 
 const styles = {
   container: css`
+    flex: 1;
     line-height: 138%;
     font-family: 'Inconsolata', monospace;
     padding: 2rem 1rem;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow: auto;
   `,
   loading: css`
     opacity: 0.5;
-    -webkit-filter: blur(1px); /* Safari */
-    filter: blur(1px);
     transition-delay: 0.2s;
   `,
   link: css`

@@ -15,7 +15,9 @@ export default () => {
 
 const styles = css`
   grid-area: article;
-  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
   flex: 1 0 62%;
 
   @media screen and (max-width: 800px) {
