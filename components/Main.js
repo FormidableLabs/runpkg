@@ -10,7 +10,7 @@ const replaceState = url => history.replaceState(null, null, url);
 
 export default () => {
   const [state, dispatch] = useStateValue();
-  const { request, code, packagesSearchTerm } = state;
+  const { request, packagesSearchTerm } = state;
 
   // Update the request on user navigation
   react.useEffect(() => {
@@ -47,16 +47,6 @@ export default () => {
         .catch(console.error);
   }, [request.path]);
 
-  // Fetch the code for requested file
-  react.useEffect(() => {
-    if (request.file)
-      fetch(`https://unpkg.com/${request.path}`)
-        .then(async res =>
-          dispatch({ type: 'setCode', payload: await res.text() })
-        )
-        .catch(console.error);
-  }, [request.file, request.path]);
-
   // Fetch directory listings for requested package
   react.useEffect(() => {
     if (request.name && request.version)
@@ -77,11 +67,11 @@ export default () => {
 
   // Parse dependencies for the current code
   react.useEffect(() => {
-    if (code)
+    if (request.file)
       parseDependencies('https://unpkg.com/' + request.path).then(cache =>
         dispatch({ type: 'setCache', payload: cache })
       );
-  }, [code]);
+  }, [request.file]);
 
   // Fetch packages by search term
   react.useEffect(() => {

@@ -59,6 +59,10 @@ export const parseDependencies = async path => {
   const dir = await fetch(directoriesUrl(url)).then(res => res.json());
   const pkg = await fetch(packageJsonUrl(url)).then(res => res.json());
   const files = flatten(dir.files);
+  const ext = url
+    .split('/')
+    .pop()
+    .match(/\.(.*)/);
   const dependencies = extractDependencies(code, pkg).reduce((all, entry) => {
     const packageUrl = `${UNPKG}${pkg.name}@${pkg.version}`;
     let match = makePath(url)(entry);
@@ -67,7 +71,6 @@ export const parseDependencies = async path => {
       match = version ? `${match}@${version}` : match;
     }
     if (isLocalFile(entry) && needsExtension(entry)) {
-      const ext = path.match(/\/.*\.(.*)/)[1];
       const options = files.filter(x =>
         x.match(new RegExp(`${match.replace(packageUrl, '')}(/index)?\\..*`))
       );
@@ -75,5 +78,11 @@ export const parseDependencies = async path => {
     }
     return { ...all, [entry]: match };
   }, {});
-  return { url, size: code.length, dependencies };
+  return {
+    url,
+    code,
+    dependencies,
+    size: code.length,
+    extension: ext ? ext[1] : '',
+  };
 };

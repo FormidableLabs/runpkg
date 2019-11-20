@@ -20,10 +20,10 @@ const hasImport = line =>
 
 const removeQuotes = packageName => packageName.replace(/['"]+/g, '');
 
-function usePrevious(value) {
+function useLastGoodState(value) {
   const ref = react.useRef();
   react.useEffect(() => {
-    ref.current = value;
+    ref.current = value || ref.current;
   }, [value]);
   return ref.current;
 }
@@ -64,113 +64,85 @@ const languages = {
   yml: 'yaml',
 };
 
+const UNPKG = 'https://unpkg.com/';
+
 export default () => {
-  const [{ code, cache, request }] = useStateValue();
+  const [{ cache, request }] = useStateValue();
   const selectedLine = getSelectedLineNumberFromUrl();
-  const fileData = cache['https://unpkg.com/' + request.path];
   const container = react.useRef();
-
-  const prevCode = usePrevious(code);
-  const prevReq = usePrevious(request);
-  const prevFileData = react.useRef();
-
-  const [codeToRender, setCodeToRender] = react.useState(code);
-  const [depsToRender, setDepsToRender] = react.useState(
-    fileData && fileData.dependencies
-  );
-  const [loading, setLoading] = react.useState(true);
+  const lastGoodState = useLastGoodState(cache[UNPKG + request.path]);
+  const fileData = cache[UNPKG + request.path] || lastGoodState;
+  const loading = !fileData || request.path !== fileData.url.replace(UNPKG, '');
 
   const scrollToLine = () => {
     const selectedLineEl = document.getElementById(selectedLine);
     if (selectedLineEl) {
       selectedLineEl.scrollIntoView();
-      // offset for the selected line height
       container.current.scrollBy(0, -38);
     }
   };
 
   react.useEffect(() => {
-    // only update prevFileData if new fileData is not null
-    prevFileData.current = fileData || prevFileData.current;
-  }, [fileData]);
+    if (container.current && !loading) scrollToLine();
+  }, [loading, container.current]);
 
-  react.useEffect(() => {
-    // use old values if the request path has changed or
-    // the new file's dependencies have not been parsed
-    const useOldValues =
-      (prevReq && prevReq.path !== request.path) ||
-      !(fileData && fileData.dependencies);
-
-    setLoading(useOldValues);
-    setCodeToRender(useOldValues ? prevCode : code);
-    setDepsToRender(
-      useOldValues
-        ? prevFileData.current && prevFileData.current.dependencies
-        : fileData.dependencies
-    );
-  }, [code, fileData, request, prevReq, prevFileData]);
-
-  react.useEffect(() => {
-    if (!loading) scrollToLine();
-  }, [loading]);
-
-  const extension = request.path.match(/\/.*\.(.*)/);
-
-  if (!depsToRender) return null;
-  return html`
-    <${Highlight}
-      Prism=${Prism}
-      code=${codeToRender.slice(0, 100000)}
-      language=${extension ? languages[extension[1]] || extension[1] : null}
-      theme=${undefined}
-    >
-      ${({ className, style, tokens, getLineProps, getTokenProps }) => html`
-        <pre
-          className=${`${styles.container} ${className} ${
-            loading ? styles.loading : ''
-          } `}
-          style=${style}
-          ref=${container}
-        >
+  return (
+    !!fileData &&
+    html`
+      <${Highlight}
+        Prism=${Prism}
+        code=${fileData.code.slice(0, 100000)}
+        language=${languages[fileData.extension]}
+        theme=${undefined}
+      >
+        ${({ className, style, tokens, getLineProps, getTokenProps }) => html`
+          <pre
+            className=${`${styles.container} ${className} ${
+              loading ? styles.loading : ''
+            } `}
+            style=${style}
+            ref=${container}
+          >
         ${tokens.map((line, i) => {
-            const isImportLine = hasImport(line);
-            return html`
-              <div
-                ...${getLineProps({ line, key: i })}
-                id=${i}
-                className=${selectedLine - 1 === i ? styles.lineActive : ''}
-              >
-                <span
-                  className=${styles.lineNo}
-                  onClick=${handleLineNumberClick.bind(null, i + 1)}
-                  >${i + 1}</span
+              const isImportLine = hasImport(line);
+              return html`
+                <div
+                  ...${getLineProps({ line, key: i })}
+                  id=${i}
+                  className=${selectedLine - 1 === i ? styles.lineActive : ''}
                 >
-                ${line.map(token => {
-                  const dep =
-                    isImportLine &&
-                    token.types.includes('string') &&
-                    depsToRender[removeQuotes(token.content)];
-                  return dep
-                    ? html`
-                        <${Link}
-                          href=${`/?${dep.replace('https://unpkg.com/', '')}`}
-                          className=${styles.link}
-                        >
+                  <span
+                    className=${styles.lineNo}
+                    onClick=${handleLineNumberClick.bind(null, i + 1)}
+                    >${i + 1}</span
+                  >
+                  ${line.map(token => {
+                    const dep =
+                      isImportLine &&
+                      token.types.includes('string') &&
+                      fileData.dependencies[removeQuotes(token.content)];
+                    return dep
+                      ? html`
+                          <${Link}
+                            href=${`/?${dep.replace('https://unpkg.com/', '')}`}
+                            className=${styles.link}
+                          >
+                            <span ...${getTokenProps({ token })} />
+                          <//>
+                        `
+                      : html`
                           <span ...${getTokenProps({ token })} />
-                        <//>
-                      `
-                    : html`
-                        <span ...${getTokenProps({ token })} />
-                      `;
-                })}
-              </div>
-            `;
-          })}
+                        `;
+                  })}
+                </div>
+              `;
+            })}
       </pre
-        >
-      `}
-    <//>
-  `;
+          >
+        `}
+      <//>
+    `
+  );
 };
 
 const styles = {
