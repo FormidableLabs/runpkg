@@ -157,6 +157,7 @@ export const styles = {
     background: none;
     border: none;
     padding: 1rem;
+    line-height: 1.3;
     color: rgba(255, 255, 255, 0.8);
 
     text-decoration: none;
