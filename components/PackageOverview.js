@@ -12,7 +12,10 @@ const File = ({ packageName, meta, version, filter }) =>
   meta.path.match(filter) &&
   html`
     <li key=${meta.path} className=${styles.file}>
-      <${Link} href=${`/?${packageName}@${version}${meta.path}`}>
+      <${Link}
+        href=${`/?${packageName}@${version}${meta.path}`}
+        className=${styles.item}
+      >
         <span>${FileIcon} ${meta.path.split('/').pop()}</span>
         <small>${formatBytes(meta.size)}</small>
       <//>
@@ -29,13 +32,13 @@ const Directory = ({
   const [expanded, setExpanded] = react.useState(root);
 
   return html`
-    <ul className=${`${styles.directory} ${root ? styles.root : ''}`}>
+    <ul className=${`${root ? styles.root : ''} ${styles.directory} `}>
       ${rootMeta.path &&
         rootMeta.path !== '/' &&
         rootMeta.path.match(filter) &&
         html`
           <li onClick=${() => setExpanded(!expanded)}>
-            <button>
+            <button className=${styles.item}>
               <span>
                 ${!root &&
                   html`
@@ -117,17 +120,16 @@ export const PackageOverview = () => {
 };
 
 export const styles = {
-  root: css`
-    margin-left: -1.38rem;
-
-    ul {
-      margin-left: 1.5rem;
-      border-left: 2px dotted #4b4b4e;
-    }
-  `,
-  directory: css`
+  item: css`
     position: relative;
-    word-break: break-word;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 1rem;
+    color: rgba(255, 255, 255, 0.8);
 
     svg {
       flex: none;
@@ -137,38 +139,36 @@ export const styles = {
       margin: 0 0.62rem 0 0.2rem;
     }
 
-    li {
-      button {
-        position: relative;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        width: 100%;
-        background: none;
-        border: none;
-        padding: 1rem;
-        cursor: pointer;
-        user-select: none;
-
-        span {
-          display: flex;
-          align-items: center;
-        }
-      }
-
-      small {
-        white-space: nowrap;
-        margin-left: 1rem;
-        color: rgba(255, 255, 255, 0.8);
-        font-size: 1rem;
-      }
-
-      strong {
-        font-size: 1rem;
-        font-weight: bold;
-        color: rgba(255, 255, 255, 0.8);
-      }
+    span {
+      display: flex;
+      align-items: center;
     }
+
+    small {
+      white-space: nowrap;
+      margin-left: 1rem;
+      font-size: 1rem;
+    }
+
+    strong {
+      font-size: 1rem;
+      font-weight: bold;
+    }
+  `,
+
+  directory: css`
+    position: relative;
+    word-break: break-word;
+    margin-left: 1.5rem;
+    border-left: 2px dotted #4b4b4e;
+
+    button {
+      cursor: pointer;
+    }
+  `,
+  root: css`
+    margin-left: -1.5rem;
+    border-left: none;
   `,
   chevron: css`
     position: absolute;
@@ -216,22 +216,7 @@ export const styles = {
     }
 
     a {
-      flex: 1;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      padding-right: 1rem;
       text-decoration: none;
-      cursor: pointer;
-      color: rgba(255, 255, 255, 0.7);
-      font-size: 1rem;
-      padding: 1rem;
-
-      span {
-        display: flex;
-        align-items: center;
-      }
-
       &:hover,
       &:focus {
         color: #fff;
