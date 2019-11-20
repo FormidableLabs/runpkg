@@ -8,34 +8,30 @@ import { Package } from './RegistryOverview.js';
 import formatBytes from '../utils/formatBytes.js';
 import pushState from '../utils/pushState.js';
 
-const File = ({ packageName, meta, version, filter }) =>
-  meta.path.match(filter) &&
+const flatten = arr =>
+  arr.reduce(
+    (acc, cur) => [...acc, ...(cur.files ? flatten(cur.files) : [cur])],
+    []
+  );
+
+const File = ({ packageName, link, name, size, version }) =>
   html`
-    <li key=${meta.path} className=${styles.file}>
-      <${Link}
-        href=${`/?${packageName}@${version}${meta.path}`}
-        className=${styles.item}
-      >
-        <span>${FileIcon} ${meta.path.split('/').pop()}</span>
-        <small>${formatBytes(meta.size)}</small>
-      <//>
-    </li>
+    <${Link}
+      href=${`/?${packageName}@${version}${link}`}
+      className=${styles.item}
+    >
+      <span>${FileIcon} ${name}</span>
+      <small>${formatBytes(size)}</small>
+    <//>
   `;
 
-const Directory = ({
-  packageName,
-  rootMeta,
-  version,
-  filter,
-  root = false,
-}) => {
+const Directory = ({ packageName, rootMeta, version, root = false }) => {
   const [expanded, setExpanded] = react.useState(root);
 
   return html`
     <ul className=${`${root ? styles.root : ''} ${styles.directory} `}>
       ${rootMeta.path &&
         rootMeta.path !== '/' &&
-        rootMeta.path.match(filter) &&
         html`
           <li onClick=${() => setExpanded(!expanded)}>
             <button className=${styles.item}>
@@ -61,19 +57,21 @@ const Directory = ({
         rootMeta.files.map(meta =>
           meta.type === 'file'
             ? html`
-                <${File}
-                  meta=${meta}
-                  version=${version}
-                  packageName=${packageName}
-                  filter=${filter}
-                />
+                <li key=${meta.path} className=${styles.file}>
+                  <${File}
+                    link=${meta.path}
+                    name=${meta.path.split('/').pop()}
+                    size=${meta.size}
+                    version=${version}
+                    packageName=${packageName}
+                  />
+                </li>
               `
             : html`
                 <${Directory}
                   rootMeta=${meta}
                   version=${version}
                   packageName=${packageName}
-                  filter=${filter}
                   root=${false}
                 />
               `
@@ -95,6 +93,8 @@ export const PackageOverview = () => {
       <option value=${x}>${x}</option>
     `;
 
+  const flatFiles = react.useMemo(() => flatten(directory.files), [directory]);
+
   return html`
     <${SearchInput}
       placeholder="Search for files.."
@@ -109,13 +109,41 @@ export const PackageOverview = () => {
     >
       ${Object.keys(versions).map(VersionOption)}</select
     >
-    <${Directory}
-      packageName=${name}
-      rootMeta=${directory}
-      version=${version}
-      filter=${fileSearchTerm}
-      root=${true}
-    />
+    ${fileSearchTerm
+      ? html`
+          <div>
+            ${flatFiles
+              .filter(file =>
+                file.path
+                  .toLowerCase()
+                  .match(
+                    fileSearchTerm
+                      .toLowerCase()
+                      .replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1')
+                  )
+              )
+              .map(
+                file => html`
+                  <${File}
+                    link=${file.path}
+                    name=${file.path}
+                    size=${file.size}
+                    version=${version}
+                    packageName=${name}
+                  />
+                `
+              )}
+          </div>
+        `
+      : html`
+          <${Directory}
+            packageName=${name}
+            rootMeta=${directory}
+            version=${version}
+            filter=${fileSearchTerm}
+            root=${true}
+          />
+        `}
   `;
 };
 
@@ -131,6 +159,12 @@ export const styles = {
     padding: 1rem;
     color: rgba(255, 255, 255, 0.8);
 
+    text-decoration: none;
+    &:hover,
+    &:focus {
+      color: #fff;
+    }
+
     svg {
       flex: none;
       width: 1.2rem;
@@ -142,6 +176,7 @@ export const styles = {
     span {
       display: flex;
       align-items: center;
+      word-break: break-word;
     }
 
     small {
@@ -212,14 +247,6 @@ export const styles = {
     &:last-child {
       &:before {
         height: 50%;
-      }
-    }
-
-    a {
-      text-decoration: none;
-      &:hover,
-      &:focus {
-        color: #fff;
       }
     }
   `,
