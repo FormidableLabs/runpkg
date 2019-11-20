@@ -19,8 +19,9 @@ export default () => html`
 const styles = css`
   background: rgba(0, 0, 0, 0.2);
   color: rgba(255, 255, 255, 0.6);
-  display: none;
-  padding: 1.62rem;
+  padding: 1.38rem 1.62rem;
+  display: flex;
+  align-items: center;
 
   a {
     text-decoration: none;
@@ -47,11 +48,5 @@ const styles = css`
     overflow: hidden;
     clip: rect(0, 0, 0, 0);
     white-space: nowrap;
-  }
-
-  @media screen and (min-width: 1000px) {
-    width: auto;
-    display: flex;
-    align-items: center;
   }
 `;

@@ -64,14 +64,14 @@ export const parseDependencies = async path => {
     let match = makePath(url)(entry);
     if (isExternalPath(entry)) {
       const version = pkg[isListedInDependencies(entry, pkg)][entry];
-      match = `${match}@${version}`;
+      match = version ? `${match}@${version}` : match;
     }
     if (isLocalFile(entry) && needsExtension(entry)) {
-      match =
-        packageUrl +
-        files.find(x =>
-          x.match(new RegExp(`${match.replace(packageUrl, '')}(/index)?\\..*`))
-        );
+      const ext = path.match(/\/.*\.(.*)/)[1];
+      const options = files.filter(x =>
+        x.match(new RegExp(`${match.replace(packageUrl, '')}(/index)?\\..*`))
+      );
+      match = packageUrl + (options.find(x => x.endsWith(ext)) || options[0]);
     }
     return { ...all, [entry]: match };
   }, {});

@@ -13,9 +13,8 @@ const File = ({ packageName, meta, parent, version, filter }) => {
     meta.path.match(filter) &&
     html`
       <li key=${meta.path}>
-        ${FileIcon}
         <${Link} href=${`/?${packageName}@${version}${meta.path}`}>
-          ${meta.path.replace(parent.path, '')}
+          ${FileIcon} ${meta.path.replace(parent.path, '')}
         <//>
         <small>${formatBytes(meta.size)}</small>
       </li>
@@ -29,11 +28,11 @@ const Directory = ({ packageName, rootMeta, version, filter }) => html`
       rootMeta.path !== '/' &&
       rootMeta.path.match(filter) &&
       html`
-        <li>
+        <div>
           ${FolderIcon}
-          <h2>${rootMeta.path.slice(1)}</h2>
+          <strong>${rootMeta.path.slice(1)}</strong>
           <small>${rootMeta.files.length} Files</small>
-        </li>
+        </div>
       `}
     ${rootMeta.files.map(meta =>
       meta.type === 'file'
@@ -91,23 +90,28 @@ export const styles = {
     li {
       display: flex;
       align-items: center;
-      padding: 1rem;
       order: 0;
+      &:hover {
+        background: rgba(0, 0, 0, 0.1);
+      }
       svg {
         flex: none;
-        width: 1.62rem;
-        height: 1.62rem;
+        width: 1.38rem;
+        height: 1.38rem;
         fill: rgba(255, 255, 255, 0.38);
         margin-right: 1rem;
       }
       a {
+        padding: 1rem;
+        display: flex;
+        align-items: center;
         flex: 1 1 100%;
         padding-right: 1rem;
         text-decoration: none;
         cursor: pointer;
-        text-decoration: underline;
         color: rgba(255, 255, 255, 0.7);
         font-size: 1rem;
+        line-height: 150%;
         &:hover {
           color: #fff;
         }
@@ -116,15 +120,18 @@ export const styles = {
         white-space: nowrap;
         margin-left: auto;
       }
+      strong {
+        font-weight: bold;
+      }
+    }
+
+    div {
+      padding: 1rem;
+      padding-right: 0;
     }
 
     ul {
       order: 1;
-    }
-
-    div > svg {
-      width: 2rem;
-      height: 2rem;
     }
 
     h2 {

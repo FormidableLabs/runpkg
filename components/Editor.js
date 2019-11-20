@@ -28,6 +28,42 @@ function usePrevious(value) {
   return ref.current;
 }
 
+const languages = {
+  html: 'markup',
+  sh: 'bash',
+  c: 'c',
+  h: 'c',
+  cpp: 'cpp',
+  hpp: 'cpp',
+  css: 'css',
+  js: 'javascript',
+  flow: 'javascript',
+  'js.flow': 'javascript',
+  jsx: 'jsx',
+  coffee: 'coffeescript',
+  diff: 'diff',
+  go: 'go',
+  gql: 'graphql',
+  graphql: 'graphql',
+  hbs: 'handlebars',
+  json: 'json',
+  less: 'less',
+  md: 'markdown',
+  m: 'objectivec',
+  ml: 'ocaml',
+  mli: 'ocaml',
+  py: 'python',
+  re: 'reason',
+  rei: 'reason',
+  sass: 'sass',
+  scss: 'scss',
+  sql: 'sql',
+  tsx: 'tsx',
+  ts: 'typescript',
+  wasm: 'wasm',
+  yml: 'yaml',
+};
+
 export default () => {
   const [{ code, cache, request }] = useStateValue();
   const selectedLine = getSelectedLineNumberFromUrl();
@@ -75,19 +111,17 @@ export default () => {
   }, [code, fileData, request, prevReq, prevFileData]);
 
   react.useEffect(() => {
-    if (!loading) {
-      scrollToLine();
-    }
+    if (!loading) scrollToLine();
   }, [loading]);
 
-  if (!depsToRender) {
-    return null;
-  }
+  const extension = request.path.match(/\/.*\.(.*)/);
+
+  if (!depsToRender) return null;
   return html`
     <${Highlight}
       Prism=${Prism}
       code=${codeToRender.slice(0, 100000)}
-      language="javascript"
+      language=${extension ? languages[extension[1]] || extension[1] : null}
       theme=${undefined}
     >
       ${({ className, style, tokens, getLineProps, getTokenProps }) => html`
@@ -146,7 +180,8 @@ const styles = {
     font-family: 'Inconsolata', monospace;
     padding: 2rem 1rem;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    overflow: auto;
+    overflow-y: scroll;
+    overflow-x: auto;
   `,
   loading: css`
     opacity: 0.5;

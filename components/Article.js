@@ -58,7 +58,7 @@ const styles = {
     }
 
     pre {
-      color: #fff;
+      color: rgba(255, 255, 255, 0.9);
     }
   `,
   markdown: css`
@@ -67,8 +67,11 @@ const styles = {
     line-height: 1.5;
     word-wrap: break-word;
     padding: 3rem 3rem 4rem;
+    width: 100%;
     max-width: 960px;
     margin: 0 auto;
+    overflow-y: scroll;
+    color: rgba(255, 255, 255, 0.8);
     > * + * {
       margin-top: 1rem;
     }
@@ -108,7 +111,7 @@ const styles = {
     pre {
       background: rgba(0, 0, 0, 0.2);
       padding: 1rem;
-      border-radius: 0.62rem;
+      border-radius: 0.38rem;
       overflow-x: scroll;
     }
 
@@ -116,6 +119,16 @@ const styles = {
       display: inline-block;
       color: #f8b1f1;
       margin-top: 0;
+    }
+    table {
+      border-collapse: collapse;
+      color: inherit;
+      td,
+      th,
+      tr {
+        border: 1px solid rgba(255, 255, 255, 0.38);
+        padding: 0.62rem;
+      }
     }
   `,
 };
