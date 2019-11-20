@@ -18,8 +18,8 @@ const FileList = ({ title, files, packageName, filter }) => html`
         url.match(filter) &&
         html`
           <li key=${key} data-test="Item">
-            ${url.includes(packageName) ? FileIcon : PackageIcon}
             <${Link} href=${url.replace('https://unpkg.com/', '/?')}>
+              ${url.includes(packageName) ? FileIcon : PackageIcon}
               ${url.replace(`https://unpkg.com/`, '').replace(packageName, '')}
             <//>
           </li>
