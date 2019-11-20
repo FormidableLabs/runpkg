@@ -37,12 +37,11 @@ const makePath = url => x => {
 
 const isExternalPath = str => !str.startsWith('.');
 const isLocalFile = str => !isExternalPath(str);
-const isListedInDependencies = async (pkgName, pkgJson) =>
-  ['dependencies', 'devDependencies', 'peerDependencies'].find(async depType =>
-    Object.keys(pkgJson[depType] || {}).includes(
-      eval(await getParseUrl())(pkgName).name
-    )
-  );
+const isListedInDependencies = (pkgName, pkgJson) =>
+  ['dependencies', 'devDependencies', 'peerDependencies'].find(depType => {
+    const matcher = self.parseUrl(pkgName);
+    Object.keys(pkgJson[depType] || {}).includes(matcher.name);
+  });
 
 const stripComments = str =>
   str.replace(/^[\t ]*\/\*(.|\r|\n)*?\*\/|^[\t ]*\/\/.*/gm, '');
@@ -50,13 +49,11 @@ const stripComments = str =>
 const importExportRegex = /^(import|export).*(from)[ \n]+['"](.*?)['"];?$/;
 const requireRegex = /(require\(['"])([^)\n\r]*)(['"]\))/;
 
-const packageJsonUrl = async url => {
-  const { name, version } = eval(await getParseUrl())(url);
+const packageJsonUrl = (name, version) => {
   return `${UNPKG}${name}@${version}/package.json`;
 };
 
-const directoriesUrl = async url => {
-  const { name, version } = eval(await getParseUrl())(url);
+const directoriesUrl = (name, version) => {
   return `${UNPKG}${name}@${version}/?meta`;
 };
 
@@ -86,19 +83,26 @@ const needsExtension = entry =>
     .includes('.');
 
 const parseDependencies = async path => {
+  self.parseUrl = eval(await getParseUrl());
   const { url, code } = await fetch(path).then(async res => ({
     url: res.url,
     code: await res.text(),
   }));
-  const dir = await fetch(await directoriesUrl(url)).then(res => res.json());
-  const pkg = await fetch(await packageJsonUrl(url)).then(res => res.json());
+  const { name, version } = self.parseUrl(url);
+
+  const dir = await fetch(directoriesUrl(name, version)).then(res =>
+    res.json()
+  );
+  const pkg = await fetch(packageJsonUrl(name, version)).then(res =>
+    res.json()
+  );
   const files = flatten(dir.files);
   const dependencies = extractDependencies(code, pkg).reduce((all, entry) => {
     const packageUrl = `${UNPKG}${pkg.name}@${pkg.version}`;
     let match = makePath(url)(entry);
     if (isExternalPath(entry)) {
-      const version = pkg[isListedInDependencies(entry, pkg)][entry];
-      match = version ? `${match}@${version}` : match;
+      const versions = pkg[isListedInDependencies(entry, pkg)][entry];
+      match = versions ? `${match}@${version}` : match;
     }
     if (isLocalFile(entry) && needsExtension(entry)) {
       const ext = path.match(/\/.*\.(.*)/)[1];
