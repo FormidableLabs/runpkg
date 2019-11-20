@@ -1,46 +1,14 @@
+/* eslint-disable no-eval */
 const UNPKG = 'https://unpkg.com/';
 
 const fileNameRegEx = /\/[^\/@]+[\.][^\/]+$/;
 
-const parseUrl = (url = window.location.search.slice(1).replace(/\/$/, '')) => {
-  const parts = url
-    .trim()
-    .replace('https://unpkg.com', '')
-    .split('/')
-    .map(part => part.trim())
-    .filter(Boolean);
-
-  if (parts[0]) {
-    // checks if scoped packaged
-    if (parts[0].startsWith('@')) {
-      const nameVersion = parts[1].split('@');
-      return {
-        name: `${parts[0]}/${nameVersion[0]}` || null,
-        version: nameVersion[1] || null,
-        path: parts.join('/') || null,
-        file: (parts.length > 2 && parts.slice(parts.length - 1)[0]) || null,
-        directory: parts.slice(2, parts.length - 1).join('/') || null,
-      };
-    } else {
-      const nameVersion = parts[0].split('@');
-      return {
-        name: nameVersion[0] || null,
-        version: nameVersion[1] || null,
-        path: parts.join('/') || null,
-        file: (parts.length > 1 && parts.slice(parts.length - 1)[0]) || null,
-        directory: parts.slice(1, parts.length - 1).join('/') || null,
-      };
-    }
-  } else {
-    return {
-      name: null,
-      version: null,
-      path: null,
-      file: null,
-      directory: null,
-    };
-  }
-};
+const getParseUrl = () =>
+  fetch('/utils/parseUrl.js')
+    .then(x => x.text())
+    .then(x =>
+      x.replace(/\s*export {[^}]+\};/g, '').replace(/^const\s[^=]+=/, '')
+    );
 
 // Handles paths like "../../some-file.js"
 const handleDoubleDot = (pathEnd, base) => {
@@ -69,9 +37,11 @@ const makePath = url => x => {
 
 const isExternalPath = str => !str.startsWith('.');
 const isLocalFile = str => !isExternalPath(str);
-const isListedInDependencies = (pkgName, pkgJson) =>
-  ['dependencies', 'devDependencies', 'peerDependencies'].find(depType =>
-    Object.keys(pkgJson[depType] || {}).includes(parseUrl(pkgName).name)
+const isListedInDependencies = async (pkgName, pkgJson) =>
+  ['dependencies', 'devDependencies', 'peerDependencies'].find(async depType =>
+    Object.keys(pkgJson[depType] || {}).includes(
+      eval(await getParseUrl())(pkgName).name
+    )
   );
 
 const stripComments = str =>
@@ -80,13 +50,13 @@ const stripComments = str =>
 const importExportRegex = /^(import|export).*(from)[ \n]+['"](.*?)['"];?$/;
 const requireRegex = /(require\(['"])([^)\n\r]*)(['"]\))/;
 
-const packageJsonUrl = url => {
-  const { name, version } = parseUrl(url);
+const packageJsonUrl = async url => {
+  const { name, version } = eval(await getParseUrl())(url);
   return `${UNPKG}${name}@${version}/package.json`;
 };
 
-const directoriesUrl = url => {
-  const { name, version } = parseUrl(url);
+const directoriesUrl = async url => {
+  const { name, version } = eval(await getParseUrl())(url);
   return `${UNPKG}${name}@${version}/?meta`;
 };
 
@@ -120,8 +90,8 @@ const parseDependencies = async path => {
     url: res.url,
     code: await res.text(),
   }));
-  const dir = await fetch(directoriesUrl(url)).then(res => res.json());
-  const pkg = await fetch(packageJsonUrl(url)).then(res => res.json());
+  const dir = await fetch(await directoriesUrl(url)).then(res => res.json());
+  const pkg = await fetch(await packageJsonUrl(url)).then(res => res.json());
   const files = flatten(dir.files);
   const dependencies = extractDependencies(code, pkg).reduce((all, entry) => {
     const packageUrl = `${UNPKG}${pkg.name}@${pkg.version}`;
