@@ -1,4 +1,4 @@
-import { html, css } from 'https://unpkg.com/rplus-production@1.0.0';
+import { react, html, css } from 'https://unpkg.com/rplus-production@1.0.0';
 import { SearchInput } from './SearchInput.js';
 import FolderIcon from './FolderIcon.js';
 import FileIcon from './FileIcon.js';
@@ -8,39 +8,74 @@ import { Package } from './RegistryOverview.js';
 import formatBytes from '../utils/formatBytes.js';
 import pushState from '../utils/pushState.js';
 
-const File = ({ packageName, meta, parent, version, filter }) => {
-  return (
-    meta.path.match(filter) &&
-    html`
-      <li key=${meta.path}>
-        <${Link} href=${`/?${packageName}@${version}${meta.path}`}>
-          ${FileIcon} ${meta.path.replace(parent.path, '')}
-        <//>
-        <small>${formatBytes(meta.size)}</small>
-      </li>
-    `
-  );
-};
+const File = ({ packageName, meta, parent, version, filter }) =>
+  meta.path.match(filter) &&
+  html`
+    <li key=${meta.path} className=${styles.file}>
+      ${FileIcon}
+      <${Link} href=${`/?${packageName}@${version}${meta.path}`}>
+        ${meta.path.replace(parent.path, '')}
+      <//>
+      <small>${formatBytes(meta.size)}</small>
+    </li>
+  `;
 
-const Directory = ({ packageName, rootMeta, version, filter }) => html`
-  <ul className=${styles.directory}>
-    ${rootMeta.path &&
-      rootMeta.path !== '/' &&
-      rootMeta.path.match(filter) &&
-      html`
-        <div>
-          ${FolderIcon}
-          <strong>${rootMeta.path.slice(1)}</strong>
-          <small>${rootMeta.files.length} Files</small>
-        </div>
-      `}
-    ${rootMeta.files.map(meta =>
-      meta.type === 'file'
-        ? File({ meta, parent: rootMeta, version, packageName, filter })
-        : Directory({ rootMeta: meta, version, packageName, filter })
-    )}
-  </ul>
-`;
+const Directory = ({
+  packageName,
+  rootMeta,
+  version,
+  filter,
+  root = false,
+}) => {
+  const [expanded, setExpanded] = react.useState(root);
+
+  return html`
+    <ul className=${`${styles.directory} ${root ? styles.root : ''}`}>
+      ${rootMeta.path &&
+        rootMeta.path !== '/' &&
+        rootMeta.path.match(filter) &&
+        html`
+          <li onClick=${() => setExpanded(!expanded)}>
+            ${!root &&
+              html`
+                <span
+                  className=${`${styles.chevron} ${
+                    expanded ? styles.expanded : ''
+                  }`}
+                >
+                  \u25ba
+                </span>
+              `}
+            ${FolderIcon}
+            <h2>${rootMeta.path.split('/').pop()}</h2>
+            <small>${rootMeta.files.length} Files</small>
+          </li>
+        `}
+      ${expanded &&
+        rootMeta.files.map(meta =>
+          meta.type === 'file'
+            ? html`
+                <${File}
+                  meta=${meta}
+                  parent=${rootMeta}
+                  version=${version}
+                  packageName=${packageName}
+                  filter=${filter}
+                />
+              `
+            : html`
+                <${Directory}
+                  rootMeta=${meta}
+                  version=${version}
+                  packageName=${packageName}
+                  filter=${filter}
+                  root=${false}
+                />
+              `
+        )}
+    </ul>
+  `;
+};
 
 export const PackageOverview = () => {
   const [
@@ -74,26 +109,24 @@ export const PackageOverview = () => {
       rootMeta=${directory}
       version=${version}
       filter=${fileSearchTerm}
+      root=${true}
     />
   `;
 };
 
 export const styles = {
   directory: css`
+    position: relative;
     display: flex;
     flex-direction: column;
     word-break: break-word;
-    > * + *:not(:empty) {
-      border-top: 1px solid rgba(0, 0, 0, 0.2);
-    }
+
     div,
     li {
+      position: relative;
       display: flex;
       align-items: center;
-      order: 0;
-      &:hover {
-        background: rgba(0, 0, 0, 0.1);
-      }
+      padding: 1rem 1rem 1rem 2rem;
       svg {
         flex: none;
         width: 1.38rem;
@@ -125,18 +158,80 @@ export const styles = {
       }
     }
 
-    div {
-      padding: 1rem;
-      padding-right: 0;
-    }
-
-    ul {
-      order: 1;
+    div > svg {
+      width: 2rem;
+      height: 2rem;
     }
 
     h2 {
       font-size: 0.62rem;
       font-weight: bold;
+    }
+  `,
+  root: css`
+    margin-left: -1.38rem;
+
+    ul {
+      margin-left: 2.5rem;
+      border-left: 2px dashed #76767a;
+
+      > li:first-of-type {
+        cursor: pointer;
+        user-select: none;
+
+        &:before {
+          display: block;
+          content: '';
+          position: absolute;
+          top: 50%;
+          left: 0;
+          width: 1rem;
+          border-bottom: 2px dashed #76767a;
+        }
+      }
+    }
+  `,
+  chevron: css`
+    position: absolute;
+    top: 0;
+    left: 0;
+    top: 50%;
+    font-size: 0.8rem;
+    padding: 0.2rem;
+    z-index: 2;
+    background: #26272d;
+    transform: translate(-50%, -50%);
+  `,
+  expanded: css`
+    transform: translate(-50%, -50%) rotate(90deg);
+  `,
+  file: css`
+    position: relative;
+    margin-left: 2.5rem;
+
+    &:before {
+      display: block;
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      border-left: 2px solid #76767a;
+    }
+    &:last-child {
+      &:before {
+        height: 50%;
+      }
+    }
+
+    &:after {
+      display: block;
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 0;
+      width: 1rem;
+      border-bottom: 2px solid #76767a;
     }
   `,
 };
