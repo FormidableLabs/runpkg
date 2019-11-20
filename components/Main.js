@@ -1,7 +1,6 @@
 import { react, html, css } from 'https://unpkg.com/rplus-production@1.0.0';
 import { useStateValue } from '../utils/globalState.js';
 import { parseUrl } from '../utils/parseUrl.js';
-import { parseDependencies } from '../utils/recursiveDependencyFetch.js';
 
 import Nav from './Nav.js';
 import Article from './Article.js';
@@ -76,12 +75,30 @@ export default () => {
   }, [request.name]);
 
   // Parse dependencies for the current code
+
+  const lastWorker = react.useRef(null);
+  const requestPathRef = react.useRef(null);
+
+  // set up webworker and post url
   react.useEffect(() => {
-    if (code)
-      parseDependencies('https://unpkg.com/' + request.path).then(cache =>
-        dispatch({ type: 'setCache', payload: cache })
+    if (code && request.file && requestPathRef.current !== request.path) {
+      requestPathRef.current = request.path;
+      lastWorker.current = new Worker(
+        './utils/recursiveDependencyFetchWorker.js'
       );
-  }, [code]);
+      lastWorker.current.postMessage('https://unpkg.com/' + request.path);
+    }
+  }, [code, request.path, request.file, lastWorker.current]);
+
+  // Set up listener for messages from the webworker
+  react.useEffect(() => {
+    if (lastWorker.current) {
+      lastWorker.current.addEventListener('message', e => {
+        dispatch({ type: 'setCache', payload: e.data });
+        lastWorker.current = null;
+      });
+    }
+  }, [dispatch, lastWorker.current]);
 
   // Fetch packages by search term
   react.useEffect(() => {
