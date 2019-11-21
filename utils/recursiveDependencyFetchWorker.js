@@ -144,9 +144,9 @@ const parseDependencies = async path => {
       size: code.length,
       extension: ext ? ext[1] : '',
     });
-    Object.keys(dependencies).forEach(x =>
-      parseDependencies(dependencies[x], true)
-    );
+    // Object.keys(dependencies).forEach(x =>
+    //   parseDependencies(dependencies[x], true)
+    // );
   }
 };
 

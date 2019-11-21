@@ -6,10 +6,11 @@ import Nav from './Nav.js';
 import Article from './Article.js';
 
 const replaceState = url => history.replaceState(null, null, url);
+const worker = new Worker('./utils/recursiveDependencyFetchWorker.js');
 
 export default () => {
   const [state, dispatch] = useStateValue();
-  const { request, packagesSearchTerm } = state;
+  const { cache, request, packagesSearchTerm } = state;
 
   // Update the request on user navigation
   react.useEffect(() => {
@@ -22,6 +23,9 @@ export default () => {
       pushState.apply(history, arguments);
       updateRequest();
     };
+    worker.addEventListener('message', e =>
+      dispatch({ type: 'setCache', payload: { [e.data.url]: e.data } })
+    );
   }, []);
 
   // Update the page title when the request changes
@@ -65,47 +69,10 @@ export default () => {
   }, [request.name]);
 
   // Parse dependencies for the current code
-
-  const requestFileRef = react.useRef(null);
-  const worker = react.useRef(null);
-
-  // Set up listener for messages from the webworker
   react.useEffect(() => {
-    let buffer = {};
-    const eventListener = e => {
-      if (e.data.url === 'https://unpkg.com/' + request.path) {
-        dispatch({
-          type: 'setCache',
-          payload: { [e.data.url]: e.data },
-        });
-      } else {
-        buffer = { ...buffer, [e.data.url]: e.data };
-      }
-    };
-    if (request.file && requestFileRef.current !== request.file) {
-      requestFileRef.current = request.file;
-      worker.current = new Worker('./utils/recursiveDependencyFetchWorker.js');
-      worker.current.postMessage('https://unpkg.com/' + request.path);
-      if (worker.current) {
-        worker.current.addEventListener('message', eventListener);
-        setInterval(() => {
-          if (Object.keys(buffer).length > 0) {
-            dispatch({
-              type: 'setCache',
-              payload: buffer,
-            });
-            buffer = {};
-          }
-        }, 1000);
-      }
-    }
-    return () => {
-      if (worker.current) {
-        worker.current.terminate();
-        worker.current.removeEventListener('message', eventListener);
-      }
-    };
-  }, [request.path, request.file]);
+    if (request.file && !cache['https://unpkg.com/' + request.path])
+      worker.postMessage('https://unpkg.com/' + request.path);
+  }, [request.path]);
 
   // Fetch packages by search term
   react.useEffect(() => {
