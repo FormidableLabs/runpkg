@@ -49,7 +49,6 @@ const styles = css`
   overflow-x: hidden;
 
   @media screen and (min-width: 800px) {
-    overflow-y: scroll;
     height: 100vh;
     overflow-y: scroll;
   }
