@@ -84,35 +84,39 @@ export default () => {
   // Set up listener for messages from the webworker
   react.useEffect(() => {
     let buffer = {};
-    worker.current.addEventListener('message', e => {
-      if (e.data.url === 'https://unpkg.com/' + request.path) {
-        dispatch({
-          type: 'setCache',
-          payload: { [e.data.url]: e.data },
-        });
-      } else {
-        buffer = { ...buffer, [e.data.url]: e.data };
-      }
-    });
-    setInterval(() => {
-      if (Object.keys(buffer).length > 0) {
-        dispatch({
-          type: 'setCache',
-          payload: buffer,
-        });
-        buffer = {};
-      }
-    }, 1000);
-    return worker.current.removeEventListener('message', e => {
-      if (e.data.url === 'https://unpkg.com/' + request.path) {
-        dispatch({
-          type: 'setCache',
-          payload: { [e.data.url]: e.data },
-        });
-      } else {
-        buffer = { ...buffer, [e.data.url]: e.data };
-      }
-    });
+    if (worker.current) {
+      worker.current.addEventListener('message', e => {
+        if (e.data.url === 'https://unpkg.com/' + request.path) {
+          dispatch({
+            type: 'setCache',
+            payload: { [e.data.url]: e.data },
+          });
+        } else {
+          buffer = { ...buffer, [e.data.url]: e.data };
+        }
+      });
+      setInterval(() => {
+        if (Object.keys(buffer).length > 0) {
+          dispatch({
+            type: 'setCache',
+            payload: buffer,
+          });
+          buffer = {};
+        }
+      }, 1000);
+    }
+    return () =>
+      worker.current &&
+      worker.current.removeEventListener('message', e => {
+        if (e.data.url === 'https://unpkg.com/' + request.path) {
+          dispatch({
+            type: 'setCache',
+            payload: { [e.data.url]: e.data },
+          });
+        } else {
+          buffer = { ...buffer, [e.data.url]: e.data };
+        }
+      });
   }, [request.path, worker.current]);
 
   // Fetch packages by search term
