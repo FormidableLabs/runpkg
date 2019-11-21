@@ -3,11 +3,14 @@ import { html, css } from 'https://unpkg.com/rplus-production@1.0.0';
 export const RadioGroup = ({ options, onClick }) => html`
   <div className=${styles}>
     ${Object.entries(options).map(
-      ([key, val]) => html`
-        <div onClick=${e => onClick(key)}>
-          <input type="radio" name="mode" checked=${val} />
-          <label>${key}</label>
-        </div>
+      ([key, selected]) => html`
+        <button
+          onMouseDown=${() => onClick(key)}
+          onClick=${() => onClick(key)}
+          disabled=${selected}
+        >
+          ${key}
+        </button>
       `
     )}
   </div>
@@ -16,34 +19,23 @@ export const RadioGroup = ({ options, onClick }) => html`
 const styles = css`
   display: flex;
   background: rgba(0, 0, 0, 0.1);
-  > div {
-    position: relative;
+  > button {
+    padding: 1.38rem 1rem;
+    font-size: 1rem;
     flex: 1 1 100%;
-    height: 3.6rem;
-    input,
-    label {
-      position: absolute;
-      top: 0;
-      left: 0;
-      bottom: 0;
-      right: 0;
-      user-select: none;
+    border: 0;
+    color: #fff;
+    text-transform: capitalize;
+    background: rgba(0, 0, 0, 0.1);
+    &:not(:disabled) {
+      opacity: 0.38;
+      background: transparent;
     }
-    input {
-      opacity: 0;
-      z-index: 1;
-    }
-    input:checked + label {
-      background: rgba(0, 0, 0, 0.2);
-    }
-    label {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      text-transform: capitalize;
+    &:hover {
+      background: rgba(0, 0, 0, 0.1);
     }
   }
   > * + * {
-    border-left: 1px solid rgba(0, 0, 0, 0.1);
+    border-left: 1px solid rgba(0, 0, 0, 0.2) !important;
   }
 `;

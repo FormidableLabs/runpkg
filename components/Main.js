@@ -10,7 +10,7 @@ const worker = new Worker('./utils/recursiveDependencyFetchWorker.js');
 
 export default () => {
   const [state, dispatch] = useStateValue();
-  const { request, code, packagesSearchTerm } = state;
+  const { request, packagesSearchTerm } = state;
 
   // Update the request on user navigation
   react.useEffect(() => {
@@ -47,16 +47,6 @@ export default () => {
         .catch(console.error);
   }, [request.path]);
 
-  // Fetch the code for requested file
-  react.useEffect(() => {
-    if (request.file)
-      fetch(`https://unpkg.com/${request.path}`)
-        .then(async res =>
-          dispatch({ type: 'setCode', payload: await res.text() })
-        )
-        .catch(console.error);
-  }, [request.file, request.path]);
-
   // Fetch directory listings for requested package
   react.useEffect(() => {
     if (request.name && request.version)
@@ -77,15 +67,16 @@ export default () => {
 
   // Parse dependencies for the current code
 
-  const requestPathRef = react.useRef(null);
+  const requestFileRef = react.useRef(null);
 
+  console.log(request.file);
   // set up webworker and post url
   react.useEffect(() => {
-    if (code && request.file && requestPathRef.current !== request.path) {
-      requestPathRef.current = request.path;
+    if (request.file && requestFileRef.current !== request.file) {
+      requestFileRef.current = request.file;
       worker.postMessage('https://unpkg.com/' + request.path);
     }
-  }, [code, request.path, request.file]);
+  }, [request.path, request.file]);
 
   // Set up listener for messages from the webworker
   react.useEffect(() => {

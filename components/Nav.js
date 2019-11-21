@@ -46,23 +46,15 @@ const styles = css`
   background: #26272c;
   color: #fff;
   padding: 2rem;
-  overflow-y: auto;
   overflow-x: hidden;
 
   @media screen and (min-width: 800px) {
     height: 100vh;
+    overflow-y: scroll;
   }
 
   > * + * {
     margin-top: 1.38rem;
-  }
-
-  &.active {
-    box-shadow: 1rem 1rem 1rem rgba(0, 0, 0, 0.1);
-    transform: translateX(0%);
-    @media screen and (min-width: 800px) {
-      box-shadow: none;
-    }
   }
 
   h2 {
@@ -81,44 +73,5 @@ const styles = css`
     width: auto;
     transform: translateX(0%);
     background: rgba(0, 0, 0, 0.2);
-  }
-
-  > button.toggleCloseButton {
-    position: fixed;
-    right: 1em;
-    top: 1em;
-    background-color: transparent;
-    border: none;
-    fill: #fff;
-    @media screen and (min-width: 800px) {
-      display: none;
-    }
-  }
-
-  > button.searchButton {
-    width: 100%;
-    top: 0;
-    left: 0;
-    position: fixed;
-    display: flex;
-    align-items: center;
-    background: #2a2c32;
-    border: none;
-    fill: rgba(255, 255, 255, 0.62);
-    color: rgba(255, 255, 255, 0.62);
-    text-align: center;
-    padding: 1rem 0rem 1rem 2rem;
-    font-size: 0.9rem;
-    > svg {
-      width: 1.2rem;
-      height: 1.2rem;
-    }
-    > span {
-      margin-left: 0.3rem;
-    }
-    &:hover {
-      fill: #fff;
-      color: #fff;
-    }
   }
 `;

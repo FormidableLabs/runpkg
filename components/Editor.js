@@ -1,4 +1,4 @@
-import { html, css } from 'https://unpkg.com/rplus-production@1.0.0';
+import { react, html, css } from 'https://unpkg.com/rplus-production@1.0.0';
 import Highlight, {
   Prism,
 } from 'https://unpkg.com/prism-react-renderer?module';
@@ -20,66 +20,144 @@ const hasImport = line =>
 
 const removeQuotes = packageName => packageName.replace(/['"]+/g, '');
 
+function useLastGoodState(value) {
+  const ref = react.useRef();
+  react.useEffect(() => {
+    ref.current = value || ref.current;
+  }, [value]);
+  return ref.current;
+}
+
+const languages = {
+  html: 'markup',
+  sh: 'bash',
+  c: 'c',
+  h: 'c',
+  cpp: 'cpp',
+  hpp: 'cpp',
+  css: 'css',
+  js: 'javascript',
+  flow: 'javascript',
+  'js.flow': 'javascript',
+  jsx: 'jsx',
+  coffee: 'coffeescript',
+  diff: 'diff',
+  go: 'go',
+  gql: 'graphql',
+  graphql: 'graphql',
+  hbs: 'handlebars',
+  json: 'json',
+  less: 'less',
+  md: 'markdown',
+  m: 'objectivec',
+  ml: 'ocaml',
+  mli: 'ocaml',
+  py: 'python',
+  re: 'reason',
+  rei: 'reason',
+  sass: 'sass',
+  scss: 'scss',
+  sql: 'sql',
+  tsx: 'tsx',
+  ts: 'typescript',
+  wasm: 'wasm',
+  yml: 'yaml',
+};
+
+const UNPKG = 'https://unpkg.com/';
+
 export default () => {
-  const [{ code, cache, request }] = useStateValue();
+  const [{ cache, request }] = useStateValue();
   const selectedLine = getSelectedLineNumberFromUrl();
-  const { dependencies } = cache['https://unpkg.com/' + request.path] || {};
-  if (!dependencies) return null;
-  return html`
-    <${Highlight}
-      Prism=${Prism}
-      code=${code.slice(0, 100000)}
-      language="javascript"
-      theme=${undefined}
-    >
-      ${({ className, style, tokens, getLineProps, getTokenProps }) => html`
-        <pre className=${`${styles.container} ${className}`} style=${style}>
+  const container = react.useRef();
+  const lastGoodState = useLastGoodState(cache[UNPKG + request.path]);
+  const fileData = cache[UNPKG + request.path] || lastGoodState;
+  const loading = !fileData || request.path !== fileData.url.replace(UNPKG, '');
+
+  const scrollToLine = () => {
+    const selectedLineEl = document.getElementById(selectedLine);
+    if (selectedLineEl) {
+      selectedLineEl.scrollIntoView();
+      container.current.scrollBy(0, -38);
+    }
+  };
+
+  react.useEffect(() => {
+    if (container.current && !loading) scrollToLine();
+  }, [loading, container.current]);
+
+  return (
+    !!fileData &&
+    html`
+      <${Highlight}
+        Prism=${Prism}
+        code=${fileData.code.slice(0, 100000)}
+        language=${languages[fileData.extension]}
+        theme=${undefined}
+      >
+        ${({ className, style, tokens, getLineProps, getTokenProps }) => html`
+          <pre
+            className=${`${styles.container} ${className} ${
+              loading ? styles.loading : ''
+            } `}
+            style=${style}
+            ref=${container}
+          >
         ${tokens.map((line, i) => {
-            const isImportLine = hasImport(line);
-            return html`
-              <div
-                ...${getLineProps({ line, key: i })}
-                className=${selectedLine - 1 === i ? styles.lineActive : ''}
-              >
-                <span
-                  className=${styles.lineNo}
-                  onClick=${handleLineNumberClick.bind(null, i + 1)}
-                  >${i + 1}</span
+              const isImportLine = hasImport(line);
+              return html`
+                <div
+                  ...${getLineProps({ line, key: i })}
+                  id=${i}
+                  className=${selectedLine - 1 === i ? styles.lineActive : ''}
                 >
-                ${line.map(token => {
-                  const dep =
-                    isImportLine &&
-                    token.types.includes('string') &&
-                    dependencies[removeQuotes(token.content)];
-                  return dep
-                    ? html`
-                        <${Link}
-                          href=${`/?${dep.replace('https://unpkg.com/', '')}`}
-                          className=${styles.link}
-                        >
+                  <span
+                    className=${styles.lineNo}
+                    onClick=${handleLineNumberClick.bind(null, i + 1)}
+                    >${i + 1}</span
+                  >
+                  ${line.map(token => {
+                    const dep =
+                      isImportLine &&
+                      token.types.includes('string') &&
+                      fileData.dependencies[removeQuotes(token.content)];
+                    return dep
+                      ? html`
+                          <${Link}
+                            href=${`/?${dep.replace('https://unpkg.com/', '')}`}
+                            className=${styles.link}
+                          >
+                            <span ...${getTokenProps({ token })} />
+                          <//>
+                        `
+                      : html`
                           <span ...${getTokenProps({ token })} />
-                        <//>
-                      `
-                    : html`
-                        <span ...${getTokenProps({ token })} />
-                      `;
-                })}
-              </div>
-            `;
-          })}
+                        `;
+                  })}
+                </div>
+              `;
+            })}
       </pre
-        >
-      `}
-    <//>
-  `;
+          >
+        `}
+      <//>
+    `
+  );
 };
 
 const styles = {
   container: css`
+    flex: 1;
     line-height: 138%;
     font-family: 'Inconsolata', monospace;
     padding: 2rem 1rem;
-    overflow: scroll;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: scroll;
+    overflow-x: auto;
+  `,
+  loading: css`
+    opacity: 0.5;
+    transition-delay: 0.2s;
   `,
   link: css`
     text-decoration: underline;

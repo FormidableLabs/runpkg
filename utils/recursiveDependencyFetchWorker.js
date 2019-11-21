@@ -109,6 +109,10 @@ const parseDependencies = async (path, recursion = false) => {
       res.json()
     );
     const files = flatten(dir.files);
+    const ext = url
+      .split('/')
+      .pop()
+      .match(/\.(.*)/);
     const dependencies = extractDependencies(code, pkg).reduce((all, entry) => {
       const packageUrl = `${UNPKG}${pkg.name}@${pkg.version}`;
       let match = makePath(url)(entry);
@@ -117,7 +121,6 @@ const parseDependencies = async (path, recursion = false) => {
         match = versions ? `${match}@${version}` : match;
       }
       if (isLocalFile(entry) && needsExtension(entry)) {
-        const ext = path.match(/\/.*\.(.*)/)[1];
         const options = files.filter(x =>
           x.match(new RegExp(`${match.replace(packageUrl, '')}(/index)?\\..*`))
         );
@@ -125,7 +128,13 @@ const parseDependencies = async (path, recursion = false) => {
       }
       return { ...all, [entry]: match };
     }, {});
-    self.postMessage({ url, size: code.length, dependencies });
+    self.postMessage({
+      url,
+      code,
+      dependencies,
+      size: code.length,
+      extension: ext ? ext[1] : '',
+    });
 
     if (recursion) {
       Object.keys(dependencies).forEach(x =>

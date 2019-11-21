@@ -34,10 +34,8 @@ export const Package = ({ name, version, description }) => html`
     >
       <div>
         ${PackageIcon}
-        <div>
-          <h2>${name}</h2>
-          <small>v${version}</small>
-        </div>
+        <h2>${name}</h2>
+        <small>v${version}</small>
       </div>
       <p>${description}</p>
     </a>
@@ -56,6 +54,7 @@ const styles = {
     }
   `,
   item: css`
+    position: relative;
     cursor: pointer;
     text-decoration: none;
     color: rgba(255, 255, 255, 0.62);
@@ -69,21 +68,26 @@ const styles = {
       align-items: center;
     }
     small {
+      position: absolute;
+      top: 0rem;
+      right: 0rem;
       display: block;
       font-size: 0.8rem;
       padding-top: 0.38rem;
+      background: rgba(0, 0, 0, 0.1);
+      padding: 0.38rem;
     }
     svg {
-      width: 2.4rem;
-      height: 2.4rem;
+      width: 2rem;
+      height: 2rem;
       margin-right: 1rem;
-      fill: rgba(255, 255, 255, 0.62);
+      fill: rgba(255, 255, 255, 0.38);
     }
     > * + * {
-      margin-top: 1rem;
+      margin-top: 0.62rem;
     }
     &:hover {
-      color: rgba(255, 255, 255, 0.8);
+      background: rgba(0, 0, 0, 0.1);
     }
     > p {
       line-height: 162%;
