@@ -69,55 +69,43 @@ export default () => {
   const requestFileRef = react.useRef(null);
   const worker = react.useRef(null);
 
-  // set up webworker and post url
-  react.useEffect(() => {
-    if (request.file && requestFileRef.current !== request.file) {
-      if (worker.current) {
-        worker.current.terminate();
-      }
-      requestFileRef.current = request.file;
-      worker.current = new Worker('./utils/recursiveDependencyFetchWorker.js');
-      worker.current.postMessage('https://unpkg.com/' + request.path);
-    }
-  }, [request.path, request.file, worker.current]);
-
   // Set up listener for messages from the webworker
   react.useEffect(() => {
     let buffer = {};
-    if (worker.current) {
-      worker.current.addEventListener('message', e => {
-        if (e.data.url === 'https://unpkg.com/' + request.path) {
-          dispatch({
-            type: 'setCache',
-            payload: { [e.data.url]: e.data },
-          });
-        } else {
-          buffer = { ...buffer, [e.data.url]: e.data };
-        }
-      });
-      setInterval(() => {
-        if (Object.keys(buffer).length > 0) {
-          dispatch({
-            type: 'setCache',
-            payload: buffer,
-          });
-          buffer = {};
-        }
-      }, 1000);
+    const eventListener = e => {
+      if (e.data.url === 'https://unpkg.com/' + request.path) {
+        dispatch({
+          type: 'setCache',
+          payload: { [e.data.url]: e.data },
+        });
+      } else {
+        buffer = { ...buffer, [e.data.url]: e.data };
+      }
+    };
+    if (request.file && requestFileRef.current !== request.file) {
+      requestFileRef.current = request.file;
+      worker.current = new Worker('./utils/recursiveDependencyFetchWorker.js');
+      worker.current.postMessage('https://unpkg.com/' + request.path);
+      if (worker.current) {
+        worker.current.addEventListener('message', eventListener);
+        setInterval(() => {
+          if (Object.keys(buffer).length > 0) {
+            dispatch({
+              type: 'setCache',
+              payload: buffer,
+            });
+            buffer = {};
+          }
+        }, 1000);
+      }
     }
-    return () =>
-      worker.current &&
-      worker.current.removeEventListener('message', e => {
-        if (e.data.url === 'https://unpkg.com/' + request.path) {
-          dispatch({
-            type: 'setCache',
-            payload: { [e.data.url]: e.data },
-          });
-        } else {
-          buffer = { ...buffer, [e.data.url]: e.data };
-        }
-      });
-  }, [request.path, worker.current]);
+    return () => {
+      if (worker.current) {
+        worker.current.terminate();
+        worker.current.removeEventListener('message', eventListener);
+      }
+    };
+  }, [request.path, request.file]);
 
   // Fetch packages by search term
   react.useEffect(() => {

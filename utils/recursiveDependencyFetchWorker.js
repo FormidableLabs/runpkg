@@ -92,10 +92,13 @@ const visitedPaths = new Set();
  * it then dispatches the result back to runpkg
  */
 
+const setupParseUrl = async () => {
+  self.parseUrl = eval(await getParseUrl());
+};
+
 const parseDependencies = async path => {
   if (!visitedPaths.has(path)) {
     visitedPaths.add(path);
-    self.parseUrl = eval(await getParseUrl());
     const { url, code } = await fetch(path).then(async res => ({
       url: res.url,
       code: await res.text(),
@@ -143,5 +146,6 @@ const parseDependencies = async path => {
 
 self.onmessage = async event => {
   const { data } = event;
+  await setupParseUrl();
   parseDependencies(data);
 };
