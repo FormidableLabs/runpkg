@@ -1,4 +1,4 @@
-import { html, css } from 'https://unpkg.com/rplus-production@1.0.0';
+import { html, css } from 'rplus';
 import { useStateValue } from '../utils/globalState.js';
 
 export const RegistryOverview = (props = {}) => {

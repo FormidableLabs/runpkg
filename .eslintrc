@@ -62,7 +62,10 @@
       }
     ],
     "no-nested-ternary": "off",
-    "import/no-unresolved": [2, { "ignore": ["https"] }],
+    "import/no-unresolved": [
+      2,
+      { "ignore": ["https", "rplus", "prism-react-renderer"] }
+    ],
     "no-var": "off",
     "prefer-template": "off",
     "filenames/match-regex": "off",

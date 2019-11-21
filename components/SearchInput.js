@@ -1,4 +1,4 @@
-import { html, css } from 'https://unpkg.com/rplus-production@1.0.0';
+import { html, css } from 'rplus';
 import SearchIcon from './SearchIcon.js';
 
 export const SearchInput = ({ placeholder, value, onChange }) => html`

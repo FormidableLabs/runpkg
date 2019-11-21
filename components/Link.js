@@ -1,4 +1,4 @@
-import { html } from 'https://unpkg.com/rplus-production@1.0.0';
+import { html } from 'rplus';
 import shouldPreventDefault from '../utils/shouldPreventDefault.js';
 
 const pushState = url => history.pushState(null, null, url);

@@ -1,4 +1,4 @@
-import { react, html } from 'https://unpkg.com/rplus-production@1.0.0';
+import { react, html } from 'rplus';
 
 const { createContext, useContext, useReducer } = react;
 

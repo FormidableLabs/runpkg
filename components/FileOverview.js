@@ -1,4 +1,4 @@
-import { css, html } from 'https://unpkg.com/rplus-production@1.0.0';
+import { css, html } from 'rplus';
 import Link from './Link.js';
 import formatBytes from '../utils/formatBytes.js';
 import { useStateValue } from '../utils/globalState.js';
