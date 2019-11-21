@@ -63,10 +63,6 @@ const styles = css`
     color: rgba(255, 255, 255, 0.8);
   }
 
-  span {
-    font-size: 1.38rem;
-  }
-
   @media screen and (min-width: 800px) {
     position: inherit;
     z-index: initial;
