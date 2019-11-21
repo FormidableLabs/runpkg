@@ -1,7 +1,5 @@
-import { react, html, css } from 'https://unpkg.com/rplus-production@1.0.0';
-import Highlight, {
-  Prism,
-} from 'https://unpkg.com/prism-react-renderer?module';
+import { react, html, css } from 'rplus';
+import Highlight, { Prism } from 'prism-react-renderer';
 import { useStateValue } from '../utils/globalState.js';
 import Link from './Link.js';
 

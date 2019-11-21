@@ -1,4 +1,4 @@
-import { html, css } from 'https://unpkg.com/rplus-production@1.0.0';
+import { html, css } from 'rplus';
 
 import { RadioGroup } from './RadioGroup.js';
 import { PackageOverview } from './PackageOverview.js';
@@ -61,10 +61,6 @@ const styles = css`
     font-size: 1.38rem;
     font-weight: bold;
     color: rgba(255, 255, 255, 0.8);
-  }
-
-  span {
-    font-size: 1.38rem;
   }
 
   @media screen and (min-width: 800px) {
