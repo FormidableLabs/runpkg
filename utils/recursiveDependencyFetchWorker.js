@@ -74,7 +74,10 @@ const extractDependencies = (input, packageJson) => {
     x => x.match(new RegExp(requireRegex))[2]
   );
   return [...new Set([...imports, ...requires])].filter(
-    x => isLocalFile(x) || isListedInDependencies(x, packageJson)
+    x =>
+      isLocalFile(x) ||
+      isListedInDependencies(x, packageJson) ||
+      x.startsWith('https://')
   );
 };
 
@@ -120,8 +123,11 @@ const parseDependencies = async path => {
       const packageUrl = `${UNPKG}${pkg.name}@${pkg.version}`;
       let match = makePath(url)(entry);
       if (isExternalPath(entry)) {
-        const versions = pkg[isListedInDependencies(entry, pkg)][entry];
-        match = versions ? `${match}@${version}` : match;
+        if (entry.startsWith('https://')) match = entry;
+        else {
+          const version_ = pkg[isListedInDependencies(entry, pkg)][entry];
+          match = version_ ? `${match}@${version_}` : match;
+        }
       }
       if (isLocalFile(entry) && needsExtension(entry)) {
         const options = files.filter(x =>
