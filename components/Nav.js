@@ -1,4 +1,4 @@
-import { html, css } from 'https://unpkg.com/rplus-production@1.0.0';
+import { html, css } from 'rplus';
 
 import { RadioGroup } from './RadioGroup.js';
 import { PackageOverview } from './PackageOverview.js';

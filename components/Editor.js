@@ -1,4 +1,4 @@
-import { react, html, css } from 'https://unpkg.com/rplus-production@1.0.0';
+import { react, html, css } from 'rplus';
 import Highlight, {
   Prism,
 } from 'https://unpkg.com/prism-react-renderer?module';

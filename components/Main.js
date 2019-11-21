@@ -1,4 +1,4 @@
-import { react, html, css } from 'https://unpkg.com/rplus-production@1.0.0';
+import { react, html, css } from 'rplus';
 import { useStateValue } from '../utils/globalState.js';
 import { parseUrl } from '../utils/parseUrl.js';
 import { parseDependencies } from '../utils/recursiveDependencyFetch.js';

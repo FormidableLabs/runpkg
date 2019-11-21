@@ -1,4 +1,4 @@
-import { react, html, css } from 'https://unpkg.com/rplus-production@1.0.0';
+import { react, html, css } from 'rplus';
 import { SearchInput } from './SearchInput.js';
 import FolderIcon from './FolderIcon.js';
 import FileIcon from './FileIcon.js';
