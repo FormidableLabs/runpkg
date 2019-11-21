@@ -5,14 +5,13 @@ import { useStateValue } from '../utils/globalState.js';
 import FileIcon from './FileIcon.js';
 import PackageIcon from './PackageIcon.js';
 import { SearchInput } from './SearchInput.js';
-import { styles as fileStyles } from './PackageOverview.js';
 
 const FileList = ({ title, files, packageName, filter }) => html`
   <div key=${title}>
     <h2>${title}</h2>
     <small>${Object.entries(files).length} Files</small>
   </div>
-  <ul className=${fileStyles.directory}>
+  <ul>
     ${Object.entries(files).map(
       ([key, url]) =>
         url.match(filter) &&
@@ -67,10 +66,28 @@ const styles = css`
       margin-left: auto;
     }
   }
-  > * + * {
+  > * + *,
+  ul > * + * {
     border-top: 1px solid rgba(0, 0, 0, 0.2);
   }
   > *:empty {
     display: none;
+  }
+  ul {
+    padding-top: 1rem;
+  }
+  a {
+    display: flex;
+    align-items: center;
+    padding: 1rem;
+    color: rgba(255, 255, 255, 0.8);
+    text-decoration: none;
+    svg {
+      flex: none;
+      width: 1.2rem;
+      height: 1.2rem;
+      fill: rgba(255, 255, 255, 0.38);
+      margin: 0 0.62rem 0 0.2rem;
+    }
   }
 `;
