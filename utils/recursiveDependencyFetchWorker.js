@@ -92,7 +92,7 @@ const visitedPaths = new Set();
  * it then dispatches the result back to runpkg
  */
 
-const parseDependencies = async (path, recursion = false) => {
+const parseDependencies = async path => {
   if (!visitedPaths.has(path)) {
     visitedPaths.add(path);
     self.parseUrl = eval(await getParseUrl());
@@ -135,16 +135,13 @@ const parseDependencies = async (path, recursion = false) => {
       size: code.length,
       extension: ext ? ext[1] : '',
     });
-
-    if (recursion) {
-      Object.keys(dependencies).forEach(x =>
-        parseDependencies(dependencies[x], true)
-      );
-    }
+    Object.keys(dependencies).forEach(x =>
+      parseDependencies(dependencies[x], true)
+    );
   }
 };
 
 self.onmessage = async event => {
   const { data } = event;
-  parseDependencies(data, true);
+  parseDependencies(data);
 };
