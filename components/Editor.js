@@ -1,7 +1,5 @@
 import { react, html, css } from 'rplus';
-import Highlight, {
-  Prism,
-} from 'https://unpkg.com/prism-react-renderer?module';
+import Highlight, { Prism } from 'prism-react-renderer';
 import { useStateValue } from '../utils/globalState.js';
 import Link from './Link.js';
 
