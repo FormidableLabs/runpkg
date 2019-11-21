@@ -6,6 +6,7 @@ import Nav from './Nav.js';
 import Article from './Article.js';
 
 const replaceState = url => history.replaceState(null, null, url);
+const worker = new Worker('./utils/recursiveDependencyFetchWorker.js');
 
 export default () => {
   const [state, dispatch] = useStateValue();
@@ -76,29 +77,39 @@ export default () => {
 
   // Parse dependencies for the current code
 
-  const lastWorker = react.useRef(null);
   const requestPathRef = react.useRef(null);
 
   // set up webworker and post url
   react.useEffect(() => {
     if (code && request.file && requestPathRef.current !== request.path) {
       requestPathRef.current = request.path;
-      lastWorker.current = new Worker(
-        './utils/recursiveDependencyFetchWorker.js'
-      );
-      lastWorker.current.postMessage('https://unpkg.com/' + request.path);
+      worker.postMessage('https://unpkg.com/' + request.path);
     }
-  }, [code, request.path, request.file, lastWorker.current]);
+  }, [code, request.path, request.file]);
 
   // Set up listener for messages from the webworker
   react.useEffect(() => {
-    if (lastWorker.current) {
-      lastWorker.current.addEventListener('message', e => {
-        dispatch({ type: 'setCache', payload: e.data });
-        lastWorker.current = null;
-      });
-    }
-  }, [dispatch, lastWorker.current]);
+    let buffer = {};
+    worker.addEventListener('message', e => {
+      if (e.data.url === 'https://unpkg.com/' + request.path) {
+        dispatch({
+          type: 'setCache',
+          payload: { [e.data.url]: e.data },
+        });
+      } else {
+        buffer = { ...buffer, [e.data.url]: e.data };
+      }
+    });
+    setInterval(() => {
+      if (Object.keys(buffer).length > 0) {
+        dispatch({
+          type: 'setCache',
+          payload: buffer,
+        });
+        buffer = {};
+      }
+    }, 1000);
+  }, []);
 
   // Fetch packages by search term
   react.useEffect(() => {

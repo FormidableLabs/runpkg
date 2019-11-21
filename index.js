@@ -49,7 +49,7 @@ function reducer(state, action) {
     case 'setCache':
       return {
         ...state,
-        cache: { ...state.cache, [action.payload.url]: action.payload },
+        cache: { ...state.cache, ...action.payload },
       };
     default:
       return { ...state };

@@ -3,6 +3,7 @@ const UNPKG = 'https://unpkg.com/';
 
 const fileNameRegEx = /\/[^\/@]+[\.][^\/]+$/;
 
+// Hack to get ESM into webworker as 21/Nov/2019 ESM is not supported by webworkers
 const getParseUrl = () =>
   fetch('/utils/parseUrl.js')
     .then(x => x.text())
@@ -27,6 +28,7 @@ const getCurrentdir = currentPath =>
     ? currentPath.replace(fileNameRegEx, '')
     : currentPath.replace(/\/[^\/]+$/, '');
 
+// Makes an unpkg path for the supplied file
 const makePath = url => x => {
   const base = getCurrentdir(url);
   if (x.startsWith('./')) return base + x.replace('./', '/');
@@ -82,43 +84,58 @@ const needsExtension = entry =>
     .pop()
     .includes('.');
 
-const parseDependencies = async path => {
-  self.parseUrl = eval(await getParseUrl());
-  const { url, code } = await fetch(path).then(async res => ({
-    url: res.url,
-    code: await res.text(),
-  }));
-  const { name, version } = self.parseUrl(url);
+const visitedPaths = new Set();
 
-  const dir = await fetch(directoriesUrl(name, version)).then(res =>
-    res.json()
-  );
-  const pkg = await fetch(packageJsonUrl(name, version)).then(res =>
-    res.json()
-  );
-  const files = flatten(dir.files);
-  const dependencies = extractDependencies(code, pkg).reduce((all, entry) => {
-    const packageUrl = `${UNPKG}${pkg.name}@${pkg.version}`;
-    let match = makePath(url)(entry);
-    if (isExternalPath(entry)) {
-      const versions = pkg[isListedInDependencies(entry, pkg)][entry];
-      match = versions ? `${match}@${version}` : match;
-    }
-    if (isLocalFile(entry) && needsExtension(entry)) {
-      const ext = path.match(/\/.*\.(.*)/)[1];
-      const options = files.filter(x =>
-        x.match(new RegExp(`${match.replace(packageUrl, '')}(/index)?\\..*`))
+/** Parses the dependency tree for the package
+ * if recursive it does it recursively
+ * if not recursive, it does one level of the dependency tree
+ * it then dispatches the result back to runpkg
+ */
+
+const parseDependencies = async (path, recursion = false) => {
+  if (!visitedPaths.has(path)) {
+    visitedPaths.add(path);
+    self.parseUrl = eval(await getParseUrl());
+    const { url, code } = await fetch(path).then(async res => ({
+      url: res.url,
+      code: await res.text(),
+    }));
+    const { name, version } = self.parseUrl(url);
+
+    const dir = await fetch(directoriesUrl(name, version)).then(res =>
+      res.json()
+    );
+    const pkg = await fetch(packageJsonUrl(name, version)).then(res =>
+      res.json()
+    );
+    const files = flatten(dir.files);
+    const dependencies = extractDependencies(code, pkg).reduce((all, entry) => {
+      const packageUrl = `${UNPKG}${pkg.name}@${pkg.version}`;
+      let match = makePath(url)(entry);
+      if (isExternalPath(entry)) {
+        const versions = pkg[isListedInDependencies(entry, pkg)][entry];
+        match = versions ? `${match}@${version}` : match;
+      }
+      if (isLocalFile(entry) && needsExtension(entry)) {
+        const ext = path.match(/\/.*\.(.*)/)[1];
+        const options = files.filter(x =>
+          x.match(new RegExp(`${match.replace(packageUrl, '')}(/index)?\\..*`))
+        );
+        match = packageUrl + (options.find(x => x.endsWith(ext)) || options[0]);
+      }
+      return { ...all, [entry]: match };
+    }, {});
+    self.postMessage({ url, size: code.length, dependencies });
+
+    if (recursion) {
+      Object.keys(dependencies).forEach(x =>
+        parseDependencies(dependencies[x], true)
       );
-      match = packageUrl + (options.find(x => x.endsWith(ext)) || options[0]);
     }
-    return { ...all, [entry]: match };
-  }, {});
-  return { url, size: code.length, dependencies };
+  }
 };
 
-self.onmessage = event => {
+self.onmessage = async event => {
   const { data } = event;
-  parseDependencies(data)
-    .then(x => self.postMessage(x))
-    .then(() => self.close());
+  parseDependencies(data, true);
 };
