@@ -4,16 +4,17 @@ import Editor from './Editor.js';
 import { useStateValue } from '../utils/globalState.js';
 
 export default () => {
-  const [{ request, code }] = useStateValue();
+  const [{ request, cache }] = useStateValue();
+  const fileData = cache['https://unpkg.com/' + request.path] || {};
   return html`
     <article className=${styles.container}>
       <h1>${request.path}</h1>
-      ${request.file && request.file.endsWith('.md')
+      ${fileData.extension === 'md'
         ? html`
             <div
               className=${styles.markdown}
               dangerouslySetInnerHTML=${{
-                __html: marked(code),
+                __html: marked(fileData.code),
               }}
             ></div>
           `
