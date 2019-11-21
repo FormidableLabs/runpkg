@@ -42,7 +42,7 @@ const isLocalFile = str => !isExternalPath(str);
 const isListedInDependencies = (pkgName, pkgJson) =>
   ['dependencies', 'devDependencies', 'peerDependencies'].find(depType => {
     const matcher = self.parseUrl(pkgName);
-    Object.keys(pkgJson[depType] || {}).includes(matcher.name);
+    return Object.keys(pkgJson[depType] || {}).includes(matcher.name);
   });
 
 const stripComments = str =>
