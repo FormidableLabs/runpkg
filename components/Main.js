@@ -71,7 +71,7 @@ export default () => {
       parseDependencies('https://unpkg.com/' + request.path).then(cache =>
         dispatch({ type: 'setCache', payload: cache })
       );
-  }, [request.file]);
+  }, [request.name, request.version, request.file]);
 
   // Fetch packages by search term
   react.useEffect(() => {
