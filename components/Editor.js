@@ -152,6 +152,7 @@ const styles = {
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow-y: scroll;
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   `,
   loading: css`
     opacity: 0.5;
