@@ -57,12 +57,6 @@ const styles = css`
     margin-top: 1.38rem;
   }
 
-  h2 {
-    font-size: 1.38rem;
-    font-weight: bold;
-    color: rgba(255, 255, 255, 0.8);
-  }
-
   @media screen and (min-width: 800px) {
     position: inherit;
     z-index: initial;

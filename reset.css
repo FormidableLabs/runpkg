@@ -241,6 +241,10 @@ select {
   color: rgba(255, 255, 255, 0.8);
 }
 
+option {
+  color: rgba(0, 0, 0, 0.8);
+}
+
 ::-webkit-scrollbar {
   width: 16px;
 }

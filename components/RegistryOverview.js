@@ -83,7 +83,7 @@ const styles = {
       margin-right: 1rem;
       fill: rgba(255, 255, 255, 0.38);
     }
-    > * + * {
+    > * + *:not(:empty) {
       margin-top: 0.62rem;
     }
     &:hover {
@@ -91,6 +91,11 @@ const styles = {
     }
     > p {
       line-height: 162%;
+    }
+    h2 {
+      font-size: 1.38rem;
+      font-weight: bold;
+      color: rgba(255, 255, 255, 0.8);
     }
   `,
 };

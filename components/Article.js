@@ -1,6 +1,7 @@
 import { html, css } from 'rplus';
 
 import Editor from './Editor.js';
+import FileIcon from './FileIcon.js';
 import { useStateValue } from '../utils/globalState.js';
 
 export default () => {
@@ -8,7 +9,10 @@ export default () => {
   const fileData = cache['https://unpkg.com/' + request.path] || {};
   return html`
     <article className=${styles.container}>
-      <h1>${request.path}</h1>
+      ${request.path &&
+        html`
+          <h1>${FileIcon} ${request.path}</h1>
+        `}
       ${fileData.extension === 'md'
         ? html`
             <div
@@ -33,28 +37,43 @@ const styles = {
     display: flex;
     flex-direction: column;
 
+    &:empty {
+      align-items: center;
+      justify-content: center;
+      ::before {
+        font-size: 10rem;
+        content: '📦';
+        margin-bottom: 1.62rem;
+        opacity: 0.62;
+      }
+
+      ::after {
+        content: 'Search for and select a package to explore its contents';
+        font-size: 1.62rem;
+        font-weight: bold;
+        max-width: 30ex;
+        line-height: 150%;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.38);
+      }
+    }
+
     @media screen and (max-width: 800px) {
       height: 62vh;
     }
 
     > h1 {
-      padding: 2rem;
-      width: 100%;
-      text-align: center;
-      background: #2a2c32;
-      color: #fff;
-      position: sticky;
-      top: 0;
-      z-index: 1;
       display: flex;
-      justify-content: center;
       align-items: center;
+      padding: 1.62rem;
+      background: rgba(0, 0, 0, 0.162);
+      color: #fff;
       color: rgba(255, 255, 255, 0.62);
       > svg {
-        width: 1.62rem;
-        height: 1.62rem;
-        margin-right: 0.62rem;
-        fill: rgba(255, 255, 255, 0.2);
+        width: 1.38rem;
+        height: 1.38rem;
+        margin-right: 1rem;
+        fill: rgba(255, 255, 255, 0.38);
       }
     }
 

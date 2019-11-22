@@ -19,6 +19,8 @@ export const RadioGroup = ({ options, onClick }) => html`
 const styles = css`
   display: flex;
   background: rgba(0, 0, 0, 0.1);
+  border-radius: 0.38rem;
+  overflow: hidden;
   > button {
     padding: 1.38rem 1rem;
     font-size: 1rem;
