@@ -83,7 +83,7 @@ const styles = {
       margin-right: 1rem;
       fill: rgba(255, 255, 255, 0.38);
     }
-    > * + * {
+    > * + *:not(:empty) {
       margin-top: 0.62rem;
     }
     &:hover {

@@ -157,7 +157,7 @@ export const styles = {
     background: none;
     border: none;
     padding: 1rem;
-    line-height: 1.3;
+    line-height: 1.38;
     color: rgba(255, 255, 255, 0.8);
 
     text-decoration: none;
@@ -203,7 +203,7 @@ export const styles = {
     }
   `,
   root: css`
-    margin-left: -1.5rem;
+    margin-left: -1.38rem;
     border-left: none;
   `,
   chevron: css`
@@ -212,7 +212,7 @@ export const styles = {
     left: 0px;
     top: 50%;
     font-size: 0.8rem;
-    padding: 0.2rem;
+    padding: 0.38rem;
     z-index: 2;
     background: #26272d;
     color: #9c9c9c;
