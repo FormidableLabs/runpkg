@@ -81,7 +81,10 @@ export default () => {
   };
 
   react.useEffect(() => {
-    if (container.current && !loading) scrollToLine();
+    if (container.current && !loading) {
+      container.current.scrollTop = 0;
+      scrollToLine();
+    }
   }, [loading, container.current]);
 
   return (
