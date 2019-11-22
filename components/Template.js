@@ -1,4 +1,4 @@
-import { html, css } from 'rplus';
+import { html, css } from '../utils/rplus.js';
 import { useStateValue } from '../utils/globalState.js';
 
 export const RegistryOverview = (props = {}) => {

@@ -1,4 +1,4 @@
-import { html } from 'rplus';
+import { html } from '../utils/rplus.js';
 
 export default html`
   <svg

@@ -1,4 +1,4 @@
-import { react, html } from 'rplus';
+import { react, html } from '../utils/rplus.js';
 
 const { createContext, useContext, useReducer } = react;
 

@@ -1,4 +1,4 @@
-import { react, html, css } from 'rplus';
+import { react, html, css } from '../utils/rplus.js';
 import { SearchInput } from './SearchInput.js';
 import FolderIcon from './FolderIcon.js';
 import FileIcon from './FileIcon.js';
@@ -6,7 +6,8 @@ import Link from './Link.js';
 import { useStateValue } from '../utils/globalState.js';
 import { Package } from './RegistryOverview.js';
 import formatBytes from '../utils/formatBytes.js';
-import pushState from '../utils/pushState.js';
+
+const pushState = url => history.pushState(null, null, url);
 
 const flatten = arr =>
   arr.reduce(

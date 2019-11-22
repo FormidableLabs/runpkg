@@ -1,9 +1,10 @@
-import { html, css } from 'rplus';
+import { html, css } from '../utils/rplus.js';
 
 import { SearchInput } from './SearchInput.js';
 import PackageIcon from './PackageIcon.js';
-import pushState from '../utils/pushState.js';
 import { useStateValue } from '../utils/globalState.js';
+
+const pushState = url => history.pushState(null, null, url);
 
 export const RegistryOverview = () => {
   const [{ packages, packagesSearchTerm }, dispatch] = useStateValue();

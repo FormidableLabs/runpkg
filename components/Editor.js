@@ -1,4 +1,4 @@
-import { react, html, css } from 'rplus';
+import { react, html, css } from '../utils/rplus.js';
 import Highlight, { Prism } from 'prism-react-renderer';
 import { useStateValue } from '../utils/globalState.js';
 import Link from './Link.js';
@@ -34,6 +34,7 @@ const languages = {
   cpp: 'cpp',
   hpp: 'cpp',
   css: 'css',
+  mjs: 'javascript',
   js: 'javascript',
   flow: 'javascript',
   jsx: 'jsx',

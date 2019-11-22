@@ -1,4 +1,4 @@
-import { html, css } from 'rplus';
+import { html, css } from '../utils/rplus.js';
 
 import FormidableIcon from './FormidableLogo.js';
 import GitHubLogo from './GitHubLogo.js';
