@@ -73,7 +73,7 @@ export default () => {
   const loading = !fileData || request.path !== fileData.url.replace(UNPKG, '');
 
   const scrollToLine = () => {
-    const selectedLineEl = document.getElementById(selectedLine);
+    const selectedLineEl = document.getElementById(`L-${selectedLine}`);
     if (selectedLineEl) {
       selectedLineEl.scrollIntoView();
       container.current.scrollBy(0, -38);
@@ -107,7 +107,7 @@ export default () => {
             return html`
               <div
                 ...${getLineProps({ line, key: i })}
-                id=${i}
+                id=${`L-${i}`}
                 className=${selectedLine - 1 === i ? styles.lineActive : ''}
               >
                 <span
