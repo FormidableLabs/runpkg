@@ -101,42 +101,43 @@ export default () => {
             style=${style}
             ref=${container}
           >
+          <code className=${styles.code}>
         ${tokens.map((line, i) => {
-              const isImportLine = hasImport(line);
-              return html`
-                <div
-                  ...${getLineProps({ line, key: i })}
-                  id=${i}
-                  className=${selectedLine - 1 === i ? styles.lineActive : ''}
+            const isImportLine = hasImport(line);
+            return html`
+              <div
+                ...${getLineProps({ line, key: i })}
+                id=${i}
+                className=${selectedLine - 1 === i ? styles.lineActive : ''}
+              >
+                <span
+                  className=${styles.lineNo}
+                  onClick=${handleLineNumberClick.bind(null, i + 1)}
+                  >${i + 1}</span
                 >
-                  <span
-                    className=${styles.lineNo}
-                    onClick=${handleLineNumberClick.bind(null, i + 1)}
-                    >${i + 1}</span
-                  >
-                  ${line.map(token => {
-                    const dep =
-                      isImportLine &&
-                      token.types.includes('string') &&
-                      fileData.dependencies[removeQuotes(token.content)];
-                    return dep
-                      ? html`
-                          <${Link}
-                            href=${`/?${dep.replace('https://unpkg.com/', '')}`}
-                            className=${styles.link}
-                          >
-                            <span ...${getTokenProps({ token })} />
-                          <//>
-                        `
-                      : html`
+                ${line.map(token => {
+                  const dep =
+                    isImportLine &&
+                    token.types.includes('string') &&
+                    fileData.dependencies[removeQuotes(token.content)];
+                  return dep
+                    ? html`
+                        <${Link}
+                          href=${`/?${dep.replace('https://unpkg.com/', '')}`}
+                          className=${styles.link}
+                        >
                           <span ...${getTokenProps({ token })} />
-                        `;
-                  })}
-                </div>
-              `;
-            })}
-      </pre
-          >
+                        <//>
+                      `
+                    : html`
+                        <span ...${getTokenProps({ token })} />
+                      `;
+                })}
+              </div>
+            `;
+          })}
+        </code>
+      </pre>
         `}
       <//>
     `
@@ -147,7 +148,6 @@ const styles = {
   container: css`
     flex: 1;
     line-height: 138%;
-    font-family: 'Inconsolata', monospace;
     padding: 2rem 1rem;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
     overflow-y: scroll;
@@ -173,5 +173,8 @@ const styles = {
     opacity: 0.6;
     cursor: pointer;
     user-select: none;
+  `,
+  code: css`
+    line-height: 150%;
   `,
 };

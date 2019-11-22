@@ -4,7 +4,7 @@
   "description": "> the online package explorer",
   "main": "index.js",
   "scripts": {
-    "start": "servor --reload --browse",
+    "start": "servor --reload --browse --secure",
     "prettier": "prettier --config .prettierrc --write \"./**/*.{css,html,json,md,yml}\"",
     "lint": "eslint --config .eslintrc \"./**/*.js\"",
     "jest": "jest",
