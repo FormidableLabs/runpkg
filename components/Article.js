@@ -1,6 +1,7 @@
 import { html, css } from 'rplus';
 
 import Editor from './Editor.js';
+import FileIcon from './FileIcon.js';
 import { useStateValue } from '../utils/globalState.js';
 
 export default () => {
@@ -8,7 +9,7 @@ export default () => {
   const fileData = cache['https://unpkg.com/' + request.path] || {};
   return html`
     <article className=${styles.container}>
-      <h1>${request.path}</h1>
+      <h1>${FileIcon} ${request.path}</h1>
       ${fileData.extension === 'md'
         ? html`
             <div
@@ -38,23 +39,17 @@ const styles = {
     }
 
     > h1 {
-      padding: 2rem;
-      width: 100%;
-      text-align: center;
-      background: #2a2c32;
-      color: #fff;
-      position: sticky;
-      top: 0;
-      z-index: 1;
       display: flex;
-      justify-content: center;
       align-items: center;
+      padding: 1.62rem;
+      background: rgba(0, 0, 0, 0.162);
+      color: #fff;
       color: rgba(255, 255, 255, 0.62);
       > svg {
-        width: 1.62rem;
-        height: 1.62rem;
-        margin-right: 0.62rem;
-        fill: rgba(255, 255, 255, 0.2);
+        width: 1.38rem;
+        height: 1.38rem;
+        margin-right: 1rem;
+        fill: rgba(255, 255, 255, 0.38);
       }
     }
 
