@@ -225,3 +225,44 @@ pre {
 .token.entity {
   cursor: help;
 }
+
+li {
+  list-style: none;
+}
+
+select {
+  font-size: 1.38rem;
+  width: 100%;
+  height: 3.6rem;
+  text-indent: 1rem;
+  background: rgba(0, 0, 0, 0.1);
+  border: 0;
+  border-right: 1rem solid transparent;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+::-webkit-scrollbar {
+  width: 16px;
+}
+
+::-webkit-scrollbar-track {
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.1);
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 0;
+  background: rgba(0, 0, 0, 0.2);
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(0, 0, 0, 0.38);
+}
+
+::-webkit-scrollbar-thumb:window-inactive {
+  background: rgba(0, 0, 0, 0.05);
+}
+
+::-webkit-scrollbar-corner {
+  background: rgba(0, 0, 0, 0.38);
+}

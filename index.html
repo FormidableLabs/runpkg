@@ -12,15 +12,33 @@
       href="https://fonts.googleapis.com/css?family=Inconsolata"
       rel="stylesheet"
     />
-    <link
-      href="https://fonts.googleapis.com/css?family=Work+Sans"
-      rel="stylesheet"
-    />
-    <link
-      href="https://fonts.googleapis.com/css?family=Bai+Jamjuree"
-      rel="stylesheet"
-    />
-    <script src="/index.js" type="module"></script>
+    <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+    <script
+      type="text/javascript"
+      defer
+      src="https://unpkg.com/es-module-shims@0.4.2/dist/es-module-shims.js"
+    ></script>
+    <script>
+      const dev = document.location.hostname === 'localhost';
+      const im = document.createElement('script');
+      im.type = 'importmap-shim';
+      im.textContent = JSON.stringify({
+        imports: {
+          'https://unpkg.com/react@>=0.14.9?module':
+            'https://unpkg.com/@philpl/es-react',
+          'https://unpkg.com/react@16.11.0?module':
+            'https://unpkg.com/@philpl/es-react',
+          react: 'https://unpkg.com/@philpl/es-react',
+          rplus: `https://unpkg.com/${
+            dev ? 'rplus' : 'rplus-production'
+          }@1.0.0`,
+          'prism-react-renderer':
+            'https://unpkg.com/prism-react-renderer?module',
+        },
+      });
+      document.currentScript.after(im);
+    </script>
+    <script src="/index.js" type="module-shim"></script>
     <meta property="og:site_name" content="runpkg" />
     <meta property="og:title" content="runpkg | the package explorer" />
     <meta name="twitter:title" content="runpkg | the package explorer" />

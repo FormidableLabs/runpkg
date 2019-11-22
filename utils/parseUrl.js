@@ -1,11 +1,11 @@
-const parseUrl = url => {
+const parseUrl = (url = window.location.search.slice(1).replace(/\/$/, '')) => {
   const parts = url
-    .toLowerCase()
     .trim()
     .replace('https://unpkg.com', '')
     .split('/')
     .map(part => part.trim())
     .filter(Boolean);
+
   if (parts[0]) {
     // checks if scoped packaged
     if (parts[0].startsWith('@')) {
@@ -13,7 +13,7 @@ const parseUrl = url => {
       return {
         name: `${parts[0]}/${nameVersion[0]}` || null,
         version: nameVersion[1] || null,
-        path: `/${parts.join('/')}` || null,
+        path: parts.join('/') || null,
         file: (parts.length > 2 && parts.slice(parts.length - 1)[0]) || null,
         directory: parts.slice(2, parts.length - 1).join('/') || null,
       };
@@ -22,7 +22,7 @@ const parseUrl = url => {
       return {
         name: nameVersion[0] || null,
         version: nameVersion[1] || null,
-        path: `/${parts.join('/')}` || null,
+        path: parts.join('/') || null,
         file: (parts.length > 1 && parts.slice(parts.length - 1)[0]) || null,
         directory: parts.slice(1, parts.length - 1).join('/') || null,
       };
