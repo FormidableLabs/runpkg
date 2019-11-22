@@ -107,7 +107,6 @@ const parseDependencies = async path => {
       code: await res.text(),
     }));
     const { name, version } = self.parseUrl(url);
-
     const dir = await fetch(directoriesUrl(name, version)).then(res =>
       res.json()
     );
@@ -144,14 +143,16 @@ const parseDependencies = async path => {
       size: code.length,
       extension: ext ? ext[1] : '',
     });
-    // Object.keys(dependencies).forEach(x =>
-    //   parseDependencies(dependencies[x], true)
-    // );
   }
 };
 
 self.onmessage = async event => {
   const { data } = event;
   await setupParseUrl();
-  parseDependencies(data);
+  try {
+    await parseDependencies(data);
+  } catch (e) {
+    // This is a truly awful hack to get around random CORS errors
+    parseDependencies(data);
+  }
 };
