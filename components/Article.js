@@ -9,7 +9,10 @@ export default () => {
   const fileData = cache['https://unpkg.com/' + request.path] || {};
   return html`
     <article className=${styles.container}>
-      <h1>${FileIcon} ${request.path}</h1>
+      ${request.path &&
+        html`
+          <h1>${FileIcon} ${request.path}</h1>
+        `}
       ${fileData.extension === 'md'
         ? html`
             <div
@@ -33,6 +36,27 @@ const styles = {
     flex: 1 0 62%;
     display: flex;
     flex-direction: column;
+
+    &:empty {
+      align-items: center;
+      justify-content: center;
+      ::before {
+        font-size: 10rem;
+        content: '📦';
+        margin-bottom: 1.62rem;
+        opacity: 0.62;
+      }
+
+      ::after {
+        content: 'Search for and select a package to explore its contents';
+        font-size: 1.62rem;
+        font-weight: bold;
+        max-width: 30ex;
+        line-height: 150%;
+        text-align: center;
+        color: rgba(255, 255, 255, 0.38);
+      }
+    }
 
     @media screen and (max-width: 800px) {
       height: 62vh;
