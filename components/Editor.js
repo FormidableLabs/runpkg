@@ -36,7 +36,6 @@ const languages = {
   css: 'css',
   js: 'javascript',
   flow: 'javascript',
-  'js.flow': 'javascript',
   jsx: 'jsx',
   coffee: 'coffeescript',
   diff: 'diff',
@@ -93,7 +92,7 @@ export default () => {
       <${Highlight}
         Prism=${Prism}
         code=${fileData.code.slice(0, 100000)}
-        language=${languages[fileData.extension]}
+        language=${languages[fileData.extension.split('.').pop()]}
         theme=${undefined}
       >
         ${({ className, style, tokens, getLineProps, getTokenProps }) => html`
