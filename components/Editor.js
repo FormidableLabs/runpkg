@@ -123,7 +123,7 @@ export default () => {
                     isImportLine &&
                     token.types.includes('string') &&
                     fileData.dependencies[removeQuotes(token.content)];
-                  return dep
+                  return dep && typeof dep === 'string'
                     ? html`
                         <${Link}
                           href=${`/?${dep.replace('https://unpkg.com/', '')}`}
