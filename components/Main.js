@@ -1,4 +1,4 @@
-import { react, html, css } from 'rplus';
+import { react, html, css } from '../utils/rplus.js';
 import { useStateValue } from '../utils/globalState.js';
 import { parseUrl } from '../utils/parseUrl.js';
 

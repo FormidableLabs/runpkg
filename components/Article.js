@@ -1,4 +1,4 @@
-import { html, css } from 'rplus';
+import { html, css } from '../utils/rplus.js';
 
 import Editor from './Editor.js';
 import FileIcon from './FileIcon.js';

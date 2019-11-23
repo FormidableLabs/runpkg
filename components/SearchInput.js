@@ -1,4 +1,4 @@
-import { html, css } from 'rplus';
+import { html, css } from '../utils/rplus.js';
 import SearchIcon from './SearchIcon.js';
 
 export const SearchInput = ({ placeholder, value, onChange }) => html`

@@ -1,4 +1,4 @@
-import { html, css } from 'rplus';
+import { html, css } from '../utils/rplus.js';
 
 import { RadioGroup } from './RadioGroup.js';
 import { PackageOverview } from './PackageOverview.js';

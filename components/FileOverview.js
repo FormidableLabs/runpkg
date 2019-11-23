@@ -1,4 +1,4 @@
-import { css, html } from 'rplus';
+import { css, html } from '../utils/rplus.js';
 import Link from './Link.js';
 import formatBytes from '../utils/formatBytes.js';
 import { useStateValue } from '../utils/globalState.js';
