@@ -1,12 +1,9 @@
 import { html, css } from '../utils/rplus.js';
-
 import { RadioGroup } from './RadioGroup.js';
 import { PackageOverview } from './PackageOverview.js';
 import { RegistryOverview } from './RegistryOverview.js';
 import { FileOverview } from './FileOverview.js';
 import { useStateValue } from '../utils/globalState.js';
-
-import Footer from './Footer.js';
 
 export default () => {
   const [{ mode }, dispatch] = useStateValue();
@@ -34,8 +31,6 @@ export default () => {
             <${FileOverview} />
           `
         : null}
-
-      <${Footer} />
     </nav>
   `;
 };
@@ -47,21 +42,18 @@ const styles = css`
   color: #fff;
   padding: 2rem;
   overflow-x: hidden;
-
-  @media screen and (min-width: 800px) {
-    height: 100vh;
-    overflow-y: scroll;
-  }
-
   > * + * {
     margin-top: 1.38rem;
   }
-
   @media screen and (min-width: 800px) {
-    position: inherit;
-    z-index: initial;
-    width: auto;
+    height: 100vh;
+    overflow-y: scroll;
     transform: translateX(0%);
-    background: rgba(0, 0, 0, 0.2);
+  }
+  @media screen and (max-width: 400px) {
+    padding: 1.38rem;
+    > * + * {
+      margin-top: 1rem;
+    }
   }
 `;

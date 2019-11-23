@@ -41,7 +41,7 @@ const styles = {
       align-items: center;
       justify-content: center;
       ::before {
-        font-size: 10rem;
+        font-size: 8rem;
         content: '📦';
         margin-bottom: 1.62rem;
         opacity: 0.62;
@@ -49,12 +49,12 @@ const styles = {
 
       ::after {
         content: 'Search for and select a package to explore its contents';
-        font-size: 1.62rem;
-        font-weight: bold;
+        font-size: 1.38rem;
         max-width: 30ex;
-        line-height: 150%;
+        line-height: 138%;
         text-align: center;
         color: rgba(255, 255, 255, 0.38);
+        padding: 0 2rem;
       }
     }
 
@@ -91,10 +91,16 @@ const styles = {
     max-width: 960px;
     margin: 0 auto;
     overflow-y: scroll;
+    -webkit-overflow-scrolling: touch;
     color: rgba(255, 255, 255, 0.8);
     > * + * {
       margin-top: 1rem;
     }
+
+    @media screen and (max-width: 400px) {
+      padding: 2rem;
+    }
+
     li {
       list-style: disc;
       list-style-position: inside;

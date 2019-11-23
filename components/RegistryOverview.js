@@ -79,9 +79,9 @@ const styles = {
       padding: 0.38rem;
     }
     svg {
-      width: 2rem;
-      height: 2rem;
-      margin-right: 1rem;
+      width: 1.8rem;
+      height: 1.8rem;
+      margin-right: 0.8rem;
       fill: rgba(255, 255, 255, 0.38);
     }
     > * + *:not(:empty) {
@@ -94,9 +94,10 @@ const styles = {
       line-height: 162%;
     }
     h2 {
-      font-size: 1.38rem;
+      font-size: 1.2rem;
       font-weight: bold;
       color: rgba(255, 255, 255, 0.8);
+      word-break: break-word;
     }
   `,
 };

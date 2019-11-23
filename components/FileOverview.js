@@ -101,12 +101,13 @@ const styles = {
     }
   `,
   file: css`
-    padding: 1rem;
+    padding: 1.38rem;
     border: 1px solid rgba(0, 0, 0, 0.2);
     display: flex;
     align-items: center;
     font-size: 1rem;
     color: rgba(255, 255, 255, 0.8);
+    font-weight: bold;
     span {
       word-break: break-word;
       padding-right: 1rem;
@@ -123,7 +124,7 @@ const styles = {
       width: 1.62rem;
       height: 1.62rem;
       fill: rgba(255, 255, 255, 0.38);
-      margin: 0 0.62rem 0 0rem;
+      margin: 0 1rem 0 0rem;
     }
   `,
 };
