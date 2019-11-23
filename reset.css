@@ -239,6 +239,10 @@ select {
   border: 0;
   border-right: 1rem solid transparent;
   color: rgba(255, 255, 255, 0.8);
+  -webkit-appearance: none;
+  appearance: none;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 0.38rem;
 }
 
 option {
