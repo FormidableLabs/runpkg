@@ -1,58 +1,64 @@
 {
-  "name": "runpkg",
-  "version": "1.0.0",
-  "description": "The online javascript package explorer",
-  "main": "index.js",
-  "scripts": {
-    "start": "servor --reload --browse",
-    "prettier": "prettier --config .prettierrc --write \"./**/*.{css,html,json,md,yml}\"",
-    "lint": "eslint --config .eslintrc \"./**/*.js\"",
-    "test": "jest"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/FormidableLabs/runpkg.git"
-  },
-  "author": "Luke Jackson <@lukejacksonn>",
-  "contributors": [
-    "Alex Saunders <@alex-saunders>",
-    "Kara Stubbs <@kiraarghy>"
-  ],
-  "license": "MIT",
-  "bugs": {
-    "url": "https://github.com/FormidableLabs/runpkg/issues"
-  },
-  "homepage": "https://runpkg.com",
-  "devDependencies": {
-    "babel-eslint": "^10.0.1",
-    "eslint": "^5.16.0",
-    "eslint-config-formidable": "^3.0.0",
-    "eslint-config-prettier": "^2.9.0",
-    "eslint-plugin-filenames": "^1.2.0",
-    "eslint-plugin-import": "^2.9.0",
-    "eslint-plugin-react": "^7.7.0",
-    "husky": "^2.3.0",
-    "jest": "20.0.4",
-    "lint-staged": "^8.1.6",
-    "prettier": "^1.17.0",
-    "servor": "^3.0.0",
-    "wait-on": "^3.2.0",
-    "esm": "^3.2.25"
-  },
-  "husky": {
-    "hooks": {
-      "pre-commit": "lint-staged"
-    }
-  },
-  "lint-staged": {
-    "*.js": [
-      "eslint --fix",
-      "prettier --write",
-      "git add"
+    "name": "runpkg",
+    "version": "1.0.0",
+    "description": "The online javascript package explorer",
+    "main": "index.js",
+    "scripts": {
+        "start": "servor --reload --browse",
+        "startHeadless": "servor --no-browser",
+        "prettier": "prettier --config .prettierrc --write \"./**/*.{css,html,json,md,yml}\"",
+        "lint": "eslint --config .eslintrc \"./**/*.js\"",
+        "jest": "jest",
+        "cypress": "./node_modules/.bin/cypress run --env env=local",
+        "cypressServor": "concurrently \"yarn servor . index.html 8080 5000\" \"yarn cypress\"",
+        "test": "jest && yarn cypressServor"
+    },
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/FormidableLabs/runpkg.git"
+    },
+    "author": "Luke Jackson <@lukejacksonn>",
+    "contributors": [
+        "Alex Saunders <@alex-saunders>",
+        "Kara Stubbs <@kiraarghy>"
     ],
-    "*.{css,html,json,md,yml}": [
-      "prettier --write",
-      "git add"
-    ]
-  }
+    "license": "MIT",
+    "bugs": {
+        "url": "https://github.com/FormidableLabs/runpkg/issues"
+    },
+    "homepage": "https://runpkg.com",
+    "devDependencies": {
+        "babel-eslint": "^10.0.1",
+        "cypress": "^3.6.1",
+        "eslint": "^5.16.0",
+        "eslint-config-formidable": "^3.0.0",
+        "eslint-config-prettier": "^2.9.0",
+        "eslint-plugin-filenames": "^1.2.0",
+        "eslint-plugin-import": "^2.9.0",
+        "eslint-plugin-react": "^7.7.0",
+        "esm": "^3.2.25",
+        "husky": "^2.3.0",
+        "jest": "20.0.4",
+        "lint-staged": "^8.1.6",
+        "prettier": "^1.17.0",
+        "servor": "^3.0.0",
+        "wait-on": "^3.3.0",
+        "whatwg-fetch": "^3.0.0"
+    },
+    "husky": {
+        "hooks": {
+            "pre-commit": "lint-staged"
+        }
+    },
+    "lint-staged": {
+        "*.js": [
+            "eslint --fix",
+            "prettier --write",
+            "git add"
+        ],
+        "*.{css,html,json,md,yml}": [
+            "prettier --write",
+            "git add"
+        ]
+    }
 }
