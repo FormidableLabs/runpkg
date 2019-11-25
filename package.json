@@ -42,7 +42,6 @@
         "lint-staged": "^8.1.6",
         "prettier": "^1.17.0",
         "servor": "^3.0.0",
-        "wait-on": "^3.3.0",
         "whatwg-fetch": "^3.0.0"
     },
     "husky": {
