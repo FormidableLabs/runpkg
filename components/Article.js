@@ -2,16 +2,41 @@ import { html, css } from '../utils/rplus.js';
 
 import Editor from './Editor.js';
 import FileIcon from './FileIcon.js';
+import PrettierIcon from './PrettierIcon.js';
 import { useStateValue } from '../utils/globalState.js';
 
 export default () => {
-  const [{ request, cache }] = useStateValue();
+  const [{ request, cache }, dispatch] = useStateValue();
   const fileData = cache['https://unpkg.com/' + request.path] || {};
   return html`
     <article className=${styles.container}>
       ${request.path &&
         html`
-          <h1>${FileIcon} ${request.path}</h1>
+          <header className=${styles.header}>
+            <h1>
+              ${FileIcon} ${request.path}
+            </h1>
+            <button
+              onClick=${() => {
+                const code = prettier.format(fileData.code, {
+                  parser: 'babylon',
+                  plugins: prettierPlugins,
+                });
+                dispatch({
+                  type: 'setCache',
+                  payload: {
+                    ['https://unpkg.com/' + request.path]: {
+                      ...fileData,
+                      code,
+                    },
+                  },
+                });
+              }}
+            >
+              ${PrettierIcon}
+              <span>Format Code</span>
+            </button>
+          </header>
         `}
       ${fileData.extension === 'md'
         ? html`
@@ -30,6 +55,40 @@ export default () => {
 };
 
 const styles = {
+  header: css`
+    display: flex;
+    align-items: center;
+    padding: 1rem 1.38rem;
+    background: rgba(0, 0, 0, 0.162);
+    > h1 {
+      display: flex;
+      align-items: center;
+      color: rgba(255, 255, 255, 0.62);
+      > svg {
+        width: 1.38rem;
+        height: 1.38rem;
+        margin-right: 1rem;
+        fill: rgba(255, 255, 255, 0.38);
+      }
+    }
+    > button {
+      display: flex;
+      align-items: center;
+      background: none;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      padding: 1rem;
+      margin-left: auto;
+      color: rgba(255, 255, 255, 0.8);
+      font-size: 1rem;
+      > svg {
+        width: 1rem;
+        height: 1rem;
+      }
+      > * + * {
+        margin-left: 0.62rem;
+      }
+    }
+  `,
   container: css`
     grid-area: article;
     overflow: hidden;
@@ -60,21 +119,6 @@ const styles = {
 
     @media screen and (max-width: 800px) {
       height: 62vh;
-    }
-
-    > h1 {
-      display: flex;
-      align-items: center;
-      padding: 1.62rem;
-      background: rgba(0, 0, 0, 0.162);
-      color: #fff;
-      color: rgba(255, 255, 255, 0.62);
-      > svg {
-        width: 1.38rem;
-        height: 1.38rem;
-        margin-right: 1rem;
-        fill: rgba(255, 255, 255, 0.38);
-      }
     }
 
     pre {
