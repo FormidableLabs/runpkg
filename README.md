@@ -6,7 +6,7 @@ Runpkg turns a static file into an interactive and informative browsing experien
 
 ---
 
-![ezgif com-video-to-gif](https://user-images.githubusercontent.com/1457604/57516159-1a539d80-730c-11e9-9735-3b34a3ebafde.gif)
+![runpkg](https://user-images.githubusercontent.com/1457604/69634098-77fdcc00-1049-11ea-82db-c2f23cf87179.gif)
 
 ## Features
 
@@ -72,7 +72,6 @@ npm test
 ## Maintenance Status
 
 **Active:** Formidable is actively working on this project, and we expect to continue for work for the foreseeable future. Bug reports, feature requests and pull requests are welcome.
-
 
 ## Licence
 
