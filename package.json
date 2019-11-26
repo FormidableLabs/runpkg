@@ -1,28 +1,30 @@
 {
   "name": "runpkg",
-  "version": "0.1.0",
-  "description": "> the online package explorer",
+  "version": "1.0.0",
+  "description": "The online javascript package explorer",
   "main": "index.js",
   "scripts": {
-    "start": "servor --reload --browse --secure",
+    "start": "servor --reload --browse",
     "prettier": "prettier --config .prettierrc --write \"./**/*.{css,html,json,md,yml}\"",
     "lint": "eslint --config .eslintrc \"./**/*.js\"",
-    "jest": "jest",
     "test": "jest"
   },
   "repository": {
     "type": "git",
     "url": "git+https://github.com/FormidableLabs/runpkg.git"
   },
-  "author": "",
+  "author": "Luke Jackson <@lukejacksonn>",
+  "contributors": [
+    "Alex Saunders <@alex-saunders>",
+    "Kara Stubbs <@kiraarghy>"
+  ],
   "license": "MIT",
   "bugs": {
     "url": "https://github.com/FormidableLabs/runpkg/issues"
   },
-  "homepage": "https://github.com/FormidableLabs/runpkg#readme",
+  "homepage": "https://runpkg.com",
   "devDependencies": {
     "babel-eslint": "^10.0.1",
-    "concurrently": "^4.1.0",
     "eslint": "^5.16.0",
     "eslint-config-formidable": "^3.0.0",
     "eslint-config-prettier": "^2.9.0",
