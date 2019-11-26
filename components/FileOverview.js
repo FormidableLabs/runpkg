@@ -65,7 +65,7 @@ const styles = {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 1rem 1.2rem;
+      padding: 0.62rem 1rem 1.62rem 1rem;
       small {
         margin-left: auto;
       }
@@ -76,9 +76,6 @@ const styles = {
     }
     > *:empty {
       display: none;
-    }
-    ul {
-      padding-top: 0.62rem;
     }
     a {
       display: flex;
@@ -92,6 +89,9 @@ const styles = {
         height: 1.2rem;
         fill: rgba(255, 255, 255, 0.38);
         margin: 0 0.62rem 0 0.2rem;
+      }
+      &:hover {
+        background: rgba(0, 0, 0, 0.1);
       }
     }
     h2 {
