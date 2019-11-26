@@ -14,7 +14,10 @@ export default () => {
         html`
           <header className=${styles.header}>
             <h1>
-              ${FileIcon} ${request.path}
+              ${FileIcon}
+              <span>
+                ${request.path}
+              </span>
             </h1>
             <button
               onClick=${() => {
@@ -64,11 +67,18 @@ const styles = {
       display: flex;
       align-items: center;
       color: rgba(255, 255, 255, 0.62);
+      overflow: hidden;
       > svg {
+        flex: none;
         width: 1.38rem;
         height: 1.38rem;
         margin-right: 1rem;
         fill: rgba(255, 255, 255, 0.38);
+      }
+      > span {
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     }
     > button {
@@ -80,6 +90,9 @@ const styles = {
       margin-left: auto;
       color: rgba(255, 255, 255, 0.8);
       font-size: 1rem;
+      > span {
+        white-space: nowrap;
+      }
       > svg {
         width: 1rem;
         height: 1rem;
