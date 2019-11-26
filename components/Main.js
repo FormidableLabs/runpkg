@@ -64,7 +64,10 @@ export default () => {
     if (request.name)
       fetch(`https://registry.npmjs.cf/${request.name}/`)
         .then(res => res.json())
-        .then(json => dispatch({ type: 'setVersions', payload: json.versions }))
+        .then(json => {
+          dispatch({ type: 'setVersions', payload: json.versions });
+          dispatch({ type: 'setMode', payload: 'package' });
+        })
         .catch(console.error);
   }, [request.name]);
 
