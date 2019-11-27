@@ -109,11 +109,9 @@ export const PackageOverview = () => {
               .map(
                 file => html`
                   <${File}
-                    link=${file.path}
-                    name=${file.path}
-                    size=${file.size}
-                    version=${version}
+                    meta=${file}
                     packageName=${name}
+                    packageVersion=${version}
                   />
                 `
               )}
