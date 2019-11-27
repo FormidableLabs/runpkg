@@ -37,7 +37,7 @@ yarn
 npm i
 ```
 
-After this can run the `start` script, which will open the app in your preferred browser:
+After this you can run the `start` script, which will open the app in your preferred browser:
 
 ```bash
 yarn start
