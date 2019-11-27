@@ -1,4 +1,4 @@
-import { html, react, css } from 'rplus';
+import { react, html, css } from '../utils/rplus.js';
 
 const TreeView = ({ children }) =>
   html`
@@ -41,7 +41,7 @@ const TreeItem = ({ children, label, root = false }) => {
 
 export const styles = {
   root: css`
-    margin-left: -1.5rem;
+    margin-left: -1.38rem;
     border-left: none;
 
     li {
