@@ -79,6 +79,16 @@ export const PackageOverview = () => {
 
   const flatFiles = react.useMemo(() => flatten(directory.files), [directory]);
 
+  const search = react.useCallback(
+    file =>
+      file.path
+        .toLowerCase()
+        .match(
+          fileSearchTerm.toLowerCase().replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1')
+        ),
+    [fileSearchTerm]
+  );
+
   return html`
     <${SearchInput}
       placeholder="Search for files.."
@@ -96,25 +106,15 @@ export const PackageOverview = () => {
     ${fileSearchTerm
       ? html`
           <div>
-            ${flatFiles
-              .filter(file =>
-                file.path
-                  .toLowerCase()
-                  .match(
-                    fileSearchTerm
-                      .toLowerCase()
-                      .replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1')
-                  )
-              )
-              .map(
-                file => html`
-                  <${File}
-                    meta=${file}
-                    packageName=${name}
-                    packageVersion=${version}
-                  />
-                `
-              )}
+            ${flatFiles.filter(search).map(
+              file => html`
+                <${File}
+                  meta=${file}
+                  packageName=${name}
+                  packageVersion=${version}
+                />
+              `
+            )}
           </div>
         `
       : html`
@@ -141,8 +141,6 @@ export const styles = {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    background: none;
-    border: none;
     padding: 1rem;
     font-size: 1rem;
     line-height: 1.38;

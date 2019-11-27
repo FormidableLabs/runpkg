@@ -35,7 +35,7 @@ const TreeItem = ({ children, label, root = false }) => {
         </ul>
       `
     : html`
-        <li className=${`${styles.leaf}`}>${label}</li>
+        <li className=${styles.leaf}>${label}</li>
       `;
 };
 
