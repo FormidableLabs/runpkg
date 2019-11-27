@@ -7,6 +7,8 @@ import { useStateValue } from '../utils/globalState.js';
 import { Package } from './RegistryOverview.js';
 import formatBytes from '../utils/formatBytes.js';
 
+import { TreeView, TreeItem } from './TreeView.js';
+
 const pushState = url => history.pushState(null, null, url);
 
 const flatten = arr =>
@@ -15,69 +17,50 @@ const flatten = arr =>
     []
   );
 
-const File = ({ packageName, link, name, size, version }) =>
+const File = ({ packageName, packageVersion, meta }) =>
   html`
     <${Link}
-      href=${`/?${packageName}@${version}${link}`}
+      href=${`/?${packageName}@${packageVersion}${meta.path}`}
       className=${styles.item}
     >
-      <span>${FileIcon} ${name}</span>
-      <small>${formatBytes(size)}</small>
+      <span>${FileIcon} ${meta.path.split('/').pop()}</span>
+      <small>${formatBytes(meta.size)}</small>
     <//>
   `;
 
-const Directory = ({ packageName, rootMeta, version, root = false }) => {
-  const [expanded, setExpanded] = react.useState(root);
-
+const Node = ({ meta, packageName, packageVersion }) => {
+  const directory = meta.type === 'directory';
   return html`
-    <ul className=${`${root ? styles.root : ''} ${styles.directory} `}>
-      ${rootMeta.path &&
-        rootMeta.path !== '/' &&
-        html`
-          <li onClick=${() => setExpanded(!expanded)}>
-            <button className=${styles.item}>
+    <${TreeItem}
+      label=${!directory
+        ? html`
+            <${File}
+              packageName=${packageName}
+              packageVersion=${packageVersion}
+              meta=${meta}
+            />
+          `
+        : html`
+            <div className=${styles.item}>
               <span>
-                ${!root &&
-                  html`
-                    <span
-                      className=${`${styles.chevron} ${
-                        expanded ? styles.expanded : ''
-                      }`}
-                    >
-                      \u25ba
-                    </span>
-                  `}
                 ${FolderIcon}
-                <strong>${rootMeta.path.split('/').pop()}</strong>
+                <strong>${meta.path.split('/').pop()}</strong>
               </span>
-              <small>${rootMeta.files.length} Files</small>
-            </button>
-          </li>
-        `}
-      ${expanded &&
-        rootMeta.files.map(meta =>
-          meta.type === 'file'
-            ? html`
-                <li key=${meta.path} className=${styles.file}>
-                  <${File}
-                    link=${meta.path}
-                    name=${meta.path.split('/').pop()}
-                    size=${meta.size}
-                    version=${version}
-                    packageName=${packageName}
-                  />
-                </li>
-              `
-            : html`
-                <${Directory}
-                  rootMeta=${meta}
-                  version=${version}
-                  packageName=${packageName}
-                  root=${false}
-                />
-              `
+              <small>${meta.files.length} Files</small>
+            </div>
+          `}
+    >
+      ${directory &&
+        meta.files.map(
+          node => html`
+            <${Node}
+              meta=${node}
+              packageName=${packageName}
+              packageVersion=${packageVersion}
+            />
+          `
         )}
-    </ul>
+    <//>
   `;
 };
 
@@ -96,6 +79,16 @@ export const PackageOverview = () => {
 
   const flatFiles = react.useMemo(() => flatten(directory.files), [directory]);
 
+  const search = react.useCallback(
+    file =>
+      file.path
+        .toLowerCase()
+        .match(
+          fileSearchTerm.toLowerCase().replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1')
+        ),
+    [fileSearchTerm]
+  );
+
   return html`
     <${SearchInput}
       placeholder="Search for files.."
@@ -113,37 +106,30 @@ export const PackageOverview = () => {
     ${fileSearchTerm
       ? html`
           <div>
-            ${flatFiles
-              .filter(file =>
-                file.path
-                  .toLowerCase()
-                  .match(
-                    fileSearchTerm
-                      .toLowerCase()
-                      .replace(/([.?*+^$[\]\\(){}|-])/g, '\\$1')
-                  )
-              )
-              .map(
-                file => html`
-                  <${File}
-                    link=${file.path}
-                    name=${file.path}
-                    size=${file.size}
-                    version=${version}
-                    packageName=${name}
-                  />
-                `
-              )}
+            ${flatFiles.filter(search).map(
+              file => html`
+                <${File}
+                  meta=${file}
+                  packageName=${name}
+                  packageVersion=${version}
+                />
+              `
+            )}
           </div>
         `
       : html`
-          <${Directory}
-            packageName=${name}
-            rootMeta=${directory}
-            version=${version}
-            filter=${fileSearchTerm}
-            root=${true}
-          />
+          <${TreeView}>
+            ${directory.files.map(
+              node =>
+                html`
+                  <${Node}
+                    meta=${node}
+                    packageName=${name}
+                    packageVersion=${version}
+                  />
+                `
+            )}
+          <//>
         `}
   `;
 };
@@ -155,9 +141,8 @@ export const styles = {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    background: none;
-    border: none;
     padding: 1rem;
+    font-size: 1rem;
     line-height: 1.38;
     color: rgba(255, 255, 255, 0.8);
 
@@ -190,66 +175,6 @@ export const styles = {
     strong {
       font-size: 1rem;
       font-weight: bold;
-    }
-  `,
-
-  directory: css`
-    position: relative;
-    word-break: break-word;
-    margin-left: 1.5rem;
-    border-left: 2px dotted #4b4b4e;
-
-    button {
-      cursor: pointer;
-    }
-  `,
-  root: css`
-    margin-left: -1.38rem;
-    border-left: none;
-  `,
-  chevron: css`
-    position: absolute;
-    top: 0;
-    left: 0px;
-    top: 50%;
-    font-size: 0.8rem;
-    padding: 0.38rem;
-    z-index: 2;
-    background: #26272d;
-    color: #9c9c9c;
-    transform: translate(-50%, -50%);
-  `,
-  expanded: css`
-    transform: translate(-50%, -50%) rotate(90deg);
-  `,
-  file: css`
-    position: relative;
-    margin-left: 1.5rem;
-
-    &:before,
-    &:after {
-      display: block;
-      content: '';
-      position: absolute;
-      left: 0;
-      border-color: ;
-    }
-
-    &:after {
-      top: 50%;
-      width: 1rem;
-      border-bottom: 2px solid #4b4b4e;
-    }
-
-    &:before {
-      top: 0;
-      height: 100%;
-      border-left: 2px solid #4b4b4e;
-    }
-    &:last-child {
-      &:before {
-        height: 50%;
-      }
     }
   `,
 };
