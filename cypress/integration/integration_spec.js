@@ -3,7 +3,7 @@ describe('Runpkg', () => {
   before(() => {
     url =
       Cypress.env('env') === 'local'
-        ? 'https://localhost:8080'
+        ? 'http://localhost:8080'
         : 'https://runpkg.com';
   });
   it('Visits the page', () => {
