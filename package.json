@@ -5,9 +5,13 @@
   "main": "index.js",
   "scripts": {
     "start": "servor --reload --browse",
+    "startHeadless": "servor . index.html 8080 5000 --no-browser",
     "prettier": "prettier --config .prettierrc --write \"./**/*.{css,html,json,md,yml}\"",
     "lint": "eslint --config .eslintrc \"./**/*.js\"",
-    "test": "jest"
+    "jest": "jest",
+    "cypress": "./node_modules/.bin/cypress run --env env=local",
+    "cypressServor": "npm-run-all -p startHeadless cypress --race",
+    "test": "jest && yarn cypressServor"
   },
   "repository": {
     "type": "git",
@@ -25,19 +29,21 @@
   "homepage": "https://runpkg.com",
   "devDependencies": {
     "babel-eslint": "^10.0.1",
+    "cypress": "^3.6.1",
     "eslint": "^5.16.0",
     "eslint-config-formidable": "^3.0.0",
     "eslint-config-prettier": "^2.9.0",
     "eslint-plugin-filenames": "^1.2.0",
     "eslint-plugin-import": "^2.9.0",
     "eslint-plugin-react": "^7.7.0",
+    "esm": "^3.2.25",
     "husky": "^2.3.0",
     "jest": "20.0.4",
     "lint-staged": "^8.1.6",
+    "npm-run-all": "^4.1.5",
     "prettier": "^1.17.0",
     "servor": "^3.0.0",
-    "wait-on": "^3.2.0",
-    "esm": "^3.2.25"
+    "whatwg-fetch": "^3.0.0"
   },
   "husky": {
     "hooks": {
