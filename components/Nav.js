@@ -5,7 +5,7 @@ import { RegistryOverview } from './RegistryOverview.js';
 import { FileOverview } from './FileOverview.js';
 import { useStateValue } from '../utils/globalState.js';
 
-export default () => {
+export default ({ worker }) => {
   const [{ mode }, dispatch] = useStateValue();
   const modeOptions = {
     registry: mode === 'registry',
@@ -28,7 +28,7 @@ export default () => {
           `
         : mode === 'file'
         ? html`
-            <${FileOverview} />
+            <${FileOverview} worker=${worker} />
           `
         : null}
     </nav>

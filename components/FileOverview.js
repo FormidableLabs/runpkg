@@ -27,9 +27,16 @@ const FileList = ({ title, files, packageName, filter }) => html`
   </ul>
 `;
 
-export const FileOverview = () => {
+export const FileOverview = ({ worker }) => {
   const [{ request, cache, dependencySearchTerm }, dispatch] = useStateValue();
   const file = cache['https://unpkg.com/' + request.path];
+  const analyse = () => {
+    if (file.dependencies) {
+      Object.keys(file.dependencies).forEach(x =>
+        worker.postMessage(file.dependencies[x])
+      );
+    }
+  };
   return (
     !!file &&
     html`
@@ -47,6 +54,7 @@ export const FileOverview = () => {
         <small>${formatBytes(file.size)}</small>
       </div>
       <div className=${styles.container}>
+        <button onClick=${() => analyse()}>Analyse</button>
         <${FileList}
           title="Dependencies"
           files=${file.dependencies}

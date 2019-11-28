@@ -91,7 +91,7 @@ export default () => {
   return html`
     <main className=${styles}>
       <${Article} />
-      <${Nav} />
+      <${Nav} worker=${worker} />
     </main>
   `;
 };

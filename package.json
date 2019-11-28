@@ -1,6 +1,6 @@
 {
   "name": "runpkg",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "The online javascript package explorer",
   "main": "index.js",
   "scripts": {
