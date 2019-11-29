@@ -1,5 +1,5 @@
 /* eslint-disable max-nested-callbacks */
-const cacheName = 'www.runpkg.com';
+const cacheName = 'www.unpkg.com';
 
 self.addEventListener('activate', () => {
   console.log('service worker activated');
