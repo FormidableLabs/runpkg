@@ -88,6 +88,9 @@ const needsExtension = entry =>
     .includes('.');
 
 const visitedPaths = new Set();
+const fetchedPackageJsons = {};
+const fetchedMetas = {};
+const flattenedDirs = {};
 
 /** Parses the dependency tree for the package
  * if recursive it does it recursively
@@ -100,50 +103,55 @@ const setupParseUrl = async () => {
 };
 
 const parseDependencies = async path => {
-  if (!visitedPaths.has(path)) {
-    visitedPaths.add(path);
-    const { url, code } = await fetch(path).then(async res => ({
-      url: res.url,
-      code: await res.text(),
-    }));
-    const { name, version } = self.parseUrl(url);
-    const dir = await fetch(directoriesUrl(name, version)).then(res =>
-      res.json()
-    );
-    const pkg = await fetch(packageJsonUrl(name, version)).then(res =>
-      res.json()
-    );
-    const files = flatten(dir.files);
-    const ext = url
-      .split('/')
-      .pop()
-      .match(/\.(.*)/);
-    const dependencies = extractDependencies(code, pkg).reduce((all, entry) => {
-      const packageUrl = `${UNPKG}${pkg.name}@${pkg.version}`;
-      let match = makePath(url)(entry);
-      if (isExternalPath(entry)) {
-        if (entry.startsWith('https://')) match = entry;
-        else {
-          const version_ = pkg[isListedInDependencies(entry, pkg)][entry];
-          match = version_ ? `${match}@${version_}` : match;
-        }
+  if (visitedPaths.has(path)) return;
+  visitedPaths.add(path);
+
+  const { url, code } = await fetch(path).then(async res => ({
+    url: res.url,
+    code: await res.text(),
+  }));
+
+  const { name, version } = self.parseUrl(url);
+  const uid = `${name}${version}`;
+
+  const dir = (fetchedMetas[uid] =
+    fetchedMetas[uid] ||
+    (await fetch(directoriesUrl(name, version)).then(res => res.json())));
+
+  const pkg = (fetchedPackageJsons[uid] =
+    fetchedPackageJsons[uid] ||
+    (await fetch(packageJsonUrl(name, version)).then(res => res.json())));
+
+  const files = (flattenedDirs[uid] = flattenedDirs[uid] || flatten(dir.files));
+  const ext = url
+    .split('/')
+    .pop()
+    .match(/\.(.*)/);
+  const dependencies = extractDependencies(code, pkg).reduce((all, entry) => {
+    const packageUrl = `${UNPKG}${pkg.name}@${pkg.version}`;
+    let match = makePath(url)(entry);
+    if (isExternalPath(entry)) {
+      if (entry.startsWith('https://')) match = entry;
+      else {
+        const version_ = pkg[isListedInDependencies(entry, pkg)][entry];
+        match = version_ ? `${match}@${version_}` : match;
       }
-      if (isLocalFile(entry) && needsExtension(entry)) {
-        const options = files.filter(x =>
-          x.match(new RegExp(`${match.replace(packageUrl, '')}(/index)?\\..*`))
-        );
-        match = packageUrl + (options.find(x => x.endsWith(ext)) || options[0]);
-      }
-      return { ...all, [entry]: match };
-    }, {});
-    self.postMessage({
-      url,
-      code,
-      dependencies,
-      size: code.length,
-      extension: ext ? ext[1] : '',
-    });
-  }
+    }
+    if (isLocalFile(entry) && needsExtension(entry)) {
+      const options = files.filter(x =>
+        x.match(new RegExp(`${match.replace(packageUrl, '')}(/index)?\\..*`))
+      );
+      match = packageUrl + (options.find(x => x.endsWith(ext)) || options[0]);
+    }
+    return { ...all, [entry]: match };
+  }, {});
+  self.postMessage({
+    url,
+    code,
+    dependencies,
+    size: code.length,
+    extension: ext ? ext[1] : '',
+  });
 };
 
 self.onmessage = async event => {
