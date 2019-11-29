@@ -2,7 +2,7 @@
 
 > the online package explorer
 
-Runpkg turns a static file into an interactive and informative browsing experience. It lets you navigate any JavaScript package on npm thanks to [unpkg.com](https://unpkg.com) a very popular and reliable CDN mirror of the npm registry. You can use the tool to learn more about the inner workings of your project's dependencies; find out how modules work, what they depend on, the size of specific imports as other useful metadata.
+Runpkg turns a static file into an interactive and informative browsing experience. It lets you navigate any JavaScript package on npm thanks to [unpkg.com](https://unpkg.com), a popular and reliable CDN mirror of the npm registry. You can use this tool to learn more about the inner workings of your project's dependencies; find out how modules work, what they depend on, the size of specific imports as well as other useful metadata.
 
 ---
 
@@ -23,19 +23,29 @@ To view a package or module in the browser with runpkg, prepend any unpkg url wi
 | unpkg  | [`https://unpkg.com/es-react@16.8.30/index.js`](https://unpkg.com/es-react@16.8.30/index.js)   |
 | runpkg | [`https://runpkg.com/es-react@16.8.30/index.js`](https://runpkg.com/es-react@16.8.30/index.js) |
 
-You will be redirect you to runpkg which will display the relevant package and file. You can navigate around the package using the panel on the left which contains a directory listing. Any data uncovered by static analysis will be displayed in the right hand panel.
+You will be redirected to runpkg which will display the relevant package and file. You can navigate around the package using the 'Package' panel which contains a directory listing. The 'File' tab will also display any information uncovered during static analysis.
 
 > Note if browsing a directory then runpkg will ignore the trailing `/` and take you to the entry point.
 
 ## Development
 
-If you would like to develop the project, first clone this repo then run the following command in your terminal (from the project root directory) which will open the app in your preferred browser.
+If you would like to develop the project, first clone this repo and then install the relevant dependencies:
 
-```
-npx servor
+```bash
+yarn
+# or
+npm i
 ```
 
-> Live reload is enabled by default with [servor](https://github.com/lukejacksonn/servor) so when you make changes to your code the browser will reload the tab and your changes will be reflected there.
+After this you can run the `start` script, which will open the app in your preferred browser:
+
+```bash
+yarn start
+# or
+npm run start
+```
+
+> Live reload is enabled by default with [servor](https://github.com/lukejacksonn/servor) so when you make changes to your code the browser will reload the tab with any changes reflected immediately.
 
 ## Local URLs
 
@@ -65,8 +75,10 @@ As we're not using Netlify to redirect URLs locally, you have to pass in the pac
 
 We're currently doing end to end tests via Cypress, you can run them using the following:
 
-```
-npm test
+```bash
+yarn test
+# or
+npm run test
 ```
 
 ## Maintenance Status
