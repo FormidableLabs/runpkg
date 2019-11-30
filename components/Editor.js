@@ -13,7 +13,8 @@ const hasImport = line =>
   line.some(
     token =>
       token.types.includes('module') ||
-      (token.types.includes('function') && token.content === 'require')
+      (token.types.includes('function') && token.content === 'require') ||
+      (token.types.includes('keyword') && token.content === 'import')
   );
 
 const removeQuotes = packageName => packageName.replace(/['"]+/g, '');
@@ -62,15 +63,13 @@ const languages = {
   yml: 'yaml',
 };
 
-const UNPKG = 'https://unpkg.com/';
-
 export default () => {
   const [{ cache, request }] = useStateValue();
   const selectedLine = getSelectedLineNumberFromUrl();
   const container = react.useRef();
-  const lastGoodState = useLastGoodState(cache[UNPKG + request.path]);
-  const fileData = cache[UNPKG + request.path] || lastGoodState;
-  const loading = !fileData || request.path !== fileData.url.replace(UNPKG, '');
+  const lastGoodState = useLastGoodState(cache[request.path]);
+  const fileData = cache[request.path] || lastGoodState;
+  const loading = !fileData || request.path !== fileData.url;
 
   const scrollToLine = () => {
     const selectedLineEl = document.getElementById(`L-${selectedLine}`);
@@ -125,10 +124,7 @@ export default () => {
                     fileData.dependencies[removeQuotes(token.content)];
                   return dep && typeof dep === 'string'
                     ? html`
-                        <${Link}
-                          href=${`/?${dep.replace('https://unpkg.com/', '')}`}
-                          className=${styles.link}
-                        >
+                        <${Link} href=${`/?${dep}`} className=${styles.link}>
                           <span ...${getTokenProps({ token })} />
                         <//>
                       `

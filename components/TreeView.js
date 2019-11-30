@@ -3,15 +3,13 @@ import { react, html, css } from '../utils/rplus.js';
 const TreeView = ({ children }) =>
   html`
     <ul className=${styles.root}>
-      ${react.Children.map(children, child =>
-        react.cloneElement(child, { root: true })
-      )}
+      ${children}
     </ul>
   `;
 
-const TreeItem = ({ children, label, root = false }) => {
+const TreeItem = ({ children, label }) => {
   const expandable = children && react.Children.count(children) > 0;
-  const [expanded, setExpanded] = react.useState(root);
+  const [expanded, setExpanded] = react.useState(false);
 
   return expandable
     ? html`

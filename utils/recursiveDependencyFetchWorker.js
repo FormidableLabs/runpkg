@@ -1,5 +1,5 @@
 /* eslint-disable no-eval */
-const UNPKG = 'https://unpkg.com/';
+const UNPKG = 'https://bunpkg.dev/n/';
 
 const fileNameRegEx = /\/[^\/@]+[\.][^\/]+$/;
 
@@ -106,7 +106,7 @@ const parseDependencies = async path => {
   if (visitedPaths.has(path)) return;
   visitedPaths.add(path);
 
-  const { url, code } = await fetch(path).then(async res => ({
+  const { url, code } = await fetch(UNPKG + path).then(async res => ({
     url: res.url,
     code: await res.text(),
   }));
@@ -131,7 +131,8 @@ const parseDependencies = async path => {
     const packageUrl = `${UNPKG}${pkg.name}@${pkg.version}`;
     let match = makePath(url)(entry);
     if (isExternalPath(entry)) {
-      if (entry.startsWith('https://')) match = entry;
+      if (entry.startsWith('https://'))
+        match = entry.replace('https://unpkg.com/', '');
       else {
         const version_ = pkg[isListedInDependencies(entry, pkg)][entry];
         match = version_ ? `${match}@${version_}` : match;
@@ -141,12 +142,14 @@ const parseDependencies = async path => {
       const options = files.filter(x =>
         x.match(new RegExp(`${match.replace(packageUrl, '')}(/index)?\\..*`))
       );
-      match = packageUrl + (options.find(x => x.endsWith(ext)) || options[0]);
+      match =
+        packageUrl +
+        (options.find(x => x.endsWith(ext[0] || '')) || options[0]);
     }
-    return { ...all, [entry]: match };
+    return { ...all, [entry]: match.replace(UNPKG, '') };
   }, {});
   self.postMessage({
-    url,
+    url: url.replace(UNPKG, ''),
     code,
     dependencies,
     size: code.length,
@@ -157,10 +160,5 @@ const parseDependencies = async path => {
 self.onmessage = async event => {
   const { data } = event;
   await setupParseUrl();
-  try {
-    await parseDependencies(data);
-  } catch (e) {
-    // This is a truly awful hack to get around random CORS errors
-    parseDependencies(data);
-  }
+  parseDependencies(data);
 };

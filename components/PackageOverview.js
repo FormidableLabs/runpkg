@@ -1,13 +1,12 @@
 import { react, html, css } from '../utils/rplus.js';
 import { SearchInput } from './SearchInput.js';
+import { useStateValue } from '../utils/globalState.js';
+import { Package } from './RegistryOverview.js';
+import { TreeView, TreeItem } from './TreeView.js';
 import FolderIcon from './FolderIcon.js';
 import FileIcon from './FileIcon.js';
 import Link from './Link.js';
-import { useStateValue } from '../utils/globalState.js';
-import { Package } from './RegistryOverview.js';
 import formatBytes from '../utils/formatBytes.js';
-
-import { TreeView, TreeItem } from './TreeView.js';
 
 const pushState = url => history.pushState(null, null, url);
 
@@ -17,49 +16,35 @@ const flatten = arr =>
     []
   );
 
-const File = ({ packageName, packageVersion, meta }) =>
+const File = base => meta =>
   html`
-    <${Link}
-      href=${`/?${packageName}@${packageVersion}${meta.path}`}
-      className=${styles.item}
-    >
+    <${Link} href=${`/?${base}${meta.path}`} className=${styles.item}>
       <span>${FileIcon} ${meta.path.split('/').pop()}</span>
       <small>${formatBytes(meta.size)}</small>
     <//>
   `;
 
-const Node = ({ meta, packageName, packageVersion }) => {
+const Directory = meta => {
+  const label = meta.path
+    .slice(0, -1)
+    .split('/')
+    .pop();
+  return html`
+    <div className=${styles.item}>
+      <span>
+        ${FolderIcon}
+        <strong>${label}</strong>
+      </span>
+      <small>${meta.files.length} Files</small>
+    </div>
+  `;
+};
+
+const Node = base => meta => {
   const directory = meta.type === 'directory';
   return html`
-    <${TreeItem}
-      label=${!directory
-        ? html`
-            <${File}
-              packageName=${packageName}
-              packageVersion=${packageVersion}
-              meta=${meta}
-            />
-          `
-        : html`
-            <div className=${styles.item}>
-              <span>
-                ${FolderIcon}
-                <strong>${meta.path.split('/').pop()}</strong>
-              </span>
-              <small>${meta.files.length} Files</small>
-            </div>
-          `}
-    >
-      ${directory &&
-        meta.files.map(
-          node => html`
-            <${Node}
-              meta=${node}
-              packageName=${packageName}
-              packageVersion=${packageVersion}
-            />
-          `
-        )}
+    <${TreeItem} label=${!directory ? File(base)(meta) : Directory(meta)}>
+      ${directory && meta.files.map(Node(base))}
     <//>
   `;
 };
@@ -69,8 +54,9 @@ export const PackageOverview = () => {
     { versions, request, directory, fileSearchTerm },
     dispatch,
   ] = useStateValue();
-  if (!versions[request.version] || !directory.files) return null;
-  const { name, version, description } = versions[request.version];
+
+  if (!versions.includes(request.version) || !directory.files) return null;
+  const { name, version, description } = request;
   const handleVersionChange = v => pushState(`?${name}@${v}`);
   const VersionOption = x =>
     html`
@@ -78,7 +64,6 @@ export const PackageOverview = () => {
     `;
 
   const flatFiles = react.useMemo(() => flatten(directory.files), [directory]);
-
   const search = react.useCallback(
     file =>
       file.path
@@ -88,6 +73,8 @@ export const PackageOverview = () => {
         ),
     [fileSearchTerm]
   );
+
+  const base = `${name}@${version}`;
 
   return html`
     <${SearchInput}
@@ -101,34 +88,17 @@ export const PackageOverview = () => {
       value=${version}
       onChange=${e => handleVersionChange(e.target.value)}
     >
-      ${Object.keys(versions).map(VersionOption)}</select
+      ${versions.map(VersionOption)}</select
     >
     ${fileSearchTerm
       ? html`
           <div>
-            ${flatFiles.filter(search).map(
-              file => html`
-                <${File}
-                  meta=${file}
-                  packageName=${name}
-                  packageVersion=${version}
-                />
-              `
-            )}
+            ${flatFiles.filter(search).map(File(base))}
           </div>
         `
       : html`
           <${TreeView}>
-            ${directory.files.map(
-              node =>
-                html`
-                  <${Node}
-                    meta=${node}
-                    packageName=${name}
-                    packageVersion=${version}
-                  />
-                `
-            )}
+            ${directory.files.map(Node(base))}
           <//>
         `}
   `;

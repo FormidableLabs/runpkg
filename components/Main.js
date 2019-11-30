@@ -12,6 +12,8 @@ export default () => {
   const [state, dispatch] = useStateValue();
   const { cache, request, packagesSearchTerm } = state;
 
+  console.log(state);
+
   // Update the request on user navigation
   react.useEffect(() => {
     const updateRequest = () => {
@@ -40,11 +42,11 @@ export default () => {
   // Resolve full path for incomplete urls
   react.useEffect(() => {
     if (request.name && (!request.version || !request.file))
-      fetch(`https://unpkg.com/${request.path}`)
+      fetch(`https://bunpkg.dev/n/${request.path}`)
         .then(({ url }) => {
           dispatch({ type: 'setRequest', payload: parseUrl(url) });
           replaceState(
-            `/?${url.replace('https://unpkg.com/', '')}${location.hash}`
+            `/?${url.replace('https://bunpkg.dev/n/', '')}${location.hash}`
           );
         })
         .catch(console.error);
@@ -53,7 +55,7 @@ export default () => {
   // Fetch directory listings for requested package
   react.useEffect(() => {
     if (request.name && request.version)
-      fetch(`https://unpkg.com/${request.name}@${request.version}/?meta`)
+      fetch(`https://bunpkg.dev/n/${request.name}@${request.version}/?meta`)
         .then(res => res.json())
         .then(res => dispatch({ type: 'setDirectory', payload: res }))
         .catch(console.error);
@@ -61,20 +63,20 @@ export default () => {
 
   // Fetch package meta data for all versions
   react.useEffect(() => {
-    if (request.name)
-      fetch(`https://registry.npmjs.cf/${request.name}/`)
+    if (request.name) {
+      dispatch({ type: 'setMode', payload: 'package' });
+      fetch(`https://bunpkg.dev/i/${request.name}`)
         .then(res => res.json())
         .then(json => {
           dispatch({ type: 'setVersions', payload: json.versions });
-          dispatch({ type: 'setMode', payload: 'package' });
         })
         .catch(console.error);
+    }
   }, [request.name]);
 
   // Parse dependencies for the current code
   react.useEffect(() => {
-    if (request.file && !cache['https://unpkg.com/' + request.path])
-      worker.postMessage('https://unpkg.com/' + request.path);
+    if (request.file && !cache[request.path]) worker.postMessage(request.path);
   }, [request.path]);
 
   // Fetch packages by search term

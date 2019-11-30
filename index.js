@@ -18,7 +18,7 @@ const initialState = {
   dependencySearchTerm: '',
   request: parseUrl(),
   directory: {},
-  versions: {},
+  versions: [],
   cache: {},
   mode: 'registry',
 };

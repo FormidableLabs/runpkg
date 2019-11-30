@@ -17,7 +17,7 @@ const FileList = ({ title, files, packageName, filter }) => html`
         url.match(filter) &&
         html`
           <li key=${key} data-test="Item">
-            <${Link} href=${url.replace('https://unpkg.com/', '/?')}>
+            <${Link} href=${'/?' + url.replace('https://unpkg.com/', '')}>
               ${url.includes(packageName) ? FileIcon : PackageIcon}
               ${url.replace(`https://unpkg.com/`, '').replace(packageName, '')}
             <//>
@@ -29,7 +29,7 @@ const FileList = ({ title, files, packageName, filter }) => html`
 
 export const FileOverview = () => {
   const [{ request, cache, dependencySearchTerm }, dispatch] = useStateValue();
-  const file = cache['https://unpkg.com/' + request.path];
+  const file = cache[request.path];
   return (
     !!file &&
     html`
