@@ -1,7 +1,7 @@
 const parseUrl = (url = window.location.search.slice(1).replace(/\/$/, '')) => {
   const parts = url
     .trim()
-    .replace('https://unpkg.com/', '')
+    .replace('https://bunpkg.dev/n/', '')
     .split('/')
     .map(part => part.trim())
     .filter(Boolean);

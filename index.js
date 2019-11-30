@@ -18,7 +18,7 @@ const initialState = {
   dependencySearchTerm: '',
   request: parseUrl(),
   directory: {},
-  versions: {},
+  info: {},
   cache: {},
   mode: 'registry',
 };
@@ -41,8 +41,8 @@ function reducer(state, action) {
       return { ...state, directory: action.payload };
     case 'setFile':
       return { ...state, file: action.payload };
-    case 'setVersions':
-      return { ...state, versions: action.payload };
+    case 'setInfo':
+      return { ...state, info: action.payload };
     case 'setCache':
       return {
         ...state,

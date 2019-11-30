@@ -1,5 +1,5 @@
 /* eslint-disable max-nested-callbacks */
-const cacheName = 'www.unpkg.com';
+const cacheName = 'www.bunpkg.dev';
 
 self.addEventListener('activate', () => {
   console.log('service worker activated');
@@ -7,8 +7,8 @@ self.addEventListener('activate', () => {
 
 self.addEventListener('fetch', event => {
   if (
-    event.request.url.includes('https://unpkg') &&
-    !event.request.referrer.includes('https://unpkg.com/')
+    event.request.url.includes('https://bunpkg') &&
+    !event.request.referrer.includes('https://bunpkg.dev/')
   ) {
     event.respondWith(
       caches.open(cacheName).then(cache =>

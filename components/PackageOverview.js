@@ -23,7 +23,7 @@ const File = ({ packageName, packageVersion, meta }) =>
       href=${`/?${packageName}@${packageVersion}${meta.path}`}
       className=${styles.item}
     >
-      <span>${FileIcon} ${meta.path.split('/').pop()}</span>
+      <span>${FileIcon} ${meta.name}</span>
       <small>${formatBytes(meta.size)}</small>
     <//>
   `;
@@ -44,7 +44,7 @@ const Node = ({ meta, packageName, packageVersion }) => {
             <div className=${styles.item}>
               <span>
                 ${FolderIcon}
-                <strong>${meta.path.split('/').pop()}</strong>
+                <strong>${meta.name}</strong>
               </span>
               <small>${meta.files.length} Files</small>
             </div>
@@ -66,11 +66,12 @@ const Node = ({ meta, packageName, packageVersion }) => {
 
 export const PackageOverview = () => {
   const [
-    { versions, request, directory, fileSearchTerm },
+    { info, request, directory, fileSearchTerm },
     dispatch,
   ] = useStateValue();
-  if (!versions[request.version] || !directory.files) return null;
-  const { name, version, description } = versions[request.version];
+  const { version } = request;
+  if (!info || !info.time[version] || !directory.files) return null;
+  const { name, description } = info;
   const handleVersionChange = v => pushState(`?${name}@${v}`);
   const VersionOption = x =>
     html`
@@ -101,7 +102,7 @@ export const PackageOverview = () => {
       value=${version}
       onChange=${e => handleVersionChange(e.target.value)}
     >
-      ${Object.keys(versions).map(VersionOption)}</select
+      ${info.versions.map(VersionOption)}</select
     >
     ${fileSearchTerm
       ? html`

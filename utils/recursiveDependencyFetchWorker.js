@@ -12,7 +12,7 @@ const getParseUrl = () =>
 
 // This isn't imported from constants.js since otherwise we're importing
 // (see abive for webworker note)
-const UNPKG = 'https://unpkg.com/';
+const UNPKG = 'https://bunpkg.dev/n/';
 
 // Handles paths like "../../some-file.js"
 const handleDoubleDot = (pathEnd, base) => {

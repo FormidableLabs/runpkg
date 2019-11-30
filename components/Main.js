@@ -64,7 +64,7 @@ export default () => {
       fetch(`${PACKUMENT}/${request.name}/`)
         .then(res => res.json())
         .then(json => {
-          dispatch({ type: 'setVersions', payload: json.versions });
+          dispatch({ type: 'setInfo', payload: json });
           dispatch({ type: 'setMode', payload: 'package' });
         })
         .catch(console.error);
