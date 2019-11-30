@@ -70,7 +70,8 @@ export const PackageOverview = () => {
     dispatch,
   ] = useStateValue();
   const { version } = request;
-  if (!info || !info.time[version] || !directory.files) return null;
+  if (!info || !info.time || !info.time[version] || !directory.files)
+    return null;
   const { name, description } = info;
   const handleVersionChange = v => pushState(`?${name}@${v}`);
   const VersionOption = x =>
