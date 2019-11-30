@@ -48,7 +48,7 @@ const isListedInDependencies = (pkgName, pkgJson) =>
 const stripComments = str =>
   str.replace(/^[\t ]*\/\*(.|\r|\n)*?\*\/|^[\t ]*\/\/.*/gm, '');
 
-const importExportRegex = /^(import|export).*(from)[ \n]+['"](.*?)['"];?$/;
+const importExportRegex = /(from|import)[ \n]?['"](.*?)['"];?/;
 const requireRegex = /(require\(['"])([^)\n\r]*)(['"]\))/;
 
 const packageJsonUrl = (name, version) => {
@@ -68,7 +68,7 @@ const flatten = arr =>
 const extractDependencies = (input, packageJson) => {
   const code = stripComments(input).slice(0, 100000);
   const imports = (code.match(new RegExp(importExportRegex, 'gm')) || []).map(
-    x => x.match(new RegExp(importExportRegex))[3]
+    x => x.match(new RegExp(importExportRegex))[2]
   );
   const requires = (code.match(new RegExp(requireRegex, 'gm')) || []).map(
     x => x.match(new RegExp(requireRegex))[2]
@@ -132,7 +132,11 @@ const parseDependencies = async path => {
         const options = files.filter(x =>
           x.match(new RegExp(`${match.replace(packageUrl, '')}(/index)?\\..*`))
         );
-        match = packageUrl + (options.find(x => x.endsWith(ext)) || options[0]);
+        match =
+          packageUrl +
+          (options
+            .sort((a, b) => a.length - b.length || a.localeCompare(b))
+            .find(x => x.endsWith(ext[0])) || options[0]);
       }
       return { ...all, [entry]: match };
     }, {});
