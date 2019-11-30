@@ -9,14 +9,6 @@ const getSelectedLineNumberFromUrl = () =>
 const handleLineNumberClick = lineNo =>
   history.pushState(null, null, `#${lineNo}`);
 
-const hasImport = line =>
-  line.some(
-    token =>
-      token.types.includes('module') ||
-      (token.types.includes('function') && token.content === 'require') ||
-      (token.types.includes('keyword') && token.content === 'import')
-  );
-
 const removeQuotes = packageName => packageName.replace(/['"]+/g, '');
 
 function useLastGoodState(value) {
@@ -105,7 +97,6 @@ export default () => {
           >
           <code className=${styles.code}>
         ${tokens.map((line, i) => {
-            const isImportLine = hasImport(line);
             return html`
               <div
                 ...${getLineProps({ line, key: i })}
@@ -119,8 +110,6 @@ export default () => {
                 >
                 ${line.map(token => {
                   const dep =
-                    isImportLine &&
-                    token.types.includes('string') &&
                     fileData.dependencies[removeQuotes(token.content)];
                   return dep && typeof dep === 'string'
                     ? html`
