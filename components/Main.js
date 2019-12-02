@@ -1,3 +1,4 @@
+import { UNPKG, PACKUMENT } from '../utils/constants.js';
 import { react, html, css } from '../utils/rplus.js';
 import { useStateValue } from '../utils/globalState.js';
 import { parseUrl } from '../utils/parseUrl.js';
@@ -40,12 +41,10 @@ export default () => {
   // Resolve full path for incomplete urls
   react.useEffect(() => {
     if (request.name && (!request.version || !request.file))
-      fetch(`https://unpkg.com/${request.path}`)
+      fetch(UNPKG + request.path)
         .then(({ url }) => {
           dispatch({ type: 'setRequest', payload: parseUrl(url) });
-          replaceState(
-            `/?${url.replace('https://unpkg.com/', '')}${location.hash}`
-          );
+          replaceState(`/?${url.replace(UNPKG, '')}${location.hash}`);
         })
         .catch(console.error);
   }, [request.path]);
@@ -53,7 +52,7 @@ export default () => {
   // Fetch directory listings for requested package
   react.useEffect(() => {
     if (request.name && request.version)
-      fetch(`https://unpkg.com/${request.name}@${request.version}/?meta`)
+      fetch(`${UNPKG}${request.name}@${request.version}/?meta`)
         .then(res => res.json())
         .then(res => dispatch({ type: 'setDirectory', payload: res }))
         .catch(console.error);
@@ -62,7 +61,7 @@ export default () => {
   // Fetch package meta data for all versions
   react.useEffect(() => {
     if (request.name)
-      fetch(`https://registry.npmjs.cf/${request.name}/`)
+      fetch(`${PACKUMENT}/${request.name}/`)
         .then(res => res.json())
         .then(json => {
           dispatch({ type: 'setVersions', payload: json.versions });
@@ -73,8 +72,8 @@ export default () => {
 
   // Parse dependencies for the current code
   react.useEffect(() => {
-    if (request.file && !cache['https://unpkg.com/' + request.path])
-      worker.postMessage('https://unpkg.com/' + request.path);
+    if (request.file && !cache[UNPKG + request.path])
+      worker.postMessage(UNPKG + request.path);
   }, [request.path]);
 
   // Fetch packages by search term

@@ -1,4 +1,5 @@
 import { react, html, css } from '../utils/rplus.js';
+import { UNPKG } from '../utils/constants.js';
 import Highlight, { Prism } from 'prism-react-renderer';
 import { useStateValue } from '../utils/globalState.js';
 import Link from './Link.js';
@@ -54,8 +55,6 @@ const languages = {
   wasm: 'wasm',
   yml: 'yaml',
 };
-
-const UNPKG = 'https://unpkg.com/';
 
 export default () => {
   const [{ cache, request }] = useStateValue();
@@ -116,7 +115,7 @@ export default () => {
                   return dep && typeof dep === 'string'
                     ? html`
                         <${Link}
-                          href=${`/?${dep.replace('https://unpkg.com/', '')}`}
+                          href=${`/?${dep.replace(UNPKG, '')}`}
                           className=${styles.link}
                         >
                           <span ...${getTokenProps({ token })} />

@@ -2,6 +2,7 @@ import { css, html } from '../utils/rplus.js';
 import Link from './Link.js';
 import formatBytes from '../utils/formatBytes.js';
 import { useStateValue } from '../utils/globalState.js';
+import { UNPKG } from '../utils/constants.js';
 import FileIcon from './FileIcon.js';
 import PackageIcon from './PackageIcon.js';
 import { SearchInput } from './SearchInput.js';
@@ -17,9 +18,9 @@ const FileList = ({ title, files, packageName, filter }) => html`
         url.match(filter) &&
         html`
           <li key=${key} data-test="Item">
-            <${Link} href=${url.replace('https://unpkg.com/', '/?')}>
+            <${Link} href=${url.replace(UNPKG, '/?')}>
               ${url.includes(packageName) ? FileIcon : PackageIcon}
-              ${url.replace(`https://unpkg.com/`, '').replace(packageName, '')}
+              ${url.replace(UNPKG, '').replace(packageName, '')}
             <//>
           </li>
         `
@@ -29,7 +30,7 @@ const FileList = ({ title, files, packageName, filter }) => html`
 
 export const FileOverview = () => {
   const [{ request, cache, dependencySearchTerm }, dispatch] = useStateValue();
-  const file = cache['https://unpkg.com/' + request.path];
+  const file = cache[UNPKG + request.path];
   return (
     !!file &&
     html`

@@ -1,5 +1,4 @@
 /* eslint-disable no-eval */
-const UNPKG = 'https://unpkg.com/';
 
 const fileNameRegEx = /\/[^\/@]+[\.][^\/]+$/;
 
@@ -10,6 +9,10 @@ const getParseUrl = () =>
     .then(x =>
       x.replace(/\s*export {[^}]+\};/g, '').replace(/^const\s[^=]+=/, '')
     );
+
+// This isn't imported from constants.js since otherwise we're importing
+// (see abive for webworker note)
+const UNPKG = 'https://unpkg.com/';
 
 // Handles paths like "../../some-file.js"
 const handleDoubleDot = (pathEnd, base) => {
@@ -152,10 +155,11 @@ const parseDependencies = async path => {
 
 self.onmessage = async event => {
   const { data } = event;
-  await setupParseUrl();
   try {
+    await setupParseUrl();
     await parseDependencies(data);
   } catch (e) {
+    console.error(e);
     // This is a truly awful hack to get around random CORS errors
     parseDependencies(data);
   }
