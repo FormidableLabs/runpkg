@@ -6,7 +6,7 @@ import Main from './components/Main.js';
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker
-    .register('./serviceWorker.js')
+    .register('./sw.js')
     .then(() => console.log('[runpkg] service worker registered'))
     .catch(err => console.log(err));
 }
