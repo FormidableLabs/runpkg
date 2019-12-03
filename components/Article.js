@@ -131,19 +131,20 @@ const styles = {
     align-items: center;
     justify-content: center;
     flex-direction: column;
+    padding: 1rem;
     width: 100%;
-    height: 100vh;
+    height: 100%;
     color: rgba(255, 255, 255, 0.62);
     flex: none;
     svg:first-child {
       position: absolute;
       top: 2rem;
       left: 2rem;
-      width: 10rem;
+      width: 10%;
       fill: rgba(255, 255, 255, 0.1);
     }
     svg {
-      width: 16rem;
+      width: calc(10rem + 10vw);
     }
     p {
       font-size: 1.38rem;
