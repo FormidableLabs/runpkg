@@ -17,15 +17,27 @@ const flatten = arr =>
     []
   );
 
-const File = ({ packageName, packageVersion, meta }) =>
+const File = ({ packageName, packageVersion, meta, displayFullPath = false }) =>
   html`
     <${Link}
       href=${`/?${packageName}@${packageVersion}${meta.path}`}
       className=${styles.item}
     >
-      <span>${FileIcon} ${meta.path.split('/').pop()}</span>
+      <div>
+        ${FileIcon}
+        <span>${meta.path.split('/').pop()}</span>
+          ${
+            displayFullPath
+              ? html`
+                  <span
+                    >${meta.path.substring(0, meta.path.lastIndexOf('/'))}</span
+                  >
+                `
+              : null
+          }
+      </div>
       <small>${formatBytes(meta.size)}</small>
-    <//>
+    </${Link}>
   `;
 
 const Node = ({ meta, packageName, packageVersion }) => {
@@ -42,10 +54,10 @@ const Node = ({ meta, packageName, packageVersion }) => {
           `
         : html`
             <div className=${styles.item}>
-              <span>
+              <div>
                 ${FolderIcon}
                 <strong>${meta.path.split('/').pop()}</strong>
-              </span>
+              </div>
               <small>${meta.files.length} Files</small>
             </div>
           `}
@@ -112,6 +124,7 @@ export const PackageOverview = () => {
                   meta=${file}
                   packageName=${name}
                   packageVersion=${version}
+                  displayFullPath=${true}
                 />
               `
             )}
@@ -160,10 +173,10 @@ export const styles = {
       margin: 0 0.62rem 0 0.2rem;
     }
 
-    span {
+    div {
       display: flex;
       align-items: center;
-      word-break: break-word;
+      overflow: hidden;
     }
 
     small {
@@ -175,6 +188,19 @@ export const styles = {
     strong {
       font-size: 1rem;
       font-weight: bold;
+    }
+
+    span {
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      overflow: hidden;
+
+      &:nth-of-type(2) {
+        flex: 1;
+        margin-left: 0.2rem;
+        opacity: 0.5;
+        font-size: 0.9rem;
+      }
     }
   `,
 };
