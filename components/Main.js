@@ -103,7 +103,6 @@ export default () => {
 
 const styles = css`
   width: 100%;
-  min-height: 100vh;
   overflow: auto;
   background: #2f3138;
 

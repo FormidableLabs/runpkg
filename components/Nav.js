@@ -77,11 +77,10 @@ const styles = css`
 `;
 
 const compactStyles = css`
-  margin: 1rem;
-  border-radius: 0.5rem;
-  box-shadow: 3px 2px 4px 1px rgba(10, 10, 10, 0.05);
-
   @media screen and (min-width: 800px) {
+    margin: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 3px 2px 4px 1px rgba(10, 10, 10, 0.05);
     height: auto;
   }
 `;
