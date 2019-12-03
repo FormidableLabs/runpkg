@@ -36,7 +36,11 @@ function reducer(state, action) {
     case 'setDependencySearchTerm':
       return { ...state, dependencySearchTerm: action.payload };
     case 'setRequest':
-      return { ...state, request: action.payload };
+      return {
+        ...state,
+        request: action.payload,
+        mode: !action.payload.name ? 'registry' : state.mode,
+      };
     case 'setDirectory':
       return { ...state, directory: action.payload };
     case 'setFile':

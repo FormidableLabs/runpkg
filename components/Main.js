@@ -61,14 +61,15 @@ export default () => {
 
   // Fetch package meta data for all versions
   react.useEffect(() => {
-    if (request.name)
+    if (request.name) {
+      dispatch({ type: 'setMode', payload: 'package' });
       fetch(`https://registry.npmjs.cf/${request.name}/`)
         .then(res => res.json())
         .then(json => {
           dispatch({ type: 'setVersions', payload: json.versions });
-          dispatch({ type: 'setMode', payload: 'package' });
         })
         .catch(console.error);
+    }
   }, [request.name]);
 
   // Parse dependencies for the current code
