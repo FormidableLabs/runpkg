@@ -1,3 +1,4 @@
+/* global prettier, prettierPlugins, marked */
 import { html, css } from '../utils/rplus.js';
 
 import Editor from './Editor.js';
