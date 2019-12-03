@@ -80,6 +80,10 @@ export default () => {
 
   // Fetch packages by search term
   react.useEffect(() => {
+    if (!packagesSearchTerm) {
+      return dispatch({ type: 'setPackages', payload: [] });
+    }
+
     fetch(
       `https://api.npms.io/v2/search/suggestions?size=10&q=${packagesSearchTerm ||
         'lodash-es'}`
@@ -102,17 +106,19 @@ const styles = css`
   min-height: 100vh;
   overflow: auto;
   background: #2f3138;
+
   @media screen and (min-width: 800px) {
-    display: grid;
-    grid-template-columns: 1fr 25rem;
-    grid-template-areas: 'article nav';
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
     overflow: hidden;
     height: 100vh;
   }
+
   @media screen and (min-width: 1000px) {
-    display: grid;
-    grid-template-areas: 'article nav';
-    grid-template-columns: 1fr 30rem;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-start;
     overflow: hidden;
     height: 100vh;
   }

@@ -16,9 +16,18 @@ export const RegistryOverview = () => {
         onChange=${val =>
           dispatch({ type: 'setPackagesSearchTerm', payload: val })}
       />
-      <ul className=${styles.list} key=${packagesSearchTerm}>
-        ${packages.map(Package)}
-      </ul>
+      ${!packages.length &&
+        packagesSearchTerm &&
+        html`
+          <h2>No packages found</h2>
+        `}
+      ${packages.length
+        ? html`
+            <ul className=${styles.list} key=${packagesSearchTerm}>
+              ${packages.map(Package)}
+            </ul>
+          `
+        : null}
     </div>
   `;
 };

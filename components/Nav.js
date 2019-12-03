@@ -6,31 +6,45 @@ import { FileOverview } from './FileOverview.js';
 import { useStateValue } from '../utils/globalState.js';
 
 export default () => {
-  const [{ mode }, dispatch] = useStateValue();
-  const modeOptions = {
-    registry: mode === 'registry',
-    package: mode === 'package',
-    file: mode === 'file',
-  };
+  const [state, dispatch] = useStateValue();
+  const isCompact = !state.packagesSearchTerm && !state.request.name;
+
+  const modeOptions = !state.request.name
+    ? {
+        registry: true,
+      }
+    : {
+        registry: state.mode === 'registry',
+        package: state.mode === 'package',
+        file: state.mode === 'file',
+      };
+
+  let children = null;
+  switch (state.mode) {
+    case 'package':
+      children = html`
+        <${PackageOverview} />
+      `;
+      break;
+    case 'registry':
+      children = html`
+        <${RegistryOverview} />
+      `;
+      break;
+    case 'file':
+      children = html`
+        <${FileOverview} />
+      `;
+      break;
+  }
+
   return html`
-    <nav className=${styles}>
+    <nav className=${isCompact ? `${styles} ${compactStyles}` : styles}>
       <${RadioGroup}
         options=${modeOptions}
         onClick=${val => dispatch({ type: 'setMode', payload: val })}
       />
-      ${mode === 'package'
-        ? html`
-            <${PackageOverview} />
-          `
-        : mode === 'registry'
-        ? html`
-            <${RegistryOverview} />
-          `
-        : mode === 'file'
-        ? html`
-            <${FileOverview} />
-          `
-        : null}
+      ${children}
     </nav>
   `;
 };
@@ -42,6 +56,10 @@ const styles = css`
   color: #fff;
   padding: 2rem;
   overflow-x: hidden;
+  box-shadow: none;
+  transition-property: margin, border-radius, height, box-shadow;
+  transition-duration: 0.6s;
+
   > * + * {
     margin-top: 1.38rem;
   }
@@ -55,5 +73,15 @@ const styles = css`
     > * + * {
       margin-top: 1rem;
     }
+  }
+`;
+
+const compactStyles = css`
+  margin: 1rem;
+  border-radius: 0.5rem;
+  box-shadow: 3px 2px 4px 1px rgba(10, 10, 10, 0.05);
+
+  @media screen and (min-width: 800px) {
+    height: auto;
   }
 `;

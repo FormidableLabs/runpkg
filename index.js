@@ -11,12 +11,13 @@ if ('serviceWorker' in navigator) {
     .catch(err => console.log(err));
 }
 
+const request = parseUrl();
 const initialState = {
   packages: [],
-  packagesSearchTerm: '',
+  packagesSearchTerm: request.name || '',
   fileSearchTerm: '',
   dependencySearchTerm: '',
-  request: parseUrl(),
+  request,
   directory: {},
   versions: {},
   cache: {},

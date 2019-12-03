@@ -113,9 +113,9 @@ const styles = {
     }
   `,
   container: css`
-    grid-area: article;
     overflow: hidden;
     flex: 1 0 62%;
+    min-height: 100vh;
     display: flex;
     flex-direction: column;
 
@@ -128,6 +128,7 @@ const styles = {
     }
   `,
   welcome: css`
+    flex-grow: 1;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -136,7 +137,6 @@ const styles = {
     width: 100%;
     height: 100%;
     color: rgba(255, 255, 255, 0.62);
-    flex: none;
     svg:first-child {
       position: absolute;
       top: 2rem;
