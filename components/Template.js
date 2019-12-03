@@ -1,11 +1,15 @@
 import { html, css } from '../utils/rplus.js';
 import { useStateValue } from '../utils/globalState.js';
 
-export const RegistryOverview = (props = {}) => {
+export const TemplateComponent = (props = {}) => {
   const [state, dispatch] = useStateValue();
-  console.log(state, dispatch);
   return html`
-    <div className=${styles.container}>${props.children}</div>
+    <div
+      className=${styles.container}
+      onClick=${() => dispatch({ type: 'action', payload: state + 1 })}
+    >
+      ${props.children}
+    </div>
   `;
 };
 
