@@ -46,7 +46,10 @@ export default () => {
           `
         : html`
             <div className=${styles.welcome}>
-              ${FormidableLogo} ${RunpkgIcon}
+              <a href="https://formidable.com">
+                ${FormidableLogo}
+              </a>
+              ${RunpkgIcon}
               <p>Search for and select a package to explore its contents</p>
             </div>
           `}
@@ -137,18 +140,20 @@ const styles = {
     height: 100%;
     color: rgba(255, 255, 255, 0.62);
     flex: none;
-    svg:first-child {
+    a {
       position: absolute;
-      top: 2rem;
-      left: 2rem;
-      width: 10%;
+      top: 2vw;
+      left: 2vw;
       fill: rgba(255, 255, 255, 0.1);
+      svg {
+        width: calc(5rem + 5vw);
+      }
     }
     svg {
-      width: calc(10rem + 10vw);
+      width: calc(10rem + 5vw);
     }
     p {
-      font-size: 1.38rem;
+      font-size: calc(1rem + 0.5vw);
       width: 30ex;
       text-align: center;
       line-height: 138%;
