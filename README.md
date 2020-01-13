@@ -29,23 +29,7 @@ You will be redirected to runpkg which will display the relevant package and fil
 
 ## Development
 
-If you would like to develop the project, first clone this repo and then install the relevant dependencies:
-
-```bash
-yarn
-# or
-npm i
-```
-
-After this you can run the `start` script, which will open the app in your preferred browser:
-
-```bash
-yarn start
-# or
-npm run start
-```
-
-> Live reload is enabled by default with [servor](https://github.com/lukejacksonn/servor) so when you make changes to your code the browser will reload the tab with any changes reflected immediately.
+See [CONTRIBUTING.md](./CONTRIBUTING.md) for instructions on how to run this project locally, contribute, and to see our code of conduct.
 
 ## Local URLs
 
