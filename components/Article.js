@@ -46,11 +46,16 @@ export default () => {
           `
         : html`
             <div className=${styles.welcome}>
-              <a href="https://formidable.com">
+              <a className=${styles.formidaLogo} href="https://formidable.com">
                 ${FormidableLogo}
               </a>
               ${RunpkgIcon}
               <p>Search for and select a package to explore its contents</p>
+              <a className=${styles.netlifyLogo} href="https://www.netlify.com">
+                <img
+                  src="https://www.netlify.com/img/global/badges/netlify-dark.svg"
+                />
+              </a>
             </div>
           `}
       ${fileData.extension === 'md'
@@ -140,15 +145,6 @@ const styles = {
     height: 100%;
     color: rgba(255, 255, 255, 0.62);
     flex: none;
-    a {
-      position: absolute;
-      top: 2vw;
-      left: 2vw;
-      fill: rgba(255, 255, 255, 0.1);
-      svg {
-        width: calc(5rem + 5vw);
-      }
-    }
     svg {
       width: calc(10rem + 5vw);
     }
@@ -158,6 +154,18 @@ const styles = {
       text-align: center;
       line-height: 138%;
     }
+  `,
+  formidaLogo: css`
+    position: absolute;
+    top: 2vw;
+    left: 2vw;
+    fill: rgba(255, 255, 255, 0.1);
+    svg {
+      width: calc(5rem + 5vw);
+    }
+  `,
+  netlifyLogo: css`
+    margin-top: 2rem;
   `,
   markdown: css`
     color: #fff;
