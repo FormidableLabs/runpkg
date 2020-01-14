@@ -165,7 +165,7 @@ const styles = {
     }
   `,
   netlifyLogo: css`
-    margin-top: 1rem;
+    margin-top: 2rem;
   `,
   markdown: css`
     color: #fff;
