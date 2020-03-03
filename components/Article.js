@@ -1,5 +1,5 @@
 /* global prettier, prettierPlugins, marked */
-import { html, css } from '../utils/rplus.js';
+import { html, css, react } from '../utils/rplus.js';
 
 import Editor from './Editor.js';
 import FileIcon from './FileIcon.js';
@@ -9,7 +9,9 @@ import RunpkgIcon from './RunpkgIcon.js';
 import { useStateValue } from '../utils/globalState.js';
 
 export default () => {
+  const { useState } = react;
   const [{ request, cache }, dispatch] = useStateValue();
+  const [isPrettierFormatting, setIsPrettierFormatting] = useState(false);
   const fileData = cache['https://unpkg.com/' + request.path] || {};
   return html`
     <article className=${styles.container}>
@@ -24,6 +26,16 @@ export default () => {
               </h1>
               <button
                 onClick=${() => {
+                  setIsPrettierFormatting(true);
+
+                  // This array work is just to make the time after the formatting state update more apparent
+                  // ...especially when used with CPU throttling
+                  console.log(
+                    Array(10000)
+                      .fill(55)
+                      .map(x => x * Math.random())
+                  );
+
                   const code = prettier.format(fileData.code, {
                     parser: 'babylon',
                     plugins: prettierPlugins,
@@ -37,10 +49,16 @@ export default () => {
                       },
                     },
                   });
+
+                  setIsPrettierFormatting(false);
                 }}
               >
                 ${PrettierIcon}
-                <span>Format Code</span>
+                <span
+                  >${isPrettierFormatting
+                    ? 'Formatting...'
+                    : 'Format Code'}</span
+                >
               </button>
             </header>
           `
