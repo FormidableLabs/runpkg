@@ -21,6 +21,7 @@ const initialState = {
   versions: {},
   cache: {},
   mode: 'registry',
+  prettierFormattingInProgress: false,
 };
 
 function reducer(state, action) {
@@ -52,6 +53,16 @@ function reducer(state, action) {
         ...state,
         cache: { ...state.cache, ...action.payload },
       };
+    case 'startPrettierLoading':
+      return { ...state, prettierFormattingInProgress: true };
+    case 'setPrettierCache':
+      return {
+        ...state,
+        prettierFormattingInProgress: false,
+        cache: { ...state.cache, ...action.payload },
+      };
+    case 'stopPrettierLoading':
+      return { ...state, prettierFormattingInProgress: false };
     default:
       return { ...state };
   }

@@ -9,7 +9,10 @@ import RunpkgIcon from './RunpkgIcon.js';
 import { useStateValue } from '../utils/globalState.js';
 
 export default () => {
-  const [{ request, cache }, dispatch] = useStateValue();
+  const [
+    { request, cache, prettierFormattingInProgress },
+    dispatch,
+  ] = useStateValue();
   const fileData = cache['https://unpkg.com/' + request.path] || {};
   return html`
     <article className=${styles.container}>
@@ -24,12 +27,21 @@ export default () => {
               </h1>
               <button
                 onClick=${() => {
+                  dispatch({ type: 'startPrettierLoading' });
+
                   const code = prettier.format(fileData.code, {
                     parser: 'babylon',
                     plugins: prettierPlugins,
                   });
+
+                  console.log(
+                    Array(10000)
+                      .fill(Math.random())
+                      .map(x => x * Math.random())
+                  );
+
                   dispatch({
-                    type: 'setCache',
+                    type: 'setPrettierCache',
                     payload: {
                       ['https://unpkg.com/' + request.path]: {
                         ...fileData,
@@ -40,7 +52,11 @@ export default () => {
                 }}
               >
                 ${PrettierIcon}
-                <span>Format Code</span>
+                <span
+                  >${prettierFormattingInProgress
+                    ? 'Loading...'
+                    : 'Format Code'}</span
+                >
               </button>
             </header>
           `
