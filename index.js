@@ -61,8 +61,6 @@ function reducer(state, action) {
         prettierFormattingInProgress: false,
         cache: { ...state.cache, ...action.payload },
       };
-    case 'stopPrettierLoading':
-      return { ...state, prettierFormattingInProgress: false };
     default:
       return { ...state };
   }
