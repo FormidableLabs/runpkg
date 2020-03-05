@@ -1,5 +1,12 @@
 /* global prettier, prettierPlugins, marked */
-import { html, css } from '../utils/rplus.js';
+import { html, css, react } from '../utils/rplus.js';
+import {
+  prettierButtonMessages,
+  initialPrettierState,
+  duringPrettierState,
+  afterPrettierState,
+  errorPrettierState,
+} from '../utils/prettier.js';
 
 import Editor from './Editor.js';
 import FileIcon from './FileIcon.js';
@@ -10,7 +17,41 @@ import { useStateValue } from '../utils/globalState.js';
 
 export default () => {
   const [{ request, cache }, dispatch] = useStateValue();
+
+  const [prettierButtonState, setPrettierButtonState] = react.useState(
+    initialPrettierState
+  );
+
   const fileData = cache['https://unpkg.com/' + request.path] || {};
+
+  react.useEffect(() => {
+    setPrettierButtonState(initialPrettierState);
+  }, [request]);
+
+  react.useEffect(() => {
+    if (prettierButtonState.message === prettierButtonMessages.during) {
+      try {
+        const code = prettier.format(fileData.code, {
+          parser: 'babylon',
+          plugins: prettierPlugins,
+        });
+        dispatch({
+          type: 'setCache',
+          payload: {
+            ['https://unpkg.com/' + request.path]: {
+              ...fileData,
+              code,
+            },
+          },
+        });
+        setPrettierButtonState(afterPrettierState);
+      } catch (e) {
+        console.error(e);
+        setPrettierButtonState(errorPrettierState);
+      }
+    }
+  }, [prettierButtonState.message]);
+
   return html`
     <article className=${styles.container}>
       ${request.path
@@ -23,24 +64,13 @@ export default () => {
                 </span>
               </h1>
               <button
+                disabled=${prettierButtonState.disabled}
                 onClick=${() => {
-                  const code = prettier.format(fileData.code, {
-                    parser: 'babylon',
-                    plugins: prettierPlugins,
-                  });
-                  dispatch({
-                    type: 'setCache',
-                    payload: {
-                      ['https://unpkg.com/' + request.path]: {
-                        ...fileData,
-                        code,
-                      },
-                    },
-                  });
+                  setPrettierButtonState(duringPrettierState);
                 }}
               >
                 ${PrettierIcon}
-                <span>Format Code</span>
+                <span>${prettierButtonState.message}</span>
               </button>
             </header>
           `
