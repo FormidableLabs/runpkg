@@ -1,4 +1,4 @@
-import { react, html, css } from '../utils/rplus.js';
+import { react, html, css, npm } from '../utils/rplus.js';
 import { useStateValue } from '../utils/globalState.js';
 import { parseUrl } from '../utils/parseUrl.js';
 
@@ -80,12 +80,15 @@ export default () => {
 
   // Fetch packages by search term
   react.useEffect(() => {
-    fetch(
-      `https://api.npms.io/v2/search/suggestions?size=10&q=${packagesSearchTerm ||
-        'lodash-es'}`
-    )
-      .then(res => res.json())
-      .then(res => res.map(x => x.package))
+    npm
+      .search([
+        {
+          indexName: 'npm-search',
+          attributesToRetrieve: ['name', 'version', 'description'],
+          params: { query: packagesSearchTerm || '*' },
+        },
+      ])
+      .then(res => res.results[0].hits)
       .then(res => dispatch({ type: 'setPackages', payload: res }));
   }, [packagesSearchTerm]);
 
