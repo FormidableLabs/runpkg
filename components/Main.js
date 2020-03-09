@@ -85,7 +85,7 @@ export default () => {
         {
           indexName: 'npm-search',
           attributesToRetrieve: ['name', 'version', 'description'],
-          params: { query: packagesSearchTerm || 'lodash-es' },
+          params: { query: packagesSearchTerm || '*' },
         },
       ])
       .then(res => res.results[0].hits)
