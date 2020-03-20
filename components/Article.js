@@ -146,6 +146,7 @@ const styles = {
     color: rgba(255, 255, 255, 0.62);
     flex: none;
     svg {
+      margin-bottom: 2rem;
       width: calc(10rem + 5vw);
       .abbr {
         font-size: 230px;
