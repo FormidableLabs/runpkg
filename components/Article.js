@@ -146,7 +146,16 @@ const styles = {
     color: rgba(255, 255, 255, 0.62);
     flex: none;
     svg {
+      margin-bottom: 2rem;
       width: calc(10rem + 5vw);
+      .abbr {
+        font-size: 230px;
+        font-family: 'Helvetica';
+      }
+      .desc {
+        font-size: 44px;
+        font-family: 'Helvetica-Bold';
+      }
     }
     p {
       font-size: calc(1rem + 0.5vw);
