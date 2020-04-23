@@ -1,5 +1,11 @@
-/* global prettier, prettierPlugins, marked */
-import { html, css } from '../utils/rplus.js';
+/* global marked */
+import { html, css, react } from '../utils/rplus.js';
+import {
+  prettierButtonMessages,
+  duringPrettierState,
+  loadPrettierParserScriptForExtension,
+  pickInitialPrettierState,
+} from '../utils/prettier.js';
 
 import Editor from './Editor.js';
 import FileIcon from './FileIcon.js';
@@ -10,7 +16,32 @@ import { useStateValue } from '../utils/globalState.js';
 
 export default () => {
   const [{ request, cache }, dispatch] = useStateValue();
+
+  const initialPrettierState = pickInitialPrettierState(request.file);
+
+  const [prettierButtonState, setPrettierButtonState] = react.useState(
+    initialPrettierState
+  );
+
   const fileData = cache['https://unpkg.com/' + request.path] || {};
+
+  react.useEffect(() => {
+    // Reset button when viewing a new file
+    setPrettierButtonState(initialPrettierState);
+  }, [request]);
+
+  react.useEffect(() => {
+    // Format code with prettier after button press and loading state displayed
+    if (prettierButtonState.message === prettierButtonMessages.during) {
+      loadPrettierParserScriptForExtension({
+        fileData,
+        setPrettierButtonState,
+        dispatch,
+        request,
+      });
+    }
+  }, [prettierButtonState.message]);
+
   return html`
     <article className=${styles.container}>
       ${request.path
@@ -22,26 +53,19 @@ export default () => {
                   ${request.path}
                 </span>
               </h1>
-              <button
-                onClick=${() => {
-                  const code = prettier.format(fileData.code, {
-                    parser: 'babylon',
-                    plugins: prettierPlugins,
-                  });
-                  dispatch({
-                    type: 'setCache',
-                    payload: {
-                      ['https://unpkg.com/' + request.path]: {
-                        ...fileData,
-                        code,
-                      },
-                    },
-                  });
-                }}
-              >
-                ${PrettierIcon}
-                <span>Format Code</span>
-              </button>
+              ${prettierButtonState.hidden
+                ? null
+                : html`
+                    <button
+                      disabled=${prettierButtonState.disabled}
+                      onClick=${() => {
+                        setPrettierButtonState(duringPrettierState);
+                      }}
+                    >
+                      ${prettierButtonState.icon || PrettierIcon}
+                      <span>${prettierButtonState.message}</span>
+                    </button>
+                  `}
             </header>
           `
         : html`
