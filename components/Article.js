@@ -6,6 +6,7 @@ import FileIcon from './FileIcon.js';
 import PrettierIcon from './PrettierIcon.js';
 import FormidableLogo from './FormidableLogo.js';
 import RunpkgIcon from './RunpkgIcon.js';
+import NotFoundIcon from './NotFoundIcon.js';
 import { useStateValue } from '../utils/globalState.js';
 
 export default () => {
@@ -18,7 +19,7 @@ export default () => {
             <a className=${styles.formidaLogo} href="https://formidable.com">
               ${FormidableLogo}
             </a>
-            ${RunpkgIcon}
+            ${NotFoundIcon}
             <p>
               Please make sure you typed your package name correctly in the url,
               or use our Registry search first.
