@@ -41,11 +41,15 @@ export default () => {
   react.useEffect(() => {
     if (request.name && (!request.version || !request.file))
       fetch(`https://unpkg.com/${request.path}`)
-        .then(({ url }) => {
+        .then(response => {
+          const { ok, url } = response;
           dispatch({ type: 'setRequest', payload: parseUrl(url) });
           replaceState(
             `/?${url.replace('https://unpkg.com/', '')}${location.hash}`
           );
+          if (!ok && !request.version) {
+            dispatch({ type: 'setNoURLPackageFound', payload: true });
+          }
         })
         .catch(console.error);
   }, [request.path]);

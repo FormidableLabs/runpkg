@@ -6,73 +6,100 @@ import FileIcon from './FileIcon.js';
 import PrettierIcon from './PrettierIcon.js';
 import FormidableLogo from './FormidableLogo.js';
 import RunpkgIcon from './RunpkgIcon.js';
+import NotFoundIcon from './NotFoundIcon.js';
 import { useStateValue } from '../utils/globalState.js';
 
 export default () => {
-  const [{ request, cache }, dispatch] = useStateValue();
+  const [{ noUrlPackageFound, request, cache }, dispatch] = useStateValue();
   const fileData = cache['https://unpkg.com/' + request.path] || {};
-  return html`
-    <article className=${styles.container}>
-      ${request.path
-        ? html`
-            <header className=${styles.header}>
-              <h1 data-testid="package-title">
-                ${FileIcon}
-                <span>
-                  ${request.path}
-                </span>
-              </h1>
-              <button
-                onClick=${() => {
-                  const code = prettier.format(fileData.code, {
-                    parser: 'babylon',
-                    plugins: prettierPlugins,
-                  });
-                  dispatch({
-                    type: 'setCache',
-                    payload: {
-                      ['https://unpkg.com/' + request.path]: {
-                        ...fileData,
-                        code,
-                      },
-                    },
-                  });
-                }}
-              >
-                ${PrettierIcon}
-                <span>Format Code</span>
-              </button>
-            </header>
-          `
-        : html`
-            <div className=${styles.welcome}>
-              <a className=${styles.formidaLogo} href="https://formidable.com">
-                ${FormidableLogo}
-              </a>
-              ${RunpkgIcon}
-              <p>Search for and select a package to explore its contents</p>
-              <a className=${styles.netlifyLogo} href="https://www.netlify.com">
-                <img
-                  src="https://www.netlify.com/img/global/badges/netlify-dark.svg"
-                />
-              </a>
-            </div>
-          `}
-      ${fileData.extension === 'md'
-        ? html`
-            <div className=${styles.markdown}>
-              <div
-                dangerouslySetInnerHTML=${{
-                  __html: marked(fileData.code),
-                }}
-              ></div>
-            </div>
-          `
-        : html`
-            <${Editor} key="editor" />
-          `}
-    </article>
-  `;
+  return noUrlPackageFound
+    ? html`
+        <article className=${styles.container}>
+          <div className=${styles.welcome}>
+            <a className=${styles.formidaLogo} href="https://formidable.com">
+              ${FormidableLogo}
+            </a>
+            ${NotFoundIcon}
+            <p>
+              Please make sure you typed your package name correctly in the url,
+              or use our Registry search first.
+            </p>
+            <a className=${styles.netlifyLogo} href="https://www.netlify.com">
+              <img
+                src="https://www.netlify.com/img/global/badges/netlify-dark.svg"
+              />
+            </a>
+          </div>
+        </article>
+      `
+    : html`
+        <article className=${styles.container}>
+          ${request.path
+            ? html`
+                <header className=${styles.header}>
+                  <h1 data-testid="package-title">
+                    ${FileIcon}
+                    <span>
+                      ${request.path}
+                    </span>
+                  </h1>
+                  <button
+                    onClick=${() => {
+                      const code = prettier.format(fileData.code, {
+                        parser: 'babylon',
+                        plugins: prettierPlugins,
+                      });
+                      dispatch({
+                        type: 'setCache',
+                        payload: {
+                          ['https://unpkg.com/' + request.path]: {
+                            ...fileData,
+                            code,
+                          },
+                        },
+                      });
+                    }}
+                  >
+                    ${PrettierIcon}
+                    <span>Format Code</span>
+                  </button>
+                </header>
+              `
+            : html`
+                <div className=${styles.welcome}>
+                  <a
+                    className=${styles.formidaLogo}
+                    href="https://formidable.com"
+                  >
+                    ${FormidableLogo}
+                  </a>
+                  ${RunpkgIcon}
+                  <p>Search for and select a package to explore its contents</p>
+                  <a
+                    className=${styles.netlifyLogo}
+                    href="https://www.netlify.com"
+                  >
+                    <img
+                      src="https://www.netlify.com/img/global/badges/netlify-dark.svg"
+                    />
+                  </a>
+                </div>
+              `}
+          ${fileData.extension === 'md'
+            ? html`
+                <div className=${styles.markdown}>
+                  <div
+                    dangerouslySetInnerHTML=${{
+                      __html: marked(fileData.code),
+                    }}
+                  ></div>
+                </div>
+              `
+            : html`
+                <${Editor} key="editor" />
+              `}
+        </article>
+      `;
 };
 
 const styles = {

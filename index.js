@@ -15,6 +15,7 @@ const initialState = {
   packages: [],
   packagesSearchTerm: '',
   fileSearchTerm: '',
+  noUrlPackageFound: '',
   dependencySearchTerm: '',
   request: parseUrl(),
   directory: {},
@@ -38,9 +39,12 @@ function reducer(state, action) {
     case 'setRequest':
       return {
         ...state,
+        noUrlPackageFound: '',
         request: action.payload,
         mode: !action.payload.name ? 'registry' : state.mode,
       };
+    case 'setNoURLPackageFound':
+      return { ...state, noUrlPackageFound: action.payload };
     case 'setDirectory':
       return { ...state, directory: action.payload };
     case 'setFile':

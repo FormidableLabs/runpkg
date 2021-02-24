@@ -6,11 +6,11 @@ import { FileOverview } from './FileOverview.js';
 import { useStateValue } from '../utils/globalState.js';
 
 export default () => {
-  const [{ mode }, dispatch] = useStateValue();
+  const [{ mode, noUrlPackageFound }, dispatch] = useStateValue();
   const modeOptions = {
-    registry: mode === 'registry',
-    package: mode === 'package',
-    file: mode === 'file',
+    registry: mode === 'registry' || noUrlPackageFound,
+    package: mode === 'package' && !noUrlPackageFound,
+    file: mode === 'file' && !noUrlPackageFound,
   };
   return html`
     <nav className=${styles}>
@@ -18,11 +18,11 @@ export default () => {
         options=${modeOptions}
         onClick=${val => dispatch({ type: 'setMode', payload: val })}
       />
-      ${mode === 'package'
+      ${mode === 'package' && !noUrlPackageFound
         ? html`
             <${PackageOverview} />
           `
-        : mode === 'registry'
+        : mode === 'registry' || noUrlPackageFound
         ? html`
             <${RegistryOverview} />
           `

@@ -81,7 +81,8 @@ export const PackageOverview = () => {
     { versions, request, directory, fileSearchTerm },
     dispatch,
   ] = useStateValue();
-  if (!versions[request.version] || !directory.files) return null;
+  if (!versions || !directory || !versions[request.version] || !directory.files)
+    return null;
   const { name, version, description } = versions[request.version];
   const handleVersionChange = v => pushState(`?${name}@${v}`);
   const VersionOption = x =>
