@@ -1,12 +1,7 @@
 import { html } from '../utils/rplus.js';
 
 export default html`
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    width="24"
-    height="24"
-    viewBox="0 0 24 24"
-  >
+  <svg width="24" height="24" viewBox="0 0 24 24">
     <title>Search for packages</title>
     <path fill="none" d="M0 0h24v24H0V0z" />
     <path

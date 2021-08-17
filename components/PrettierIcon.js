@@ -1,7 +1,7 @@
 import { html } from '../utils/rplus.js';
 
 export default html`
-  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 210 210">
+  <svg viewBox="0 0 210 210">
     <g fill="none" fill-rule="evenodd">
       <rect fill="#56B3B4" x="165" y="40" width="20" height="10" rx="5" />
       <rect fill="#EA5E5E" x="15" y="200" width="60" height="10" rx="5" />
