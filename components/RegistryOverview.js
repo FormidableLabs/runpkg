@@ -3,6 +3,7 @@ import { html, css } from '../utils/rplus.js';
 import { SearchInput } from './SearchInput.js';
 import PackageIcon from './PackageIcon.js';
 import { useStateValue } from '../utils/globalState.js';
+import AlgoliaLogo from './AlgoliaLogo.js';
 
 const pushState = url => history.pushState(null, null, url);
 
@@ -16,7 +17,8 @@ export const RegistryOverview = () => {
         onChange=${val =>
           dispatch({ type: 'setPackagesSearchTerm', payload: val })}
       />
-      <ul className=${styles.list} key=${packagesSearchTerm}>
+      ${AlgoliaLogo}
+      <ul className=${styles.container} key=${packagesSearchTerm}>
         ${packages.map(Package)}
       </ul>
     </div>
@@ -45,11 +47,6 @@ export const Package = ({ name, version, description }) => html`
 
 const styles = {
   container: css`
-    > * + * {
-      margin-top: 1.38rem;
-    }
-  `,
-  list: css`
     > * + * {
       margin-top: 1rem;
     }
