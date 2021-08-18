@@ -87,9 +87,10 @@ export default () => {
     npm
       .search([
         {
+          analyticsTags: ['runpkg'],
           indexName: 'npm-search',
           attributesToRetrieve: ['name', 'version', 'description'],
-          params: { query: packagesSearchTerm || '*' },
+          params: { query: packagesSearchTerm },
         },
       ])
       .then(res => res.results[0].hits)
