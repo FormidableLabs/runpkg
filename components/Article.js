@@ -181,7 +181,8 @@ const styles = {
       }
       .desc {
         font-size: 44px;
-        font-family: 'Helvetica-Bold';
+        font-family: 'Helvetica-Bold', 'Helvetica', sans-serif;
+        font-weight: bold;
       }
     }
     p {
