@@ -90,7 +90,7 @@ export default () => {
                 <div className=${styles.markdown}>
                   <div
                     dangerouslySetInnerHTML=${{
-                      __html: marked(fileData.code),
+                      __html: marked.parse(fileData.code),
                     }}
                   ></div>
                 </div>
