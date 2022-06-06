@@ -108,8 +108,7 @@ export default () => {
                 <span
                   className=${styles.lineNo}
                   onClick=${handleLineNumberClick.bind(null, i + 1)}
-                  >${i + 1}</span
-                >
+                ></span>
                 ${line.map(token => {
                   const dep =
                     fileData.dependencies[removeQuotes(token.content)];
@@ -166,9 +165,13 @@ const styles = {
     margin-right: 2rem;
     opacity: 0.6;
     cursor: pointer;
-    user-select: none;
+    ::before {
+      counter-increment: linenumber;
+      content: counter(linenumber);
+    }
   `,
   code: css`
     line-height: 150%;
+    counter-reset: linenumber 0;
   `,
 };
