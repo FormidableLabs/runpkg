@@ -108,6 +108,7 @@ export default () => {
                 <span
                   className=${styles.lineNo}
                   onClick=${handleLineNumberClick.bind(null, i + 1)}
+                  data-linenumber=${i + 1}
                 ></span>
                 ${line.map(token => {
                   const dep =
@@ -166,12 +167,10 @@ const styles = {
     opacity: 0.6;
     cursor: pointer;
     ::before {
-      counter-increment: linenumber;
-      content: counter(linenumber);
+      content: attr(data-linenumber);
     }
   `,
   code: css`
     line-height: 150%;
-    counter-reset: linenumber 0;
   `,
 };
