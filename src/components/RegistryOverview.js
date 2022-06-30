@@ -21,7 +21,12 @@ export const RegistryOverview = () => {
       <ul className=${styles.container} key=${packagesSearchTerm}>
         ${packages.map(props => {
           return html`
-            <${Package} key=${props.name} {...${props}} />
+            <${Package}
+              key=${props.name}
+              name=${props.name}
+              version=${props.version}
+              description=${props.description}
+            />
           `;
         })}
       </ul>
