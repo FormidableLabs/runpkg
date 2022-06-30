@@ -1,10 +1,11 @@
 import { html, css } from '../utils/rplus.js';
 import SearchIcon from './SearchIcon.js';
 
+// prettier-ignore
 export const SearchInput = ({ placeholder, value, onChange }) => html`
   <div className=${styles}>
     <input
-      autofocus
+      autoFocus
       value=${value}
       onChange=${e => onChange(e.target.value)}
       placeholder=${placeholder}
