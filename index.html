@@ -14,19 +14,7 @@
       }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/marked@4.0/marked.min.js"></script>
-    <script src="src/utils/es-module-shim.js" defer></script>
-    <script>
-      const im = document.createElement('script');
-      im.type = 'importmap-shim';
-      im.textContent = JSON.stringify({
-        imports: {
-          algolia:
-            'https://www.unpkg.com/algoliasearch@4.1.0/dist/algoliasearch-lite.esm.browser.js',
-        },
-      });
-      document.currentScript.after(im);
-    </script>
-    <script src="/src/index.js" type="module-shim"></script>
+    <script src="/src/index.js" type="module"></script>
     <script
       src="https://unpkg.com/prettier@1.13.0/standalone.js"
       async

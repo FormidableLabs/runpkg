@@ -1,3 +1,5 @@
+import { registerSW } from 'virtual:pwa-register';
+
 import { html } from './utils/rplus.js';
 import { StateProvider } from './utils/globalState.js';
 import { parseUrl } from './utils/parseUrl.js';
@@ -6,11 +8,15 @@ import Main from './components/Main.js';
 import { createRoot } from 'react-dom/client';
 
 if ('serviceWorker' in navigator) {
-  navigator.serviceWorker
-    .register('./sw.js')
-    .then(() => console.log('[runpkg] service worker registered'))
-    .catch(err => console.log(err));
+  // && !/localhost/.test(window.location)) {
+  registerSW();
 }
+// if ('serviceWorker' in navigator) {
+//   navigator.serviceWorker
+//     .register('./sw.js')
+//     .then(() => console.log('[runpkg] service worker registered'))
+//     .catch(err => console.log(err));
+// }
 
 const initialState = {
   packages: [],
