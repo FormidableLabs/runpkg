@@ -14,29 +14,19 @@
       }
     </script>
     <script src="https://cdn.jsdelivr.net/npm/marked@4.0/marked.min.js"></script>
-    <script src="./utils/es-module-shim.js" defer></script>
+    <script src="src/utils/es-module-shim.js" defer></script>
     <script>
       const im = document.createElement('script');
       im.type = 'importmap-shim';
       im.textContent = JSON.stringify({
         imports: {
-          'https://unpkg.com/react@>=0.14.9?module':
-            'https://unpkg.com/es-react@16.11.0/react.js',
-          'https://unpkg.com/react@16.11.0?module':
-            'https://unpkg.com/es-react@16.11.0/react.js',
-          react: 'https://unpkg.com/es-react@16.11.0/react.js',
-          'react-dom': 'https://unpkg.com/es-react@16.11.0/react-dom.js',
-          htm: 'https://unpkg.com/htm@2.2.1/dist/htm.module.js',
-          csz: 'https://unpkg.com/csz@1.1.1/index.js',
-          'prism-react-renderer':
-            'https://unpkg.com/prism-react-renderer?module',
           algolia:
             'https://www.unpkg.com/algoliasearch@4.1.0/dist/algoliasearch-lite.esm.browser.js',
         },
       });
       document.currentScript.after(im);
     </script>
-    <script src="/index.js" type="module-shim"></script>
+    <script src="/src/index.js" type="module-shim"></script>
     <script
       src="https://unpkg.com/prettier@1.13.0/standalone.js"
       async

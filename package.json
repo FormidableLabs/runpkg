@@ -2,9 +2,10 @@
   "name": "runpkg",
   "version": "1.0.0",
   "description": "The online javascript package explorer",
-  "main": "index.js",
+  "main": "src/index.js",
   "scripts": {
-    "start": "servor --reload --browse",
+    "start": "vite",
+    "build": "tsc && vite build",
     "prettier": "prettier --config .prettierrc --write \"./**/*.{css,html,json,md,yml}\"",
     "lint": "eslint \"./**/*.js\""
   },
@@ -23,12 +24,16 @@
   },
   "homepage": "https://runpkg.com",
   "devDependencies": {
+    "@types/react": "^18.0.14",
+    "@types/react-dom": "^18.0.5",
     "eslint": "^5.16.0",
     "eslint-config-prettier": "^2.9.0",
     "husky": "^2.3.0",
     "lint-staged": "^8.1.6",
     "prettier": "^1.17.0",
-    "servor": "^3.0.0"
+    "servor": "^3.0.0",
+    "typescript": "^4.7.4",
+    "vite": "^2.9.13"
   },
   "husky": {
     "hooks": {
@@ -72,5 +77,13 @@
       "no-useless-escape": "off",
       "no-console": "off"
     }
+  },
+  "dependencies": {
+    "algoliasearch": "4.1.0",
+    "csz": "1.1.1",
+    "htm": "2.2.1",
+    "prism-react-renderer": "^1.3.5",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   }
 }
