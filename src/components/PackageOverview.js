@@ -42,6 +42,15 @@ const File = ({ packageName, packageVersion, meta, displayFullPath = false }) =>
 
 const Node = ({ meta, packageName, packageVersion }) => {
   const directory = meta.type === 'directory';
+
+  const directoryFileSize = react.useMemo(() => {
+    if (directory) {
+      const files = flatten(meta.files);
+      const totalSize = files.reduce((acc, cur) => acc + cur.size, 0);
+      return formatBytes(totalSize);
+    }
+  }, [directory, meta]);
+
   return html`
     <${TreeItem}
       label=${!directory
@@ -58,7 +67,7 @@ const Node = ({ meta, packageName, packageVersion }) => {
                 ${FolderIcon}
                 <strong>${meta.path.split('/').pop()}</strong>
               </div>
-              <small>${meta.files.length} Files</small>
+              <small>${directoryFileSize} (${meta.files.length} Files)</small>
             </div>
           `}
     >
