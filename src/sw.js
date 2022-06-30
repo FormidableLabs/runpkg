@@ -1,3 +1,7 @@
+import { precacheAndRoute } from 'workbox-precaching';
+
+precacheAndRoute(self.__WB_MANIFEST);
+
 /* eslint-disable max-nested-callbacks */
 const cacheName = 'www.runpkg.com';
 

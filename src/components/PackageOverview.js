@@ -1,7 +1,7 @@
 import { react, html, css } from '../utils/rplus.js';
-import { SearchInput } from './SearchInput.js';
-import FolderIcon from './FolderIcon.js';
-import FileIcon from './FileIcon.js';
+import { SearchInput } from './SearchInput.tsx';
+import { FolderIcon } from './FolderIcon.tsx';
+import { FileIcon } from './FileIcon.tsx';
 import Link from './Link.js';
 import { useStateValue } from '../utils/globalState.js';
 import { Package } from './RegistryOverview.js';
@@ -24,7 +24,7 @@ const File = ({ packageName, packageVersion, meta, displayFullPath = false }) =>
       className=${styles.item}
     >
       <div>
-        ${FileIcon}
+        <${FileIcon} />
         <span>${meta.path.split('/').pop()}</span>
           ${
             displayFullPath
@@ -64,7 +64,7 @@ const Node = ({ meta, packageName, packageVersion }) => {
         : html`
             <div className=${styles.item}>
               <div>
-                ${FolderIcon}
+                <${FolderIcon} />
                 <strong>${meta.path.split('/').pop()}</strong>
               </div>
               <small>${directoryFileSize} (${meta.files.length} Files)</small>

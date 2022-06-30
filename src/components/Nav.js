@@ -1,5 +1,5 @@
 import { html, css } from '../utils/rplus.js';
-import { RadioGroup } from './RadioGroup.js';
+import { RadioGroup } from './RadioGroup.tsx';
 import { PackageOverview } from './PackageOverview.js';
 import { RegistryOverview } from './RegistryOverview.js';
 import { FileOverview } from './FileOverview.js';

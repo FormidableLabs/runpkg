@@ -1,12 +1,13 @@
-/* global prettier, prettierPlugins, marked */
+/* global prettier, prettierPlugins */
+import { marked } from 'marked';
 import { html, css } from '../utils/rplus.js';
 
 import Editor from './Editor.js';
-import FileIcon from './FileIcon.js';
-import PrettierIcon from './PrettierIcon.js';
-import FormidableLogo from './FormidableLogo.js';
-import RunpkgIcon from './RunpkgIcon.js';
-import NotFoundIcon from './NotFoundIcon.js';
+import { FileIcon } from './FileIcon.tsx';
+import { PrettierIcon } from './PrettierIcon.tsx';
+import { FormidableLogo } from './FormidableLogo.tsx';
+import { RunpkgIcon } from './RunpkgIcon.tsx';
+import { NotFoundIcon } from './NotFoundIcon.tsx';
 import { useStateValue } from '../utils/globalState.js';
 
 export default () => {
@@ -17,9 +18,9 @@ export default () => {
         <article className=${styles.container}>
           <div className=${styles.welcome}>
             <a className=${styles.formidaLogo} href="https://formidable.com">
-              ${FormidableLogo}
+              <${FormidableLogo} />
             </a>
-            ${NotFoundIcon}
+            <${NotFoundIcon} />
             <p>
               Please make sure you typed your package name correctly in the url,
               or use our Registry search first.
@@ -38,7 +39,7 @@ export default () => {
             ? html`
                 <header className=${styles.header}>
                   <h1 data-testid="package-title">
-                    ${FileIcon}
+                    <${FileIcon} />
                     <span>
                       ${request.path}
                     </span>
@@ -60,7 +61,7 @@ export default () => {
                       });
                     }}
                   >
-                    ${PrettierIcon}
+                    <${PrettierIcon} />
                     <span>Format Code</span>
                   </button>
                 </header>
@@ -71,9 +72,9 @@ export default () => {
                     className=${styles.formidaLogo}
                     href="https://formidable.com"
                   >
-                    ${FormidableLogo}
+                    <${FormidableLogo} />
                   </a>
-                  ${RunpkgIcon}
+                  <${RunpkgIcon} />
                   <p>Search for and select a package to explore its contents</p>
                   <a
                     className=${styles.netlifyLogo}

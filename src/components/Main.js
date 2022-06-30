@@ -1,12 +1,13 @@
 import { react, html, css, npm } from '../utils/rplus.js';
 import { useStateValue } from '../utils/globalState.js';
 import { parseUrl } from '../utils/parseUrl.js';
+import AnalyzeFile from '../utils/analyzeFile.js?worker';
 
 import Nav from './Nav.js';
 import Article from './Article.js';
 
 const replaceState = url => history.replaceState(null, null, url);
-const worker = new Worker('./src/utils/analyzeFile.js');
+const worker = new AnalyzeFile();
 
 export default () => {
   const [state, dispatch] = useStateValue();

@@ -1,15 +1,9 @@
+import { parseUrl } from './parseUrl';
+
 /* eslint-disable no-eval */
 const UNPKG = 'https://unpkg.com/';
 
 const fileNameRegEx = /\/[^\/@]+[\.][^\/]+$/;
-
-// Hack to get ESM into webworker as 21/Nov/2019 ESM is not supported by webworkers
-const getParseUrl = () =>
-  fetch('/utils/parseUrl.js')
-    .then(x => x.text())
-    .then(x =>
-      x.replace(/\s*export {[^}]+\};/g, '').replace(/^const\s[^=]+=/, '')
-    );
 
 // Handles paths like "../../some-file.js"
 const handleDoubleDot = (pathEnd, base) => {
@@ -41,7 +35,7 @@ const isExternalPath = str => !str.startsWith('.');
 const isLocalFile = str => !isExternalPath(str);
 const isListedInDependencies = (pkgName, pkgJson) =>
   ['dependencies', 'devDependencies', 'peerDependencies'].find(depType => {
-    const matcher = self.parseUrl(pkgName);
+    const matcher = parseUrl(pkgName);
     return Object.keys(pkgJson[depType] || {}).includes(matcher.name);
   });
 
@@ -95,10 +89,6 @@ const visitedPaths = new Set();
  * it then dispatches the result back to runpkg
  */
 
-const setupParseUrl = async () => {
-  self.parseUrl = eval(await getParseUrl());
-};
-
 const parseDependencies = async path => {
   if (!visitedPaths.has(path)) {
     visitedPaths.add(path);
@@ -106,7 +96,7 @@ const parseDependencies = async path => {
       url: res.url,
       code: await res.text(),
     }));
-    const { name, version } = self.parseUrl(url);
+    const { name, version } = parseUrl(url);
     const dir = await fetch(directoriesUrl(name, version)).then(res =>
       res.json()
     );
@@ -152,7 +142,6 @@ const parseDependencies = async path => {
 
 self.onmessage = async event => {
   const { data } = event;
-  await setupParseUrl();
   try {
     await parseDependencies(data);
   } catch (e) {
