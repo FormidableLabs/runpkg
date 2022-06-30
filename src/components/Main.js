@@ -6,7 +6,7 @@ import Nav from './Nav.js';
 import Article from './Article.js';
 
 const replaceState = url => history.replaceState(null, null, url);
-const worker = new Worker('./utils/analyzeFile.js');
+const worker = new Worker('./src/utils/analyzeFile.js');
 
 export default () => {
   const [state, dispatch] = useStateValue();

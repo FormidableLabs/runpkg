@@ -1,8 +1,9 @@
-import { react, html } from './utils/rplus.js';
+import { html } from './utils/rplus.js';
 import { StateProvider } from './utils/globalState.js';
 import { parseUrl } from './utils/parseUrl.js';
 
 import Main from './components/Main.js';
+import { createRoot } from 'react-dom/client';
 
 if ('serviceWorker' in navigator) {
   navigator.serviceWorker
@@ -67,9 +68,8 @@ const App = () => html`
   <//>
 `;
 
-react.render(
+createRoot(document.getElementById('root')).render(
   html`
     <${App} />
-  `,
-  document.body
+  `
 );

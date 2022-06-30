@@ -8,6 +8,7 @@ export const RadioGroup = ({ options, onClick }) => html`
           onMouseDown=${() => onClick(key)}
           onClick=${() => onClick(key)}
           disabled=${selected}
+          key=${key}
         >
           ${key}
         </button>

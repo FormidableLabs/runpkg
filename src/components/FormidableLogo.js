@@ -49,7 +49,7 @@ export default html`
       r="5.5"
       fill="none"
       stroke="rgba(255,255,255,0.1)"
-      stroke-width="2"
+      strokeWidth="2"
     />
     <path
       fill="rgba(255,255,255,0.1)"

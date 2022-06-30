@@ -19,7 +19,11 @@ export const RegistryOverview = () => {
       />
       ${AlgoliaLogo}
       <ul className=${styles.container} key=${packagesSearchTerm}>
-        ${packages.map(Package)}
+        ${packages.map(props => {
+          return html`
+            <${Package} key=${props.name} {...${props}} />
+          `;
+        })}
       </ul>
     </div>
   `;
