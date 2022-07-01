@@ -8,15 +8,8 @@ import Main from './components/Main.js';
 import { createRoot } from 'react-dom/client';
 
 if ('serviceWorker' in navigator) {
-  // && !/localhost/.test(window.location)) {
   registerSW();
 }
-// if ('serviceWorker' in navigator) {
-//   navigator.serviceWorker
-//     .register('./sw.js')
-//     .then(() => console.log('[runpkg] service worker registered'))
-//     .catch(err => console.log(err));
-// }
 
 const initialState = {
   packages: [],
