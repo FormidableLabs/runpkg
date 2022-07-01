@@ -1,5 +1,5 @@
 import { html, css } from '../utils/rplus.js';
-import SearchIcon from './SearchIcon.js';
+import { SearchIcon } from './SearchIcon.tsx';
 
 // prettier-ignore
 export const SearchInput = ({ placeholder, value, onChange }) => html`
@@ -10,7 +10,7 @@ export const SearchInput = ({ placeholder, value, onChange }) => html`
       onChange=${e => onChange(e.target.value)}
       placeholder=${placeholder}
     />
-    ${SearchIcon}
+    <${SearchIcon} />
   </div>
 `;
 

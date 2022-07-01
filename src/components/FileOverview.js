@@ -2,8 +2,8 @@ import { css, html } from '../utils/rplus.js';
 import Link from './Link.js';
 import formatBytes from '../utils/formatBytes.js';
 import { useStateValue } from '../utils/globalState.js';
-import FileIcon from './FileIcon.js';
-import PackageIcon from './PackageIcon.js';
+import { FileIcon } from './FileIcon.tsx';
+import { PackageIcon } from './PackageIcon.tsx';
 import { SearchInput } from './SearchInput.js';
 
 const FileList = ({ title, files, packageName, filter }) => html`
@@ -18,7 +18,7 @@ const FileList = ({ title, files, packageName, filter }) => html`
         html`
           <li key=${key} data-test="Item">
             <${Link} href=${url.replace('https://unpkg.com/', '/?')}>
-              ${url.includes(packageName) ? FileIcon : PackageIcon}
+              <${url.includes(packageName) ? FileIcon : PackageIcon} />
               ${url.replace(`https://unpkg.com/`, '').replace(packageName, '')}
             <//>
           </li>
@@ -40,7 +40,7 @@ export const FileOverview = () => {
           dispatch({ type: 'setDependencySearchTerm', payload: val })}
       />
       <div className=${styles.file}>
-        ${FileIcon}
+        <${FileIcon} />
         <span>
           ${file.url.split('/').pop()}
         </span>

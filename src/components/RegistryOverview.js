@@ -1,7 +1,7 @@
 import { html, css } from '../utils/rplus.js';
 
 import { SearchInput } from './SearchInput.js';
-import PackageIcon from './PackageIcon.js';
+import { PackageIcon } from './PackageIcon.tsx';
 import { useStateValue } from '../utils/globalState.js';
 import AlgoliaLogo from './AlgoliaLogo.js';
 
@@ -45,7 +45,7 @@ export const Package = ({ name, version, description }) => html`
       }}
     >
       <div>
-        ${PackageIcon}
+        <${PackageIcon} />
         <h2>${name}</h2>
         <small>v${version}</small>
       </div>
