@@ -4,7 +4,7 @@ import formatBytes from '../utils/formatBytes.js';
 import { useStateValue } from '../utils/globalState.js';
 import { FileIcon } from './FileIcon.tsx';
 import { PackageIcon } from './PackageIcon.tsx';
-import { SearchInput } from './SearchInput.js';
+import { SearchInput } from './SearchInput.tsx';
 
 const FileList = ({ title, files, packageName, filter }) => html`
   <div key=${title}>

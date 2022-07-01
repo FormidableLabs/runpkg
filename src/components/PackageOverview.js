@@ -1,5 +1,5 @@
 import { react, html, css } from '../utils/rplus.js';
-import { SearchInput } from './SearchInput.js';
+import { SearchInput } from './SearchInput.tsx';
 import { FolderIcon } from './FolderIcon.tsx';
 import { FileIcon } from './FileIcon.tsx';
 import Link from './Link.js';
