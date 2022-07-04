@@ -1,5 +1,7 @@
 # runpkg
 
+[![Maintenance Status][maintenance-image]](#maintenance-status)
+
 > the online package explorer
 
 Runpkg turns a static file into an interactive and informative browsing experience. It lets you navigate any JavaScript package on npm thanks to [unpkg.com](https://unpkg.com), a popular and reliable CDN mirror of the npm registry. You can use this tool to learn more about the inner workings of your project's dependencies; find out how modules work, what they depend on, the size of specific imports as well as other useful metadata.
@@ -72,3 +74,5 @@ npm run test
 ## Licence
 
 MIT
+
+[maintenance-image]: https://img.shields.io/badge/maintenance-active-green.svg?color=brightgreen&style=flat
