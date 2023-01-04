@@ -1,4 +1,4 @@
-[![Runpkg — Formidable, We build the modern web](./Runpkg-Hero.png)](https://formidable.com/open-source/)
+[![Runpkg — Formidable, We build the modern web](https://raw.githubusercontent.com/FormidableLabs/runpkg/master/Runpkg-Hero.png)](https://formidable.com/open-source/)
 
 [![Maintenance Status][maintenance-image]](#maintenance-status)
 
