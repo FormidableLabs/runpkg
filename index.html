@@ -20,6 +20,8 @@
       im.type = 'importmap-shim';
       im.textContent = JSON.stringify({
         imports: {
+          'https://unpkg.com/react@>=16.0.0?module':
+            'https://unpkg.com/es-react@16.11.0/react.js',
           'https://unpkg.com/react@>=0.14.9?module':
             'https://unpkg.com/es-react@16.11.0/react.js',
           'https://unpkg.com/react@16.11.0?module':
@@ -29,7 +31,7 @@
           htm: 'https://unpkg.com/htm@2.2.1/dist/htm.module.js',
           csz: 'https://unpkg.com/csz@1.1.1/index.js',
           'prism-react-renderer':
-            'https://unpkg.com/prism-react-renderer?module',
+            'https://unpkg.com/prism-react-renderer@2.0.6?module',
           algolia:
             'https://www.unpkg.com/algoliasearch@4.1.0/dist/algoliasearch-lite.esm.browser.js',
         },

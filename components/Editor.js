@@ -1,5 +1,5 @@
 import { react, html, css } from '../utils/rplus.js';
-import Highlight, { Prism } from 'prism-react-renderer';
+import { Prism, Highlight } from 'prism-react-renderer';
 import { useStateValue } from '../utils/globalState.js';
 import Link from './Link.js';
 
