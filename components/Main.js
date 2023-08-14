@@ -67,7 +67,7 @@ export default () => {
   react.useEffect(() => {
     if (request.name) {
       dispatch({ type: 'setMode', payload: 'package' });
-      fetch(`https://registry.npmjs.cf/${request.name}/`)
+      fetch(`https://registry.npmjs.org/${request.name}/`)
         .then(res => res.json())
         .then(json => {
           dispatch({ type: 'setVersions', payload: json.versions });
