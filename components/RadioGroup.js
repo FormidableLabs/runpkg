@@ -5,6 +5,7 @@ export const RadioGroup = ({ options, onClick }) => html`
     ${Object.entries(options).map(
       ([key, selected]) => html`
         <button
+          key=${key}
           onMouseDown=${() => onClick(key)}
           onClick=${() => onClick(key)}
           disabled=${selected}
