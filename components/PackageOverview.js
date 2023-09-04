@@ -118,50 +118,54 @@ export const PackageOverview = () => {
     `;
 
   return html`
-    <${SearchInput}
-      placeholder="Search for files.."
-      value=${fileSearchTerm}
-      onChange=${val => dispatch({ type: 'setFileSearchTerm', payload: val })}
-    />
-    <${Package} name=${name} version=${version} description=${description} />
-    <select
-      id="version"
-      value=${version}
-      onChange=${e => handleVersionChange(e.target.value)}
-    >
-      ${Object.keys(versions).map(VersionOption)}</select
-    >
-    ${fileSearchTerm
-      ? html`
-          <div>
-            ${flatFiles.filter(search).map(
-              file => html`
-                <${File}
-                  key=${file.path}
-                  meta=${file}
-                  packageName=${name}
-                  packageVersion=${version}
-                  displayFullPath=${true}
-                />
-              `
-            )}
-          </div>
-        `
-      : html`
-          <${TreeView}>
-            ${directory.files.map(
-              node =>
-                html`
-                  <${Node}
-                    key=${node.path}
-                    meta=${node}
-                    packageName=${name}
-                    packageVersion=${version}
-                  />
-                `
-            )}
-          <//>
-        `}
+    <${react.Fragment}>
+      <${SearchInput}
+        placeholder="Search for files.."
+        value=${fileSearchTerm}
+        onChange=${val => dispatch({ type: 'setFileSearchTerm', payload: val })}
+      />
+      <${Package} name=${name} version=${version} description=${description} />
+      <select
+        id="version"
+        value=${version}
+        onChange=${e => handleVersionChange(e.target.value)}
+      >
+        ${Object.keys(versions).map(VersionOption)}</select
+      >
+      ${
+        fileSearchTerm
+          ? html`
+              <div>
+                ${flatFiles.filter(search).map(
+                  file => html`
+                    <${File}
+                      key=${file.path}
+                      meta=${file}
+                      packageName=${name}
+                      packageVersion=${version}
+                      displayFullPath=${true}
+                    />
+                  `
+                )}
+              </div>
+            `
+          : html`
+              <${TreeView}>
+                ${directory.files.map(
+                  node =>
+                    html`
+                      <${Node}
+                        key=${node.path}
+                        meta=${node}
+                        packageName=${name}
+                        packageVersion=${version}
+                      />
+                    `
+                )}
+              <//>
+            `
+      }
+    </${react.Fragment}>
   `;
 };
 
