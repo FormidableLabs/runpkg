@@ -75,6 +75,7 @@ const Node = ({ meta, packageName, packageVersion }) => {
         meta.files.map(
           node => html`
             <${Node}
+              key=${node.path}
               meta=${node}
               packageName=${packageName}
               packageVersion=${packageVersion}
@@ -90,16 +91,11 @@ export const PackageOverview = () => {
     { versions, request, directory, fileSearchTerm },
     dispatch,
   ] = useStateValue();
-  if (!versions || !directory || !versions[request.version] || !directory.files)
-    return null;
-  const { name, version, description } = versions[request.version];
-  const handleVersionChange = v => pushState(`?${name}@${v}`);
-  const VersionOption = x =>
-    html`
-      <option value=${x}>${x}</option>
-    `;
 
-  const flatFiles = react.useMemo(() => flatten(directory.files), [directory]);
+  const flatFiles = react.useMemo(
+    () => (directory && directory.files ? flatten(directory.files) : []),
+    [directory]
+  );
 
   const search = react.useCallback(
     file =>
@@ -111,49 +107,65 @@ export const PackageOverview = () => {
     [fileSearchTerm]
   );
 
+  if (!versions || !directory || !versions[request.version] || !directory.files)
+    return null;
+
+  const { name, version, description } = versions[request.version];
+  const handleVersionChange = v => pushState(`?${name}@${v}`);
+  const VersionOption = x =>
+    html`
+      <option key=${x} value=${x}>${x}</option>
+    `;
+
   return html`
-    <${SearchInput}
-      placeholder="Search for files.."
-      value=${fileSearchTerm}
-      onChange=${val => dispatch({ type: 'setFileSearchTerm', payload: val })}
-    />
-    <${Package} name=${name} version=${version} description=${description} />
-    <select
-      id="version"
-      value=${version}
-      onChange=${e => handleVersionChange(e.target.value)}
-    >
-      ${Object.keys(versions).map(VersionOption)}</select
-    >
-    ${fileSearchTerm
-      ? html`
-          <div>
-            ${flatFiles.filter(search).map(
-              file => html`
-                <${File}
-                  meta=${file}
-                  packageName=${name}
-                  packageVersion=${version}
-                  displayFullPath=${true}
-                />
-              `
-            )}
-          </div>
-        `
-      : html`
-          <${TreeView}>
-            ${directory.files.map(
-              node =>
-                html`
-                  <${Node}
-                    meta=${node}
-                    packageName=${name}
-                    packageVersion=${version}
-                  />
-                `
-            )}
-          <//>
-        `}
+    <${react.Fragment}>
+      <${SearchInput}
+        placeholder="Search for files.."
+        value=${fileSearchTerm}
+        onChange=${val => dispatch({ type: 'setFileSearchTerm', payload: val })}
+      />
+      <${Package} name=${name} version=${version} description=${description} />
+      <select
+        id="version"
+        value=${version}
+        onChange=${e => handleVersionChange(e.target.value)}
+      >
+        ${Object.keys(versions).map(VersionOption)}</select
+      >
+      ${
+        fileSearchTerm
+          ? html`
+              <div>
+                ${flatFiles.filter(search).map(
+                  file => html`
+                    <${File}
+                      key=${file.path}
+                      meta=${file}
+                      packageName=${name}
+                      packageVersion=${version}
+                      displayFullPath=${true}
+                    />
+                  `
+                )}
+              </div>
+            `
+          : html`
+              <${TreeView}>
+                ${directory.files.map(
+                  node =>
+                    html`
+                      <${Node}
+                        key=${node.path}
+                        meta=${node}
+                        packageName=${name}
+                        packageVersion=${version}
+                      />
+                    `
+                )}
+              <//>
+            `
+      }
+    </${react.Fragment}>
   `;
 };
 

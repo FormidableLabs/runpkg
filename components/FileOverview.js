@@ -1,4 +1,4 @@
-import { css, html } from '../utils/rplus.js';
+import { react, css, html } from '../utils/rplus.js';
 import Link from './Link.js';
 import formatBytes from '../utils/formatBytes.js';
 import { useStateValue } from '../utils/globalState.js';
@@ -7,24 +7,28 @@ import PackageIcon from './PackageIcon.js';
 import { SearchInput } from './SearchInput.js';
 
 const FileList = ({ title, files, packageName, filter }) => html`
-  <div key=${title}>
-    <h2>${title}</h2>
-    <small>${Object.entries(files).length} Files</small>
-  </div>
-  <ul>
-    ${Object.entries(files).map(
-      ([key, url]) =>
-        url.match(filter) &&
-        html`
-          <li key=${key} data-test="Item">
-            <${Link} href=${url.replace('https://unpkg.com/', '/?')}>
-              ${url.includes(packageName) ? FileIcon : PackageIcon}
-              ${url.replace(`https://unpkg.com/`, '').replace(packageName, '')}
-            <//>
-          </li>
-        `
-    )}
-  </ul>
+  <${react.Fragment}>
+    <div>
+      <h2>${title}</h2>
+      <small>${Object.entries(files).length} Files</small>
+    </div>
+    <ul>
+      ${Object.entries(files).map(
+        ([key, url]) =>
+          url.match(filter) &&
+          html`
+            <li key=${key} data-test="Item">
+              <${Link} href=${url.replace('https://unpkg.com/', '/?')}>
+                ${url.includes(packageName) ? FileIcon : PackageIcon}
+                ${url
+                  .replace(`https://unpkg.com/`, '')
+                  .replace(packageName, '')}
+              <//>
+            </li>
+          `
+      )}
+    </ul>
+  </${react.Fragment}>
 `;
 
 export const FileOverview = () => {
@@ -33,28 +37,29 @@ export const FileOverview = () => {
   return (
     !!file &&
     html`
-      <${SearchInput}
-        placeholder="Search for dependencies.."
-        value=${dependencySearchTerm}
-        onChange=${val =>
-          dispatch({ type: 'setDependencySearchTerm', payload: val })}
-      />
-      <div className=${styles.file}>
-        ${FileIcon}
-        <span>
-          ${file.url.split('/').pop()}
-        </span>
-        <small>${formatBytes(file.size)}</small>
-      </div>
-      <div className=${styles.container}>
-        <${FileList}
-          title="Dependencies"
-          files=${file.dependencies}
-          key="dependencies"
-          packageName=${`${request.name}@${request.version}`}
-          filter=${dependencySearchTerm}
+      <${react.Fragment}>
+        <${SearchInput}
+          placeholder="Search for dependencies.."
+          value=${dependencySearchTerm}
+          onChange=${val =>
+            dispatch({ type: 'setDependencySearchTerm', payload: val })}
         />
-      </div>
+        <div className=${styles.file}>
+          ${FileIcon}
+          <span>
+            ${file.url.split('/').pop()}
+          </span>
+          <small>${formatBytes(file.size)}</small>
+        </div>
+        <div className=${styles.container}>
+          <${FileList}
+            title="Dependencies"
+            files=${file.dependencies}
+            packageName=${`${request.name}@${request.version}`}
+            filter=${dependencySearchTerm}
+          />
+        </div>
+      </${react.Fragment}>
     `
   );
 };

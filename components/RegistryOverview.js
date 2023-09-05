@@ -26,7 +26,7 @@ export const RegistryOverview = () => {
 };
 
 export const Package = ({ name, version, description }) => html`
-  <li>
+  <li key=${`${name}@${version}`}>
     <a
       className=${styles.item}
       href=${`?${name}@${version}`}
