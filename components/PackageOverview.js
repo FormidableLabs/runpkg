@@ -95,8 +95,8 @@ export const PackageOverview = () => {
   ] = useStateValue();
 
   const [
-    showAllSearchResultsForTerm,
-    setShowAllSearchResultsForTerm,
+    searchStringForShowAllResults,
+    setSearchStringForShowAllResults,
   ] = react.useState(null);
 
   const flatFiles = react.useMemo(
@@ -116,12 +116,12 @@ export const PackageOverview = () => {
 
   react.useEffect(() => {
     if (
-      showAllSearchResultsForTerm !== null &&
-      fileSearchTerm !== showAllSearchResultsForTerm
+      searchStringForShowAllResults !== null &&
+      fileSearchTerm !== searchStringForShowAllResults
     ) {
-      setShowAllSearchResultsForTerm(null);
+      setSearchStringForShowAllResults(null);
     }
-  }, [fileSearchTerm, showAllSearchResultsForTerm]);
+  }, [fileSearchTerm, searchStringForShowAllResults]);
 
   if (!versions || !directory || !versions[request.version] || !directory.files)
     return null;
@@ -137,7 +137,8 @@ export const PackageOverview = () => {
   const expandableFilesCount = matchingFiles.length - SEARCH_FILES_RENDER_LIMIT;
 
   const canShowMoreSearchFiles =
-    showAllSearchResultsForTerm !== fileSearchTerm && expandableFilesCount > 0;
+    searchStringForShowAllResults !== fileSearchTerm &&
+    expandableFilesCount > 0;
   const searchFilesToRender = canShowMoreSearchFiles
     ? matchingFiles.slice(0, SEARCH_FILES_RENDER_LIMIT)
     : matchingFiles;
@@ -176,7 +177,7 @@ export const PackageOverview = () => {
                   ? html`
                       <button
                         onClick=${() =>
-                          setShowAllSearchResultsForTerm(fileSearchTerm)}
+                          setSearchStringForShowAllResults(fileSearchTerm)}
                         className=${styles.item}
                       >
                         <div>
