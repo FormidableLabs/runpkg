@@ -9,6 +9,8 @@ import formatBytes from '../utils/formatBytes.js';
 
 import { TreeView, TreeItem } from './TreeView.js';
 
+const SEARCH_FILES_RENDER_LIMIT = 100;
+
 const pushState = url => history.pushState(null, null, url);
 
 const flatten = arr =>
@@ -92,6 +94,11 @@ export const PackageOverview = () => {
     dispatch,
   ] = useStateValue();
 
+  const [
+    searchStringForShowAllResults,
+    setSearchStringForShowAllResults,
+  ] = react.useState(null);
+
   const flatFiles = react.useMemo(
     () => (directory && directory.files ? flatten(directory.files) : []),
     [directory]
@@ -107,6 +114,15 @@ export const PackageOverview = () => {
     [fileSearchTerm]
   );
 
+  react.useEffect(() => {
+    if (
+      searchStringForShowAllResults !== null &&
+      fileSearchTerm !== searchStringForShowAllResults
+    ) {
+      setSearchStringForShowAllResults(null);
+    }
+  }, [fileSearchTerm, searchStringForShowAllResults]);
+
   if (!versions || !directory || !versions[request.version] || !directory.files)
     return null;
 
@@ -116,6 +132,16 @@ export const PackageOverview = () => {
     html`
       <option key=${x} value=${x}>${x}</option>
     `;
+
+  const matchingFiles = fileSearchTerm ? flatFiles.filter(search) : [];
+  const expandableFilesCount = matchingFiles.length - SEARCH_FILES_RENDER_LIMIT;
+
+  const canShowMoreSearchFiles =
+    searchStringForShowAllResults !== fileSearchTerm &&
+    expandableFilesCount > 0;
+  const searchFilesToRender = canShowMoreSearchFiles
+    ? matchingFiles.slice(0, SEARCH_FILES_RENDER_LIMIT)
+    : matchingFiles;
 
   return html`
     <${react.Fragment}>
@@ -136,7 +162,7 @@ export const PackageOverview = () => {
         fileSearchTerm
           ? html`
               <div>
-                ${flatFiles.filter(search).map(
+                ${searchFilesToRender.map(
                   file => html`
                     <${File}
                       key=${file.path}
@@ -147,6 +173,24 @@ export const PackageOverview = () => {
                     />
                   `
                 )}
+                ${canShowMoreSearchFiles
+                  ? html`
+                      <button
+                        onClick=${() =>
+                          setSearchStringForShowAllResults(fileSearchTerm)}
+                        className=${styles.item}
+                      >
+                        <div>
+                          <span
+                            >Show${` ${expandableFilesCount} `}more search${' '}
+                            ${expandableFilesCount === 1
+                              ? 'result'
+                              : 'results'}...</span
+                          >
+                        </div>
+                      </button>
+                    `
+                  : null}
               </div>
             `
           : html`
@@ -182,6 +226,8 @@ export const styles = {
     color: rgba(255, 255, 255, 0.8);
 
     text-decoration: none;
+    background: none;
+    cursor: pointer;
     &:hover,
     &:focus {
       color: #fff;
