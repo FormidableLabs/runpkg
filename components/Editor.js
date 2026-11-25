@@ -86,7 +86,7 @@ export default () => {
       <${Highlight}
         Prism=${Prism}
         code=${fileData.code.slice(0, 100000)}
-        language=${languages[fileData.extension.split('.').pop()]}
+        language=${languages[fileData.extension.split('.').pop()] || 'plain'}
         theme=${undefined}
       >
         ${({ className, style, tokens, getLineProps, getTokenProps }) => html`
